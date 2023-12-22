@@ -1,0 +1,24 @@
+name: nectar_generator
+description: Generate all helper classes for nectar library.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.2.3
+
+dependencies:
+  analyzer: ^5.2.0
+  build: ^2.0.0
+  build_config: ^1.0.0
+  code_builder: ^4.0.0
+  source_gen: ^1.0.0
+  logging: ^1.0.2
+  mysql1: ^0.20.0
+  nectar:
+    path: ../../
+dev_dependencies:
+  build_runner: ^2.0.0
+  test: ^1.5.3
+  pool: ^1.5.0
+  postgres: ^2.4.1
+  postgres_pool: ^2.1.3
