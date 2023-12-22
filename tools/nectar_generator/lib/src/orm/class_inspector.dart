@@ -17,12 +17,15 @@ class ClassInspector {
 
   ClassInspector(this.classElement, ConstantReader annotation)
       : name = classElement.name.removePrefix() {
+    print(annotation.read("tableName"));
     // handleAnnotations(this.classElement);
     //
     // this.entity = this.ormAnnotations.whereType<Entity>().first;
 
     this.fields = classElement.fields;
     this.methods = classElement.methods;
+
+    // this.classElement
 
     tableName = name.toLowerCase();
   }
