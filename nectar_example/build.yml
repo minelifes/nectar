@@ -1,0 +1,5 @@
+#targets:
+#  $default:
+#    builders:
+#      nectar_generator:
+#        enabled: true

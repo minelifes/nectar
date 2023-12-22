@@ -66,3 +66,7 @@ class ManyToOne {
 class PostLoad {
   const PostLoad();
 }
+
+class PreLoad {
+  const PreLoad();
+}

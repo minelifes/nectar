@@ -1,0 +1,8 @@
+builders:
+  nectar_generator:
+    import: "package:nectar_generator/nectar_generator.dart"
+    builder_factories: ["ormGenerator"]
+    build_extensions: { ".dart": [".g.dart"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
