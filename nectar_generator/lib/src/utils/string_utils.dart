@@ -1,3 +1,4 @@
 extension StringExtension on String {
-  String removePrefix() => this.replaceFirst("_", "");
+  String removePrefix() => replaceFirst("_", "");
+  String wrapWith({String symbol = '"'}) => '$symbol$this$symbol';
 }

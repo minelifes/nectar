@@ -1,9 +1,9 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:build/src/builder/build_step.dart';
+import 'package:build/build.dart';
 import 'package:nectar/nectar.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'orm/class_inspector.dart';
+import 'core/class_inspector.dart';
 
 class NectarOrmGenerator extends GeneratorForAnnotation<Entity> {
   @override
@@ -17,7 +17,7 @@ class NectarOrmGenerator extends GeneratorForAnnotation<Entity> {
     }
 
     final classInspector = ClassInspector(element, annotation).generate();
-    print("classInspector: ${classInspector}");
+    print(classInspector);
     return classInspector;
   }
 }

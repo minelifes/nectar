@@ -45,22 +45,26 @@ class UpdatedAt {
 }
 
 class Id {
-  const Id();
+  final String? name;
+  const Id({this.name});
 }
 
 class OneToOne {
   final String? mappedBy;
-  const OneToOne({this.mappedBy});
+  final String foreignKey;
+  const OneToOne({this.mappedBy, this.foreignKey = "id"});
 }
 
 class OneToMany {
   final String? mappedBy;
-  const OneToMany({this.mappedBy});
+  final String foreignKey;
+  const OneToMany({this.mappedBy, this.foreignKey = "id"});
 }
 
 class ManyToOne {
   final String? mappedBy;
-  const ManyToOne({this.mappedBy});
+  final String foreignKey;
+  const ManyToOne({this.mappedBy, this.foreignKey = "id"});
 }
 
 class PostLoad {
@@ -69,4 +73,12 @@ class PostLoad {
 
 class PreLoad {
   const PreLoad();
+}
+
+class UuidGenerate{
+  const UuidGenerate();
+}
+
+class AutoIncrement{
+  const AutoIncrement();
 }

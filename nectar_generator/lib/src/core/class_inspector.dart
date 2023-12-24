@@ -1,8 +1,13 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:nectar_generator/src/orm/orm_insert_serializer.dart';
+import 'package:nectar_generator/src/orm/orm_query_serializer.dart';
+import 'package:nectar_generator/src/orm/orm_select_serializer.dart';
+import 'package:nectar_generator/src/orm/orm_serializer.dart';
+import 'package:nectar_generator/src/orm/orm_where_serializer.dart';
 import 'package:nectar_generator/src/utils/string_utils.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'serializable.dart';
+import '../serializable/serializable.dart';
 
 class ClassInspector {
   final ClassElement classElement;
@@ -21,17 +26,29 @@ class ClassInspector {
       : name = classElement.name.removePrefix() {
     _setTableName(annotation);
 
-    this.fileName = classElement.source.shortName;
-    this.fields = classElement.fields;
-    this.methods = classElement.methods;
+    fileName = classElement.source.shortName;
+    fields = classElement.fields;
+    methods = classElement.methods;
 
     tableName = name.toLowerCase();
   }
 
   String generate() {
     final s = Serializable(this);
-    return _buildClassWithColumns([s.generate()]);
-    // return [_buildClassWithColumns()].join("\n\n");
+    final orm = OrmSerializer(this);
+    final q = OrmQuerySerializer(this);
+    final os = OrmSelectSerializer(this);
+    final w = OrmWhereSerializer(this);
+    final ins = OrmInsertSerializer(this);
+    return _buildClassWithColumns([
+      s.generate(),
+      orm.generate(),
+    ], [
+      q.generate(),
+      os.generate(),
+      w.generate(),
+      ins.generate(),
+    ]);
   }
 
   void _setTableName(ConstantReader annotation) {
@@ -42,18 +59,18 @@ class ClassInspector {
     tableName = annotation.read("tableName").stringValue;
   }
 
-  String _buildClassWithColumns(List<String> codeInside) {
-    // fields.map((e) => print(
-    //     "e.type.getDisplayString(withNullability: true): ${e.type.getDisplayString(withNullability: true)}"));
-    // ${fields.map((e) => "${e.type.getDisplayString(withNullability: true)} get ${e.name} => _${e.name};\n")}
+  String _buildClassWithColumns(
+      List<String> codeInside, List<String> codeAfter) {
     return '''
-    class $name extends _$name {
+    class $name extends _$name implements Model {
     
       $name();
       
       ${codeInside.join("\n\n")}
       
     }
+    
+    ${codeAfter.join("\n\n")}
     ''';
   }
 }

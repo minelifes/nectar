@@ -2,7 +2,7 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'dart:mirrors';
 
-import 'class_inspector.dart';
+import '../core/class_inspector.dart';
 
 class Serializable {
   final ClassInspector inspector;
@@ -16,6 +16,7 @@ class Serializable {
       
       factory ${inspector.name}.fromJson(Map<String, dynamic> json) => 
         ${inspector.name}()${inspector.fields.map((e) => _deserializeFieldIfAllowed(e)).join("")};
+        
     ''';
   }
 
