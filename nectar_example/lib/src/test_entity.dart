@@ -9,5 +9,5 @@ abstract class _Test {
 
   @Column(name: "test_string")
   @SerializableField(name: "test_string")
-  String? testString;
+  late String testString;
 }
