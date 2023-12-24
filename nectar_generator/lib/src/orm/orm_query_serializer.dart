@@ -10,7 +10,7 @@ class OrmQuerySerializer {
         ${inspector.name}Query() : super("${inspector.tableName}");
       
         @override
-        Test instanceOfT() => ${inspector.name}();
+        ${inspector.name} instanceOfT() => ${inspector.name}();
       
         @override
         ${inspector.name}SelectClause select({List<String>? fields}){

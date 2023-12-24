@@ -24,10 +24,10 @@ class OrmSerializer {
        static ${inspector.name}Query query() => ${inspector.name}Query();
        
        Future<${inspector.name}?> save() async => 
-            ${inspector.name}InsertClause(this, () => Test()).insert();
+            ${inspector.name}InsertClause(this, () => ${inspector.name}()).insert();
           
        Future<${inspector.name}?> update() async => 
-            ${inspector.name}InsertClause(this, () => Test()).update();
+            ${inspector.name}InsertClause(this, () => ${inspector.name}()).update();
     ''';
   }
 }
