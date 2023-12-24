@@ -1,4 +1,4 @@
-interface class Model<T> {
+interface class Model {
   List<String> get columns => [];
   String get tableName => "";
 
