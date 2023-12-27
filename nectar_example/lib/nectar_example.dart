@@ -37,9 +37,10 @@ void main() async {
   //
   // //one to many
   // final many = await db.query(
-  //     "Select User.id as User_id, User.name as User_name, User.lastName as User_lastName, User.email as User_email, User.phone as User_phone, User.password as User_password, User.isBlocked as User_isBlocked, User.roleId as User_roleId, books.id as Books_id, books.title as Books_title, books.user_id as Books_userId from User INNER JOIN books on books.user_id = User.id where User.id = 2");
+  //     // "Select User.id as User_id, User.name as User_name, User.lastName as User_lastName, User.email as User_email, User.phone as User_phone, User.password as User_password, User.isBlocked as User_isBlocked, User.roleId as User_roleId, books.id as Books_id, books.title as Books_title, books.user_id as Books_userId from User INNER JOIN books on books.user_id = User.id where User.id = 2");
+  //     "Select * from User JOIN books on books.user_id = User.id where User.id = 2");
   // print(many.toMap());
-  // print(many.rows);
+  // print(many.rows[0]);
 
   TestController.register();
   Nectar.configure()
@@ -52,4 +53,6 @@ void main() async {
         },
       ))
       .start();
+
+  db.close();
 }

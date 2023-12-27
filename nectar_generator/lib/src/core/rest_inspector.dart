@@ -91,6 +91,7 @@ class RestInspector {
       : "${applySymbol ? " , " : ""} ${e.parameters.map((e) => e.name).join(',')}";
 
   MapEntry<String, String>? _parameterReader(int index, ParameterElement e) {
+    var typeName = e.type.getDisplayString(withNullability: false);
     var pathVariable = getAnnotationFromParameter(e, "PathVariable");
     if (pathVariable != null) {
       final value = pathVariable.computeConstantValue();
@@ -118,7 +119,6 @@ class RestInspector {
     }
     pathVariable = getAnnotationFromParameter(e, "RequestBody");
     if (pathVariable != null) {
-      var typeName = e.type.getDisplayString(withNullability: false);
       switch (typeName) {
         case 'String':
           return MapEntry("body$index", ''' 
@@ -151,6 +151,16 @@ class RestInspector {
             final body$index = $typeName.fromJson(json$index);
           ''');
       }
+    }
+    switch (typeName) {
+      case 'Request':
+        return MapEntry("request$index", ''' 
+            final request$index = request;
+          ''');
+      case 'UserDetails':
+        return MapEntry("userDetails$index", ''' 
+            final userDetails$index = request.context[MiddlewareKeys.userDetails]! as UserDetails;
+          ''');
     }
     return null;
   }

@@ -782,13 +782,15 @@ class ResultFormat {
     List _cols = [];
     List _rowsAssoc = [];
     if (results.rows.isNotEmpty) {
-      results.rows.forEach((e) {
+      for (var e in results.rows) {
         _rows.add(e.typedAssoc());
         _rowsAssoc.add(e);
-      });
+      }
     }
     if (results.cols.isNotEmpty) {
-      results.cols.forEach((e) => _cols.add({'name': e.name, 'type': e.type}));
+      for (var e in results.cols) {
+        _cols.add({'name': e.name, 'type': e.type});
+      }
     }
     cols = _cols;
     rows = _rows;
