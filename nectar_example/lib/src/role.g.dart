@@ -15,6 +15,22 @@ class Role extends _Role implements Model {
     ..id = json["id"]
     ..title = json["title"];
 
+  _valueForList(e) {
+    if (e is String ||
+        e is num ||
+        e is bool ||
+        e is int ||
+        e is double ||
+        e is Enum ||
+        e is Map) {
+      return e;
+    }
+    if (e is List) {
+      return _valueForList(e);
+    }
+    return e.toJson();
+  }
+
   @override
   List<String> get columns => ["id", "title"];
 
@@ -23,8 +39,9 @@ class Role extends _Role implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result["id"];
-    title = result["title"];
+    id = result['Role_id'];
+
+    title = result['Role_title'];
   }
 
   static RoleQuery query() => RoleQuery();
@@ -40,11 +57,15 @@ class RoleQuery extends Query<Role> {
   @override
   Role instanceOfT() => Role();
 
+  List<String> get _defaultTableFields =>
+      ["Role.id as Role_id", "Role.title as Role_title"];
+
   @override
-  RoleSelectClause select({List<String>? fields}) {
-    if (fields != null) {
-      model.fields = fields.join(", ");
-    }
+  RoleSelectClause select({
+    List<String> fields = const [],
+  }) {
+    model.fields = (fields.isEmpty) ? _defaultTableFields : fields;
+    model.joins = [];
     return RoleSelectClause(model, instanceOfT);
   }
 }
@@ -54,18 +75,24 @@ class RoleSelectClause extends SelectClause<Role> {
 
   @override
   RoleWhereClause where() => RoleWhereClause(model, instanceOfT);
+
+  @override
+  RoleSelectClause join(JoinModel join) {
+    model.joins.add(join);
+    return this;
+  }
 }
 
 class RoleWhereClause extends WhereClause<Role> {
   RoleWhereClause(super.model, super.instanceOfT);
 
-  RoleWhereClause id(String value, {operator = "="}) {
-    model.where["id"] = [operator, value];
+  RoleWhereClause id(String? value, {operator = "="}) {
+    model.where["Role.id"] = [operator, value];
     return this;
   }
 
   RoleWhereClause title(String value, {operator = "="}) {
-    model.where["title"] = [operator, value];
+    model.where["Role.title"] = [operator, value];
     return this;
   }
 

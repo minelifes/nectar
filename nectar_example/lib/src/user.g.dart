@@ -17,7 +17,7 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role
+        "role": role.toJson()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -29,6 +29,22 @@ class User extends _User implements Model {
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
     ..role = json["role"];
+
+  _valueForList(e) {
+    if (e is String ||
+        e is num ||
+        e is bool ||
+        e is int ||
+        e is double ||
+        e is Enum ||
+        e is Map) {
+      return e;
+    }
+    if (e is List) {
+      return _valueForList(e);
+    }
+    return e.toJson();
+  }
 
   @override
   List<String> get columns => [
@@ -47,14 +63,21 @@ class User extends _User implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result["id"];
-    name = result["name"];
-    lastName = result["lastName"];
-    email = result["email"];
-    phone = result["phone"];
-    password = result["password"];
-    isBlocked = result["isBlocked"];
-    role = result["role"];
+    id = result['User_id'];
+
+    name = result['User_name'];
+
+    lastName = result['User_lastName'];
+
+    email = result['User_email'];
+
+    phone = result['User_phone'];
+
+    password = result['User_password'];
+
+    isBlocked = result['User_isBlocked'];
+
+    role = Role()..fromRow(result);
   }
 
   static UserQuery query() => UserQuery();
@@ -70,11 +93,30 @@ class UserQuery extends Query<User> {
   @override
   User instanceOfT() => User();
 
+  List<String> get _defaultTableFields => [
+        "User.id as User_id",
+        "User.name as User_name",
+        "User.lastName as User_lastName",
+        "User.email as User_email",
+        "User.phone as User_phone",
+        "User.password as User_password",
+        "User.isBlocked as User_isBlocked"
+      ];
+
   @override
-  UserSelectClause select({List<String>? fields}) {
-    if (fields != null) {
-      model.fields = fields.join(", ");
-    }
+  UserSelectClause select({
+    List<String> fields = const [],
+  }) {
+    model.fields = (fields.isEmpty) ? _defaultTableFields : fields;
+    model.joins = [
+      JoinModel(
+        tableName: 'User',
+        mappedBy: 'roleId',
+        foreignTableName: 'Role',
+        foreignKey: 'id',
+        fields: ["Role.id as Role_id", "Role.title as Role_title"],
+      )
+    ];
     return UserSelectClause(model, instanceOfT);
   }
 }
@@ -84,43 +126,54 @@ class UserSelectClause extends SelectClause<User> {
 
   @override
   UserWhereClause where() => UserWhereClause(model, instanceOfT);
+
+  @override
+  UserSelectClause join(JoinModel join) {
+    model.joins.add(join);
+    return this;
+  }
 }
 
 class UserWhereClause extends WhereClause<User> {
   UserWhereClause(super.model, super.instanceOfT);
 
-  UserWhereClause id(int value, {operator = "="}) {
-    model.where["id"] = [operator, value];
+  UserWhereClause id(int? value, {operator = "="}) {
+    model.where["User.id"] = [operator, value];
     return this;
   }
 
   UserWhereClause name(String value, {operator = "="}) {
-    model.where["name"] = [operator, value];
+    model.where["User.name"] = [operator, value];
     return this;
   }
 
   UserWhereClause lastName(String value, {operator = "="}) {
-    model.where["lastName"] = [operator, value];
+    model.where["User.lastName"] = [operator, value];
     return this;
   }
 
-  UserWhereClause email(String value, {operator = "="}) {
-    model.where["email"] = [operator, value];
+  UserWhereClause email(String? value, {operator = "="}) {
+    model.where["User.email"] = [operator, value];
     return this;
   }
 
   UserWhereClause phone(String value, {operator = "="}) {
-    model.where["phone"] = [operator, value];
+    model.where["User.phone"] = [operator, value];
     return this;
   }
 
   UserWhereClause password(String value, {operator = "="}) {
-    model.where["password"] = [operator, value];
+    model.where["User.password"] = [operator, value];
     return this;
   }
 
   UserWhereClause isBlocked(bool value, {operator = "="}) {
-    model.where["isBlocked"] = [operator, value];
+    model.where["User.isBlocked"] = [operator, value];
+    return this;
+  }
+
+  UserWhereClause roleId(String? value, {operator = "="}) {
+    model.where["User.role"] = [operator, value];
     return this;
   }
 

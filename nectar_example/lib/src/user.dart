@@ -28,6 +28,6 @@ class _User {
   bool isBlocked = false;
 
   @Column()
-  @OneToOne(mappedBy: "roleId")
-  Role? role;
+  @OneToOne(mappedBy: "roleId", referenceClass: "_Role")
+  late Role role;
 }

@@ -42,7 +42,11 @@ void main() async {
   // print(many.toMap());
   // print(many.rows[0]);
 
-  TestController.register();
+  final user = await User.query().select().where().id(2).one();
+  print(user?.toJson());
+
+  return;
+
   Nectar.configure()
       .enableJwtSecurity(JwtSecurity(
         secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",

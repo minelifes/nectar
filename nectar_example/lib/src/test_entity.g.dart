@@ -15,6 +15,22 @@ class Test extends _Test implements Model {
     ..id = json["id"]
     ..testString = json["test_string"];
 
+  _valueForList(e) {
+    if (e is String ||
+        e is num ||
+        e is bool ||
+        e is int ||
+        e is double ||
+        e is Enum ||
+        e is Map) {
+      return e;
+    }
+    if (e is List) {
+      return _valueForList(e);
+    }
+    return e.toJson();
+  }
+
   @override
   List<String> get columns => ["id", "test_string"];
 
@@ -23,8 +39,9 @@ class Test extends _Test implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result["id"];
-    testString = result["test_string"];
+    id = result['test_id'];
+
+    testString = result['test_test_string'];
   }
 
   static TestQuery query() => TestQuery();
@@ -40,11 +57,15 @@ class TestQuery extends Query<Test> {
   @override
   Test instanceOfT() => Test();
 
+  List<String> get _defaultTableFields =>
+      ["test.id as test_id", "test.test_string as test_test_string"];
+
   @override
-  TestSelectClause select({List<String>? fields}) {
-    if (fields != null) {
-      model.fields = fields.join(", ");
-    }
+  TestSelectClause select({
+    List<String> fields = const [],
+  }) {
+    model.fields = (fields.isEmpty) ? _defaultTableFields : fields;
+    model.joins = [];
     return TestSelectClause(model, instanceOfT);
   }
 }
@@ -54,18 +75,24 @@ class TestSelectClause extends SelectClause<Test> {
 
   @override
   TestWhereClause where() => TestWhereClause(model, instanceOfT);
+
+  @override
+  TestSelectClause join(JoinModel join) {
+    model.joins.add(join);
+    return this;
+  }
 }
 
 class TestWhereClause extends WhereClause<Test> {
   TestWhereClause(super.model, super.instanceOfT);
 
-  TestWhereClause id(String value, {operator = "="}) {
-    model.where["id"] = [operator, value];
+  TestWhereClause id(String? value, {operator = "="}) {
+    model.where["test.id"] = [operator, value];
     return this;
   }
 
   TestWhereClause testString(String value, {operator = "="}) {
-    model.where["test_string"] = [operator, value];
+    model.where["test.test_string"] = [operator, value];
     return this;
   }
 
