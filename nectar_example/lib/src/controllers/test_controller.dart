@@ -4,6 +4,7 @@ import 'dart:mirrors';
 import 'package:nectar/nectar.dart';
 import 'package:nectar_example/src/payloads/test_request.dart';
 import 'package:nectar_example/src/role.dart';
+import 'package:nectar_example/src/user.dart';
 import 'package:shelf/shelf.dart';
 
 part 'test_controller.g.dart';
@@ -29,8 +30,12 @@ class _TestController {
 
   @PostMapping("/body")
   @AuthWithJwt()
-  Future<TestRequest?> testBody(@RequestBody() TestRequest request) async {
-    return request;
+  Future<Map<String, dynamic>> testBody(
+      @RequestBody() TestRequest request, UserDetails userDetails) async {
+    return {
+      "request": request,
+      "userDetails": (userDetails.getUserModel() as User).toJson()
+    };
   }
 
   @GetMapping("/secured")

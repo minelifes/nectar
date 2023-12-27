@@ -78,7 +78,10 @@ class TestController extends _TestController {
       final json0 = jsonDecode(str0);
       final body0 = TestRequest.fromJson(json0);
 
-      return await testBody(body0);
+      final userDetails1 =
+          request.context[MiddlewareKeys.userDetails]! as UserDetails;
+
+      return await testBody(body0, userDetails1);
     });
   }
 
