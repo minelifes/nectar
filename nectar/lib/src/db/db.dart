@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nectar/nectar.dart';
 import 'package:nectar/src/callbacks/callbacks.dart';
 import 'package:nectar/src/orm/mysql_utils.dart';
 
@@ -55,11 +56,12 @@ class Db {
 
   Future<Map> getOne({
     required String table,
-    String fields = '*',
+    List<String> fields = const [],
     where = const {},
     String group = '',
     String having = '',
     String order = '',
+    List<JoinModel> joins = const [],
   }) =>
       _utils!.getOne(
         table: table,
@@ -69,16 +71,18 @@ class Db {
         having: having,
         order: order,
         debug: debug,
+        joins: joins,
       );
 
   Future<List<dynamic>> getAll({
     required String table,
-    String fields = '*',
+    List<String> fields = const [],
     where = const {},
     String order = '',
     dynamic limit = '',
     String group = '',
     String having = '',
+    List<JoinModel> joins = const [],
   }) =>
       _utils!.getAll(
         table: table,
@@ -89,6 +93,7 @@ class Db {
         group: group,
         having: having,
         debug: debug,
+        joins: joins,
       );
 
   Future<Map?> insert({

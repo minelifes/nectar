@@ -1,17 +1,23 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
+import 'package:collection/collection.dart';
+import 'package:nectar/nectar.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
 import 'package:nectar_generator/src/orm/orm_utils.dart';
+import 'package:source_gen/source_gen.dart';
 
 class OrmWhereSerializer {
   final ClassInspector inspector;
   OrmWhereSerializer(this.inspector);
 
-  String generate() {
+  Future<String> generate() async {
+    List<String> results =
+        await Future.wait(inspector.fields.map(_fieldToWhere));
     return '''
       class ${inspector.name}WhereClause extends WhereClause<${inspector.name}> {
         ${inspector.name}WhereClause(super.model, super.instanceOfT);
         
-        ${inspector.fields.map((e) => _fieldToWhere(e)).join("\n\n")}
+        ${results.join("\n\n")}
         
         ${inspector.name}WhereClause customField(String key, value, {operator = "="}) {
           model.where[key] = [operator, value];
@@ -21,12 +27,30 @@ class OrmWhereSerializer {
     ''';
   }
 
-  String _fieldToWhere(FieldElement field) {
-    final type = _fieldToType(field);
-    if (type == null) return "";
+  Future<String> _fieldToWhere(FieldElement field) async {
+    final referenceClass =
+        getFieldValueFromRelationAnnotation(field, "referenceClass");
+
+    String? customName;
+    String? customType;
+    if (referenceClass != null) {
+      final clazz = await getClassInfo(inspector, referenceClass);
+      if (clazz != null) {
+        final idField =
+            clazz.fields.firstWhereOrNull((e) => getIdAnnotation(e) != null);
+        if (idField != null) {
+          final idAnn = getIdAnnotation(idField)!;
+          final name =
+              idAnn.computeConstantValue()?.getField("name")?.toStringValue();
+          customName = name ?? idField.name;
+          customType = idField.type.toString();
+        }
+      }
+    }
+
     return '''
-        ${inspector.name}WhereClause ${field.name}($type value, {operator = "="}) {
-          model.where["${getFieldNameFromOrmAnnotation(field)}"] = [operator, value];
+        ${inspector.name}WhereClause ${customName != null ? "${referenceClass!.toLowerCase().replaceFirst("_", "")}${customName.capitalize()}" : field.name}(${customName != null ? "$customType" : field.type.toString()} value, {operator = "="}) {
+          model.where["${inspector.tableName}.${getFieldNameFromOrmAnnotation(field)}"] = [operator, value];
           return this;
         }
     ''';

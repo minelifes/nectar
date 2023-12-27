@@ -29,3 +29,4 @@ export 'src/middlewares/has_privilege_middleware.dart';
 
 export 'src/extensions/middleware_ext.dart';
 export 'src/extensions/router_extension.dart';
+export 'src/extensions/string_ext.dart';

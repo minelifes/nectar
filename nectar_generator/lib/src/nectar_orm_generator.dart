@@ -17,7 +17,8 @@ class NectarOrmGenerator extends GeneratorForAnnotation<Entity> {
       throw 'The top @Entity() annotation can only be applied to classes.';
     }
 
-    final classInspector = ClassInspector(element, annotation).generate();
+    final classInspector =
+        await ClassInspector(element, buildStep, annotation).generate();
     return classInspector;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:nectar_generator/src/orm/orm_insert_serializer.dart';
 import 'package:nectar_generator/src/orm/orm_query_serializer.dart';
 import 'package:nectar_generator/src/orm/orm_select_serializer.dart';
@@ -11,6 +12,7 @@ import '../serializable/serializable.dart';
 
 class ClassInspector {
   final ClassElement classElement;
+  final BuildStep buildStep;
   String name;
 
   late String tableName;
@@ -22,7 +24,7 @@ class ClassInspector {
   List<FieldElement> fields = [];
   List<MethodElement> methods = [];
 
-  ClassInspector(this.classElement, ConstantReader annotation)
+  ClassInspector(this.classElement, this.buildStep, ConstantReader annotation)
       : name = classElement.name.removePrefix() {
     _setTableName(annotation);
 
@@ -31,7 +33,7 @@ class ClassInspector {
     methods = classElement.methods;
   }
 
-  String generate() {
+  Future<String> generate() async {
     final s = Serializable(this);
     final orm = OrmSerializer(this);
     final q = OrmQuerySerializer(this);
@@ -42,9 +44,9 @@ class ClassInspector {
       s.generate(),
       orm.generate(),
     ], [
-      q.generate(),
+      await q.generate(),
       os.generate(),
-      w.generate(),
+      await w.generate(),
       ins.generate(),
     ]);
   }

@@ -6,7 +6,7 @@ import '../core/class_inspector.dart';
 
 class Serializable {
   final ClassInspector inspector;
-  const Serializable(this.inspector);
+  Serializable(this.inspector);
 
   String generate() {
     return '''
@@ -16,6 +16,16 @@ class Serializable {
       
       factory ${inspector.name}.fromJson(Map<String, dynamic> json) => 
         ${inspector.name}()${inspector.fields.map((e) => _deserializeFieldIfAllowed(e)).join("")};
+        
+      _valueForList(e){
+        if(e is String || e is num || e is bool || e is int || e is double || e is Enum || e is Map){
+          return e;
+        }
+        if(e is List){
+          return _valueForList(e);
+        }
+        return e.toJson();
+      }
         
     ''';
   }
@@ -28,9 +38,41 @@ class Serializable {
     final serializeName = obj?.getField("name")?.toStringValue() ?? e.name;
     final canSerialize = obj?.getField("serialize")?.toBoolValue() ?? true;
     if (canSerialize) {
-      return '"$serializeName": ${e.name}';
+      if (_isFieldEasyType(e)) {
+        return '"$serializeName": ${e.name}';
+      } else if (_isFieldDate(e)) {
+        return '"$serializeName": ${e.name}.toIso8601String()';
+      } else if (_isList(e)) {
+        return '"$serializeName": ${e.name}.map(_valueForList).toList()';
+      } else {
+        return '"$serializeName": ${e.name}.toJson()';
+      }
     }
     return "";
+  }
+
+  final _allowedTypes = [
+    "int",
+    "double",
+    "String",
+    "bool",
+    "Map",
+    "Enum",
+  ];
+
+  bool _isFieldDate(FieldElement field) {
+    final type = field.type.getDisplayString(withNullability: false);
+    return type == "DateTime";
+  }
+
+  bool _isList(FieldElement field) {
+    final type = field.type.getDisplayString(withNullability: false);
+    return type == "List";
+  }
+
+  bool _isFieldEasyType(FieldElement field) {
+    final type = field.type.getDisplayString(withNullability: false);
+    return _allowedTypes.contains(type);
   }
 
   dynamic _getValueFromDartObject(DartObject? value) {

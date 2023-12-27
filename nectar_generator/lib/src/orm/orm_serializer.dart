@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
 import 'package:nectar_generator/src/utils/string_utils.dart';
 
@@ -6,6 +7,20 @@ import 'orm_utils.dart';
 class OrmSerializer {
   final ClassInspector inspector;
   const OrmSerializer(this.inspector);
+
+  String _fieldFromRow(FieldElement e) {
+    final referenceClass =
+        getFieldValueFromRelationAnnotation(e, "referenceClass");
+    if (referenceClass == null) {
+      return '''
+        ${e.name} = result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+      ''';
+    }
+
+    return '''
+      ${e.name} = ${referenceClass.replaceFirst("_", "")}()..fromRow(result);
+    ''';
+  }
 
   String generate() {
     return '''
@@ -18,7 +33,7 @@ class OrmSerializer {
        
         @override  
         void fromRow(Map result) {
-            ${inspector.fields.map((e) => "${e.name} = result[${getFieldNameFromOrmAnnotation(e).wrapWith()}]").join(";\n ")};
+            ${inspector.fields.map(_fieldFromRow).join("\n ")}
         }
         
        static ${inspector.name}Query query() => ${inspector.name}Query();

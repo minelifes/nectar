@@ -50,21 +50,36 @@ class Id {
 }
 
 class OneToOne {
-  final String? mappedBy;
+  final String mappedBy;
   final String foreignKey;
-  const OneToOne({this.mappedBy, this.foreignKey = "id"});
+  final String referenceClass;
+  const OneToOne({
+    required this.referenceClass,
+    required this.mappedBy,
+    this.foreignKey = "id",
+  });
 }
 
 class OneToMany {
-  final String? mappedBy;
+  final String mappedBy;
   final String foreignKey;
-  const OneToMany({this.mappedBy, this.foreignKey = "id"});
+  final String referenceClass;
+  const OneToMany({
+    required this.referenceClass,
+    required this.mappedBy,
+    this.foreignKey = "id",
+  });
 }
 
 class ManyToOne {
-  final String? mappedBy;
+  final String mappedBy;
   final String foreignKey;
-  const ManyToOne({this.mappedBy, this.foreignKey = "id"});
+  final String referenceClass;
+  const ManyToOne({
+    required this.referenceClass,
+    required this.mappedBy,
+    this.foreignKey = "id",
+  });
 }
 
 class PostLoad {
@@ -75,10 +90,10 @@ class PreLoad {
   const PreLoad();
 }
 
-class UuidGenerate{
+class UuidGenerate {
   const UuidGenerate();
 }
 
-class AutoIncrement{
+class AutoIncrement {
   const AutoIncrement();
 }

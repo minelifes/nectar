@@ -11,7 +11,12 @@ class OrmSelectSerializer {
       
         @override
         ${inspector.name}WhereClause where() => ${inspector.name}WhereClause(model, instanceOfT);
-        
+      
+        @override
+        ${inspector.name}SelectClause join(JoinModel join){
+          model.joins.add(join);
+          return this;
+        }
         
       }
     ''';

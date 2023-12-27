@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
+import 'package:nectar/nectar.dart';
 
 ///mysql helper
 class MysqlUtils {
@@ -432,6 +433,15 @@ class MysqlUtils {
     }
   }
 
+  String _joinParse(List<JoinModel> joins) {
+    StringBuffer str = StringBuffer();
+    for (var join in joins) {
+      str.write(
+          " join ${join.foreignTableName} on ${join.tableName}.${join.mappedBy} = ${join.foreignTableName}.${join.foreignKey} ");
+    }
+    return str.toString();
+  }
+
   ///```
   /// await db.getAll(
   ///   table: 'table',
@@ -454,13 +464,14 @@ class MysqlUtils {
   ///```
   Future<List<dynamic>> getAll({
     required String table,
-    String fields = '*',
+    List<String> fields = const [],
     where = const {},
     String order = '',
     dynamic limit = '',
     String group = '',
     String having = '',
     bool debug = false,
+    List<JoinModel> joins = const [],
   }) async {
     if (group != '') group = 'GROUP BY $group';
     if (having != '') having = 'HAVING $having';
@@ -469,9 +480,13 @@ class MysqlUtils {
     String _where = _whereParse(where);
     table = _tableParse(table);
     limit = _limitParse(limit);
+    String join = _joinParse(joins);
+
+    List<String> allFields =
+        (fields + joins.map((e) => e.fields).flattened.toList());
 
     String _sql =
-        'SELECT $fields FROM $table $_where $group $having $order $limit';
+        'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM $table $join $_where $group $having $order $limit';
 
     ResultFormat results = await query(_sql, debug: debug);
 
@@ -503,12 +518,13 @@ class MysqlUtils {
   ///```
   Future<Map> getOne({
     required String table,
-    String fields = '*',
+    List<String> fields = const [],
     where = const {},
     String group = '',
     String having = '',
     String order = '',
     bool debug = false,
+    List<JoinModel> joins = const [],
   }) async {
     List<dynamic> res = await getAll(
       table: table,
@@ -519,6 +535,7 @@ class MysqlUtils {
       order: order,
       limit: 1,
       debug: debug,
+      joins: joins,
     );
 
     if (res.isNotEmpty) {
@@ -581,15 +598,16 @@ class MysqlUtils {
         } else if (value is String || value is num) {
           if (value is String) {
             if (_keys == '') {
-              _keys = '`$key` = \'${sqlEscapeString(value)}\'';
+              _keys = '$key = \'${sqlEscapeString(value)}\'';
             } else {
-              _keys += ' AND `$key`= \'${sqlEscapeString(value)}\'';
+              _keys += ' AND $key= \'${sqlEscapeString(value)}\'';
             }
           } else if (value is num) {
             if (_keys == '') {
-              _keys = '(`$key` = $value)';
+              print("we here $key");
+              _keys = '($key = $value)';
             } else {
-              _keys += ' AND (`$key` = $value)';
+              _keys += ' AND ($key = $value)';
             }
           }
         } else if (value is List) {
@@ -610,14 +628,14 @@ class MysqlUtils {
               };
               String _wh = '';
               if (value[0] == 'in' || value[0] == 'notin') {
-                _wh = '`$key` ${_ex[value[0]]}(${value[1].join(',')})';
+                _wh = '$key ${_ex[value[0]]}(${value[1].join(',')})';
               }
               if (value[0] == 'between' || value[0] == 'notbetween') {
-                _wh = '(`$key` ${_ex[value[0]]} ${value[1]} AND ${value[2]})';
+                _wh = '($key ${_ex[value[0]]} ${value[1]} AND ${value[2]})';
               }
               if (value[0] == 'like' || value[0] == 'notlike') {
                 _wh =
-                    '(`$key` ${_ex[value[0]]} \'${sqlEscapeString(value[1])}\')';
+                    '($key ${_ex[value[0]]} \'${sqlEscapeString(value[1])}\')';
               }
 
               if (_keys == '') {
@@ -636,7 +654,7 @@ class MysqlUtils {
               if (value[1] is String) {
                 val = '\'${value[1]}\'';
               }
-              String _wh = '(`$key` ${value[0]} $val)';
+              String _wh = '($key ${value[0]} $val)';
               if (_keys == '') {
                 _keys = _wh;
               } else {
