@@ -29,8 +29,6 @@ class ClassInspector {
     fileName = classElement.source.shortName;
     fields = classElement.fields;
     methods = classElement.methods;
-
-    tableName = name.toLowerCase();
   }
 
   String generate() {

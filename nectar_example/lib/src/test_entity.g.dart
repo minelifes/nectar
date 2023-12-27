@@ -68,6 +68,11 @@ class TestWhereClause extends WhereClause<Test> {
     model.where["test_string"] = [operator, value];
     return this;
   }
+
+  TestWhereClause customField(String key, value, {operator = "="}) {
+    model.where[key] = [operator, value];
+    return this;
+  }
 }
 
 class TestInsertClause extends InsertClause<Test> {

@@ -12,7 +12,6 @@ dependencies:
   nectar:
     path: ../nectar
   uuid: ^4.3.1
-  mysql1:
 
 dev_dependencies:
   lints: ^3.0.0

@@ -6,3 +6,10 @@ builders:
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+  nectar_rest_generator:
+    import: "package:nectar_generator/nectar_rest_generator.dart"
+    builder_factories: ["restGenerator"]
+    build_extensions: { ".dart": ["rest.g.part"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
