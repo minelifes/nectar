@@ -1,4 +1,5 @@
 import 'package:nectar/nectar.dart';
+import 'package:nectar_example/src/books.dart';
 import 'package:nectar_example/src/controllers/test_controller.dart';
 import 'package:nectar_example/src/security/user_details.dart';
 import 'package:nectar_example/src/user.dart';
@@ -48,6 +49,9 @@ void main() async {
 
   final user = await User.query().select().where().id(2).one();
   print(user?.toJson());
+
+  final books = await Book.query().select().where().userId(2).list();
+  print(books.map((e) => e.toJson()));
 
   db.close();
   return;
