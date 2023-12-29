@@ -42,7 +42,7 @@ class ClassInspector {
     final ins = OrmInsertSerializer(this);
     return _buildClassWithColumns([
       s.generate(),
-      orm.generate(),
+      await orm.generate(),
     ], [
       await q.generate(),
       os.generate(),

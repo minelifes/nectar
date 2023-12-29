@@ -31,20 +31,25 @@ void main() async {
   //
   // //one to one / many to one
   // final q = await db.query(
-  //     "Select User.id as User_id, User.name as User_name, User.lastName as User_lastName, User.email as User_email, User.phone as User_phone, User.password as User_password, User.isBlocked as User_isBlocked, User.roleId as User_roleId, Role.id as Role_id, Role.title as Role_title from User INNER JOIN Role on Role.id = User.roleId where User.id = 2");
+  //     "Select User.id as User_id, User.name as User_name, User.lastName as User_lastName, User.email as User_email, User.phone as User_phone, User.password as User_password, User.isBlocked as User_isBlocked, User.roleId as User_roleId, Role.id as Role_id, Role.title as Role_title from User INNER JOIN Role on Role.id = User.roleId where User.id = 2",
+  //     haveJoins: true,
+  //     forTable: "User");
   // print(q.toMap());
   // print(q.rows);
   //
   // //one to many
   // final many = await db.query(
   //     // "Select User.id as User_id, User.name as User_name, User.lastName as User_lastName, User.email as User_email, User.phone as User_phone, User.password as User_password, User.isBlocked as User_isBlocked, User.roleId as User_roleId, books.id as Books_id, books.title as Books_title, books.user_id as Books_userId from User INNER JOIN books on books.user_id = User.id where User.id = 2");
-  //     "Select * from User JOIN books on books.user_id = User.id where User.id = 2");
+  //     "SELECT User.id as User_id,User.name as User_name,User.lastName as User_lastName,User.email as User_email,User.phone as User_phone,User.password as User_password,User.isBlocked as User_isBlocked,Role.id as Role_id,Role.title as Role_title,books.id as books_id,books.user_id as books_user_id,books.title as books_title FROM `User`  join Role on User.roleId = Role.id  join books on User.id = books.user_id  WHERE (User.id = 2)    LIMIT 1",
+  //     haveJoins: true,
+  //     forTable: "User");
   // print(many.toMap());
   // print(many.rows[0]);
 
   final user = await User.query().select().where().id(2).one();
   print(user?.toJson());
 
+  db.close();
   return;
 
   Nectar.configure()

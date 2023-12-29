@@ -17,7 +17,8 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role.toJson()
+        "role": role.toJson(),
+        "books": books.map(_valueForList).toList()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -28,7 +29,8 @@ class User extends _User implements Model {
     ..phone = json["phone"]
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
-    ..role = json["role"];
+    ..role = json["role"]
+    ..books = json["books"];
 
   _valueForList(e) {
     if (e is String ||
@@ -40,7 +42,7 @@ class User extends _User implements Model {
         e is Map) {
       return e;
     }
-    if (e is List) {
+    if (e is List || e is Set) {
       return _valueForList(e);
     }
     return e.toJson();
@@ -55,7 +57,8 @@ class User extends _User implements Model {
         "phone",
         "password",
         "isBlocked",
-        "role"
+        "role",
+        "books"
       ];
 
   @override
@@ -63,21 +66,55 @@ class User extends _User implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result['User_id'];
+    if (result.containsKey('User')) {
+      id = result['User']['User_id'];
+    } else {
+      id = result['User_id'];
+    }
 
-    name = result['User_name'];
+    if (result.containsKey('User')) {
+      name = result['User']['User_name'];
+    } else {
+      name = result['User_name'];
+    }
 
-    lastName = result['User_lastName'];
+    if (result.containsKey('User')) {
+      lastName = result['User']['User_lastName'];
+    } else {
+      lastName = result['User_lastName'];
+    }
 
-    email = result['User_email'];
+    if (result.containsKey('User')) {
+      email = result['User']['User_email'];
+    } else {
+      email = result['User_email'];
+    }
 
-    phone = result['User_phone'];
+    if (result.containsKey('User')) {
+      phone = result['User']['User_phone'];
+    } else {
+      phone = result['User_phone'];
+    }
 
-    password = result['User_password'];
+    if (result.containsKey('User')) {
+      password = result['User']['User_password'];
+    } else {
+      password = result['User_password'];
+    }
 
-    isBlocked = result['User_isBlocked'];
+    if (result.containsKey('User')) {
+      isBlocked = result['User']['User_isBlocked'];
+    } else {
+      isBlocked = result['User_isBlocked'];
+    }
 
-    role = Role()..fromRow(result);
+    final l = (result["Role"] as List?);
+    role = (l == null || l.isEmpty == true) ? Role() : Role()
+      ..fromRow(l!.first);
+
+    books =
+        (result["books"] as List?)?.map((e) => Book()..fromRow(e)).toList() ??
+            [];
   }
 
   static UserQuery query() => UserQuery();
@@ -115,6 +152,17 @@ class UserQuery extends Query<User> {
         foreignTableName: 'Role',
         foreignKey: 'id',
         fields: ["Role.id as Role_id", "Role.title as Role_title"],
+      ),
+      JoinModel(
+        tableName: 'User',
+        mappedBy: 'id',
+        foreignTableName: 'books',
+        foreignKey: 'user_id',
+        fields: [
+          "books.id as books_id",
+          "books.user_id as books_user_id",
+          "books.title as books_title"
+        ],
       )
     ];
     return UserSelectClause(model, instanceOfT);
@@ -177,6 +225,11 @@ class UserWhereClause extends WhereClause<User> {
     return this;
   }
 
+  UserWhereClause bookId(int? value, {operator = "="}) {
+    model.where["User.books"] = [operator, value];
+    return this;
+  }
+
   UserWhereClause customField(String key, value, {operator = "="}) {
     model.where[key] = [operator, value];
     return this;
@@ -196,5 +249,6 @@ class UserInsertClause extends InsertClause<User> {
         "password": model.password,
         "isBlocked": model.isBlocked,
         "role": model.role,
+        "books": model.books,
       };
 }

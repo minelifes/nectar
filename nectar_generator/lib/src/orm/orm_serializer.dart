@@ -2,27 +2,47 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
 import 'package:nectar_generator/src/utils/string_utils.dart';
 
+import '../rest/rest_utils.dart';
 import 'orm_utils.dart';
 
 class OrmSerializer {
   final ClassInspector inspector;
   const OrmSerializer(this.inspector);
 
-  String _fieldFromRow(FieldElement e) {
+  Future<String> _fieldFromRow(FieldElement e) async {
     final referenceClass =
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
       return '''
-        ${e.name} = result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+        if(result.containsKey('${inspector.tableName}')){
+          ${e.name} = result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+        }else{
+          ${e.name} = result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+        }
       ''';
     }
 
+    final className = referenceClass.replaceFirst("_", "");
+    final clazz = await getClassInfo(inspector, referenceClass);
+    if (clazz == null) return "";
+    final entity = getAnnotationFromClass(clazz, "Entity");
+    if (entity == null) return "";
+    final foreignTableName =
+        entity.computeConstantValue()!.getField("tableName")!.toStringValue()!;
+    if (isFieldList(e)) {
+      return '''
+        ${e.name} = (result["$foreignTableName"] as List?)?.map((e) => $className()..fromRow(e)).toList() ?? [];
+      ''';
+    }
     return '''
-      ${e.name} = ${referenceClass.replaceFirst("_", "")}()..fromRow(result);
+      final l = (result["$foreignTableName"] as List?);
+      ${e.name} = (l == null || l.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l!.first);
     ''';
   }
 
-  String generate() {
+  Future<String> generate() async {
+    List<String> fields = await Future.wait(
+        inspector.fields.map((e) async => await _fieldFromRow(e)));
     return '''
     
        @override
@@ -33,7 +53,7 @@ class OrmSerializer {
        
         @override  
         void fromRow(Map result) {
-            ${inspector.fields.map(_fieldFromRow).join("\n ")}
+            ${fields.join("\n ")}
         }
         
        static ${inspector.name}Query query() => ${inspector.name}Query();

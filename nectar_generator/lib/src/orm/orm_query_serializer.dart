@@ -42,8 +42,8 @@ class OrmQuerySerializer {
       if (isFirst == true) return;
       final rowName =
           "$foreignTableName.${getFieldNameFromOrmAnnotation(e)} as ${foreignTableName}_${getFieldNameFromOrmAnnotation(e)}";
-      if (!_joins.containsKey(tableName)) {
-        _joins[tableName] = JoinModel(
+      if (!_joins.containsKey(foreignTableName)) {
+        _joins[foreignTableName] = JoinModel(
           tableName: tableName,
           mappedBy: mappedBy,
           foreignTableName: foreignTableName,
@@ -51,7 +51,7 @@ class OrmQuerySerializer {
           fields: [],
         );
       }
-      _joins[tableName]!.fields.add(rowName);
+      _joins[foreignTableName]!.fields.add(rowName);
       return;
     }
 
@@ -78,7 +78,7 @@ class OrmQuerySerializer {
     (await Future.wait(inspector.fields.map((e) async =>
         await _relationFieldList(e, true, inspector.tableName, "", "", ""))));
     final joins = _joins.values.map((value) =>
-        "JoinModel(tableName: '${value.tableName}', mappedBy: '${value.mappedBy}', foreignTableName: '${value.foreignTableName}', foreignKey: '${value.foreignKey}', fields: [${value.fields.map((e) => e.wrapWith()).join(',')}],)");
+        "JoinModel(tableName: '${value.tableName}', mappedBy: '${value.mappedBy}', foreignTableName: '${value.foreignTableName}', foreignKey: '${value.foreignKey}', fields: [${value.fields.map((e) => e.wrapWith()).join(', ')}],)");
     return '''
       class ${inspector.name}Query extends Query<${inspector.name}> {
         ${inspector.name}Query() : super("${inspector.tableName}");

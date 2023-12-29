@@ -25,7 +25,7 @@ class Test extends _Test implements Model {
         e is Map) {
       return e;
     }
-    if (e is List) {
+    if (e is List || e is Set) {
       return _valueForList(e);
     }
     return e.toJson();
@@ -39,9 +39,17 @@ class Test extends _Test implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result['test_id'];
+    if (result.containsKey('test')) {
+      id = result['test']['test_id'];
+    } else {
+      id = result['test_id'];
+    }
 
-    testString = result['test_test_string'];
+    if (result.containsKey('test')) {
+      testString = result['test']['test_test_string'];
+    } else {
+      testString = result['test_test_string'];
+    }
   }
 
   static TestQuery query() => TestQuery();

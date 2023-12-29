@@ -1,5 +1,6 @@
 import 'package:nectar/nectar.dart';
 
+import 'books.dart';
 import 'role.dart';
 
 part 'user.g.dart';
@@ -30,4 +31,8 @@ class _User {
   @Column()
   @OneToOne(mappedBy: "roleId", referenceClass: "_Role")
   late Role role;
+
+  @Column()
+  @OneToMany(mappedBy: "id", referenceClass: "_Book", foreignKey: "user_id")
+  List<Book> books = [];
 }

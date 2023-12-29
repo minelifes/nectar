@@ -56,3 +56,40 @@ DartObject? getFieldNameFromRestAnnotation(
   final obj = annotation.computeConstantValue();
   return obj?.getField(fieldName);
 }
+
+final _allowedTypes = [
+  "int",
+  "double",
+  "String",
+  "bool",
+  "Map",
+  "Enum",
+];
+
+bool isFieldDate(FieldElement field) {
+  final type = field.type.getDisplayString(withNullability: false);
+  return type == "DateTime";
+}
+
+bool isFieldList(FieldElement field) {
+  final type = field.type.getDisplayString(withNullability: false);
+  final typeName = type.split("<").firstOrNull;
+  return typeName == "List" || typeName == "Set";
+}
+
+bool isFieldEasyType(FieldElement field) {
+  final type = field.type.getDisplayString(withNullability: false);
+  return _allowedTypes.contains(type);
+}
+
+String serializeField(String key, FieldElement e) {
+  if (isFieldEasyType(e)) {
+    return '"$key": ${e.name}';
+  } else if (isFieldDate(e)) {
+    return '"$key": ${e.name}.toIso8601String()';
+  } else if (isFieldList(e)) {
+    return '"$key": ${e.name}.map(_valueForList).toList()';
+  } else {
+    return '"$key": ${e.name}.toJson()';
+  }
+}

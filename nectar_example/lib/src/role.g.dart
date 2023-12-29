@@ -25,7 +25,7 @@ class Role extends _Role implements Model {
         e is Map) {
       return e;
     }
-    if (e is List) {
+    if (e is List || e is Set) {
       return _valueForList(e);
     }
     return e.toJson();
@@ -39,9 +39,17 @@ class Role extends _Role implements Model {
 
   @override
   void fromRow(Map result) {
-    id = result['Role_id'];
+    if (result.containsKey('Role')) {
+      id = result['Role']['Role_id'];
+    } else {
+      id = result['Role_id'];
+    }
 
-    title = result['Role_title'];
+    if (result.containsKey('Role')) {
+      title = result['Role']['Role_title'];
+    } else {
+      title = result['Role_title'];
+    }
   }
 
   static RoleQuery query() => RoleQuery();

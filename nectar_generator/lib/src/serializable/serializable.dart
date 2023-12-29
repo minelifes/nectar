@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:nectar_generator/src/rest/rest_utils.dart';
 import 'dart:mirrors';
 
 import '../core/class_inspector.dart';
@@ -21,7 +22,7 @@ class Serializable {
         if(e is String || e is num || e is bool || e is int || e is double || e is Enum || e is Map){
           return e;
         }
-        if(e is List){
+        if(e is List || e is Set){
           return _valueForList(e);
         }
         return e.toJson();
@@ -38,41 +39,9 @@ class Serializable {
     final serializeName = obj?.getField("name")?.toStringValue() ?? e.name;
     final canSerialize = obj?.getField("serialize")?.toBoolValue() ?? true;
     if (canSerialize) {
-      if (_isFieldEasyType(e)) {
-        return '"$serializeName": ${e.name}';
-      } else if (_isFieldDate(e)) {
-        return '"$serializeName": ${e.name}.toIso8601String()';
-      } else if (_isList(e)) {
-        return '"$serializeName": ${e.name}.map(_valueForList).toList()';
-      } else {
-        return '"$serializeName": ${e.name}.toJson()';
-      }
+      return serializeField(serializeName, e);
     }
     return "";
-  }
-
-  final _allowedTypes = [
-    "int",
-    "double",
-    "String",
-    "bool",
-    "Map",
-    "Enum",
-  ];
-
-  bool _isFieldDate(FieldElement field) {
-    final type = field.type.getDisplayString(withNullability: false);
-    return type == "DateTime";
-  }
-
-  bool _isList(FieldElement field) {
-    final type = field.type.getDisplayString(withNullability: false);
-    return type == "List";
-  }
-
-  bool _isFieldEasyType(FieldElement field) {
-    final type = field.type.getDisplayString(withNullability: false);
-    return _allowedTypes.contains(type);
   }
 
   dynamic _getValueFromDartObject(DartObject? value) {
