@@ -115,7 +115,7 @@ class TestInsertClause extends InsertClause<Test> {
 
   @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id,
+        "id": model.id ?? generateUUID(),
         "test_string": model.testString,
       };
 }

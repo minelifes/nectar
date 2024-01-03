@@ -115,7 +115,7 @@ class RoleInsertClause extends InsertClause<Role> {
 
   @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id,
+        "id": model.id ?? generateUUID(),
         "title": model.title,
       };
 }

@@ -130,7 +130,7 @@ class BookInsertClause extends InsertClause<Book> {
 
   @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id,
+        "id": model.id ?? generateUUID(),
         "user_id": model.userId,
         "title": model.title,
       };

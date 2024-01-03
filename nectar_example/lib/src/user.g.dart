@@ -241,15 +241,14 @@ class UserInsertClause extends InsertClause<User> {
 
   @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id,
+        "id": model.id ?? generateUUID(),
         "name": model.name,
         "last_name": model.lastName,
         "email": model.email,
         "phone": model.phone,
         "password": model.password,
         "isBlocked": model.isBlocked,
-        "roleId": model.role,
-        "id": model.books,
+        "roleId": model.role.id,
       };
 }
 
