@@ -29,6 +29,9 @@ ElementAnnotation? getManyToOneAnnotation(FieldElement e) =>
 ElementAnnotation? getIdAnnotation(FieldElement e) =>
     getAnnotationFromField(e, "Id");
 
+ElementAnnotation? getUUIdAnnotation(FieldElement e) =>
+    getAnnotationFromField(e, "UuidGenerate");
+
 ElementAnnotation? getAutoIncrementAnnotation(FieldElement e) =>
     getAnnotationFromField(e, "AutoIncrement");
 

@@ -88,8 +88,6 @@ class OrmMigrationSerializer {
         ? "ColumnType.integer"
         : await _getFieldElementType(element, length, isKey);
 
-    print("columnType: $columnType");
-
     return ''' 
       ColumnInfo(
         name: '$name', 

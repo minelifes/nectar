@@ -49,7 +49,7 @@ class ClassInspector {
       await q.generate(),
       os.generate(),
       await w.generate(),
-      ins.generate(),
+      await ins.generate(),
       await mig.generate(),
     ]);
   }
