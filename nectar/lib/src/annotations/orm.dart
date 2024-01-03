@@ -11,7 +11,26 @@ enum ColumnType {
   double,
   text,
   varchar,
-  blob,
+  blob;
+
+  String getSqlType(int length) {
+    switch (this) {
+      case ColumnType.integer:
+        return "${length > 11 ? "bigint" : "int"}(${length > 0 ? length : 11})";
+      case ColumnType.bool:
+        return "tinyint";
+      case ColumnType.float:
+        return "float(${length > 0 ? length : 11}, 2)";
+      case ColumnType.double:
+        return "double(${length > 0 ? length : 11}, 2)";
+      case ColumnType.text:
+        return "text${length > 0 ? "($length)" : ""}";
+      case ColumnType.varchar:
+        return "varchar${length > 0 ? "($length)" : "(255)"}";
+      default:
+        return "blob${length > 0 ? "($length)" : ""}";
+    }
+  }
 }
 
 class Column {
@@ -23,11 +42,13 @@ class Column {
   final bool insertable;
   final bool updatable;
   final bool serializable;
+  final dynamic defaultValue;
 
   const Column({
     this.name,
     this.columnType,
     this.length,
+    this.defaultValue,
     this.unique = false,
     this.nullable = false,
     this.insertable = true,

@@ -13,10 +13,10 @@ class _User {
   @Column()
   late String name;
 
-  @Column()
+  @Column(name: "last_name")
   late String lastName;
 
-  @Column()
+  @Column(nullable: true)
   String? email;
 
   @Column()
@@ -28,11 +28,9 @@ class _User {
   @Column()
   bool isBlocked = false;
 
-  @Column()
   @OneToOne(mappedBy: "roleId", referenceClass: "_Role")
   late Role role;
 
-  @Column()
   @OneToMany(mappedBy: "id", referenceClass: "_Book", foreignKey: "user_id")
   List<Book> books = [];
 }

@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:nectar_generator/src/orm/orm_insert_serializer.dart';
+import 'package:nectar_generator/src/orm/orm_migration_serializer.dart';
 import 'package:nectar_generator/src/orm/orm_query_serializer.dart';
 import 'package:nectar_generator/src/orm/orm_select_serializer.dart';
 import 'package:nectar_generator/src/orm/orm_serializer.dart';
@@ -40,6 +41,7 @@ class ClassInspector {
     final os = OrmSelectSerializer(this);
     final w = OrmWhereSerializer(this);
     final ins = OrmInsertSerializer(this);
+    final mig = OrmMigrationSerializer(this);
     return _buildClassWithColumns([
       s.generate(),
       await orm.generate(),
@@ -48,6 +50,7 @@ class ClassInspector {
       os.generate(),
       await w.generate(),
       ins.generate(),
+      await mig.generate(),
     ]);
   }
 

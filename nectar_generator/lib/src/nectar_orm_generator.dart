@@ -19,6 +19,7 @@ class NectarOrmGenerator extends GeneratorForAnnotation<Entity> {
 
     final classInspector =
         await ClassInspector(element, buildStep, annotation).generate();
+    print(classInspector);
     return classInspector;
   }
 }
@@ -35,7 +36,6 @@ class NectarRestGenerator extends GeneratorForAnnotation<RestController> {
     }
 
     final classInspector = RestInspector(element, annotation).generate();
-    print(classInspector);
     return classInspector;
   }
 }

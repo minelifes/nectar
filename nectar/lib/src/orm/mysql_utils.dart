@@ -3,6 +3,8 @@ import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
 
+import 'column_info.dart';
+
 ///mysql helper
 class MysqlUtils {
   ///pool connect
@@ -550,27 +552,31 @@ class MysqlUtils {
 
   ///table parse
   String _tableParse(String table) {
-    var _table = '';
     String _prefix = _settings['prefix'];
-    if (table.contains(',')) {
+    return _parseColumn(table, prefix: _prefix);
+  }
+
+  String _parseColumn(String text, {String prefix = ""}) {
+    var _result = '';
+    if (text.contains(',')) {
       var tbs = [];
-      for (var tb in table.split(',')) {
+      for (var tb in text.split(',')) {
         var vl = tb.split(' ');
-        if (_prefix == '') {
-          tbs.add('`' + vl.first + '` ' + vl.last);
+        if (prefix == '') {
+          tbs.add('`${vl.first}` ${vl.last}');
         } else {
-          tbs.add('`' + _prefix + vl.first + '` ' + vl.last);
+          tbs.add('`$prefix${vl.first}` ${vl.last}');
         }
       }
-      _table = tbs.join(',');
+      _result = tbs.join(',');
     } else {
-      if (_prefix == '') {
-        _table = '`' + table.trim() + '`';
+      if (prefix == '') {
+        _result = '`${text.trim()}`';
       } else {
-        _table = '`' + _prefix + table.trim() + '`';
+        _result = '`$prefix${text.trim()}`';
       }
     }
-    return _table;
+    return _result;
   }
 
   ///..limit(10) or ..limit('10 ,100')
@@ -686,6 +692,40 @@ class MysqlUtils {
     } else {
       (await poolConn).close();
     }
+  }
+
+  String _buildColumnInfo(ColumnInfo column) {
+    return "${_parseColumn(column.name)} ${column.columnType.getSqlType(column.length)}  ${(column.nullable) ? "NULL" : "NOT NULL"}  ${(column.defaultValue == null ? (column.nullable) ? "default NULL" : "" : "default '${column.defaultValue}'")} ${column.isAutoIncrement ? "auto_increment" : ""} ";
+  }
+
+  String _buildKey(List<ColumnInfo> columns) {
+    final key = columns.firstWhereOrNull((element) => element.isKey);
+    if (key == null) return "";
+    return ",PRIMARY KEY  (${_parseColumn(key.name)})";
+  }
+
+  String _buildUniq(String table, List<ColumnInfo> columns) {
+    final uniq = columns.where((element) => element.unique);
+    if (uniq.isEmpty) return "";
+    return uniq
+        .map((e) => "constraint ${table}_${e.name} unique (${e.name})")
+        .join(",\n");
+  }
+
+  Future<ResultFormat> createTableIfNotExist({
+    required String table,
+    required List<ColumnInfo> columns,
+  }) async {
+    final _table = _tableParse(table);
+    final sql = '''
+        CREATE TABLE IF NOT EXISTS $_table (
+          ${columns.map((e) => _buildColumnInfo(e)).join(",\n")}
+          ${_buildKey(columns)}
+          ${_buildUniq(table, columns)}
+        );
+     ''';
+    print(sql);
+    return await query(sql);
   }
 
   ///query

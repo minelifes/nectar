@@ -52,13 +52,13 @@ class User extends _User implements Model {
   List<String> get columns => [
         "id",
         "name",
-        "lastName",
+        "last_name",
         "email",
         "phone",
         "password",
         "isBlocked",
-        "role",
-        "books"
+        "roleId",
+        "id"
       ];
 
   @override
@@ -79,9 +79,9 @@ class User extends _User implements Model {
     }
 
     if (result.containsKey('User')) {
-      lastName = result['User']['User_lastName'];
+      lastName = result['User']['User_last_name'];
     } else {
-      lastName = result['User_lastName'];
+      lastName = result['User_last_name'];
     }
 
     if (result.containsKey('User')) {
@@ -133,7 +133,7 @@ class UserQuery extends Query<User> {
   List<String> get _defaultTableFields => [
         "User.id as User_id",
         "User.name as User_name",
-        "User.lastName as User_lastName",
+        "User.last_name as User_last_name",
         "User.email as User_email",
         "User.phone as User_phone",
         "User.password as User_password",
@@ -196,7 +196,7 @@ class UserWhereClause extends WhereClause<User> {
   }
 
   UserWhereClause lastName(String value, {operator = "="}) {
-    model.where["User.lastName"] = [operator, value];
+    model.where["User.last_name"] = [operator, value];
     return this;
   }
 
@@ -221,12 +221,12 @@ class UserWhereClause extends WhereClause<User> {
   }
 
   UserWhereClause roleId(String? value, {operator = "="}) {
-    model.where["User.role"] = [operator, value];
+    model.where["User.roleId"] = [operator, value];
     return this;
   }
 
   UserWhereClause bookId(int? value, {operator = "="}) {
-    model.where["User.books"] = [operator, value];
+    model.where["User.id"] = [operator, value];
     return this;
   }
 
@@ -243,12 +243,100 @@ class UserInsertClause extends InsertClause<User> {
   Map<String, dynamic> toInsert() => {
         "id": model.id,
         "name": model.name,
-        "lastName": model.lastName,
+        "last_name": model.lastName,
         "email": model.email,
         "phone": model.phone,
         "password": model.password,
         "isBlocked": model.isBlocked,
-        "role": model.role,
-        "books": model.books,
+        "roleId": model.role,
+        "id": model.books,
       };
+}
+
+class UserMigration extends Migration {
+  UserMigration(super.tableName);
+
+  @override
+  List<ColumnInfo> get columns => [
+        ColumnInfo(
+          name: 'id',
+          columnType: ColumnType.integer,
+          defaultValue: null,
+          isKey: true,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'name',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'last_name',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'email',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: true,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'phone',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'password',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'isBlocked',
+          columnType: ColumnType.bool,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'roleId',
+          columnType: ColumnType.varchar,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        )
+      ];
 }

@@ -119,3 +119,31 @@ class RoleInsertClause extends InsertClause<Role> {
         "title": model.title,
       };
 }
+
+class RoleMigration extends Migration {
+  RoleMigration(super.tableName);
+
+  @override
+  List<ColumnInfo> get columns => [
+        ColumnInfo(
+          name: 'id',
+          columnType: ColumnType.varchar,
+          defaultValue: null,
+          isKey: true,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'title',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        )
+      ];
+}

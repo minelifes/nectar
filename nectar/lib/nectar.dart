@@ -5,6 +5,7 @@ export 'src/annotations/rest.dart';
 export 'src/annotations/serialize.dart';
 export 'src/orm/model.dart';
 export 'src/orm/query.dart';
+export 'src/orm/column_info.dart';
 
 export 'src/db/db.dart';
 export 'src/db/db_settings.dart';

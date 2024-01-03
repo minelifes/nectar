@@ -135,3 +135,41 @@ class BookInsertClause extends InsertClause<Book> {
         "title": model.title,
       };
 }
+
+class BookMigration extends Migration {
+  BookMigration(super.tableName);
+
+  @override
+  List<ColumnInfo> get columns => [
+        ColumnInfo(
+          name: 'id',
+          columnType: ColumnType.integer,
+          defaultValue: null,
+          isKey: true,
+          isAutoIncrement: true,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'user_id',
+          columnType: ColumnType.integer,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'title',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        )
+      ];
+}

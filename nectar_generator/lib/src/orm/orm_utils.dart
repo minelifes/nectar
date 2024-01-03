@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
@@ -28,6 +29,9 @@ ElementAnnotation? getManyToOneAnnotation(FieldElement e) =>
 ElementAnnotation? getIdAnnotation(FieldElement e) =>
     getAnnotationFromField(e, "Id");
 
+ElementAnnotation? getAutoIncrementAnnotation(FieldElement e) =>
+    getAnnotationFromField(e, "AutoIncrement");
+
 ElementAnnotation? getOrmAnnotation(FieldElement e) {
   var ann = getColumnAnnotation(e);
   if (ann != null) return ann;
@@ -47,7 +51,20 @@ ElementAnnotation? getRelationAnnotation(FieldElement e) {
 }
 
 String getFieldNameFromOrmAnnotation(FieldElement e) =>
-    getFieldValueFromOrmAnnotation(e, "name") ?? e.name;
+    getFieldValueFromOrmAnnotation(e, "name") ??
+    getFieldValueFromOrmAnnotation(e, "mappedBy") ??
+    e.name;
+
+DartObject? getFieldFromAnnotation(ElementAnnotation? annotation, String name) {
+  final obj = annotation?.computeConstantValue();
+  return obj?.getField(name);
+}
+
+DartObject? getFieldValueFromColumn(FieldElement e, String name) {
+  final annotation = getColumnAnnotation(e);
+  final obj = annotation?.computeConstantValue();
+  return obj?.getField(name);
+}
 
 String? getFieldValueFromOrmAnnotation(FieldElement e, String name) {
   final annotation = getOrmAnnotation(e);

@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:nectar/nectar.dart';
 import 'package:nectar/src/db/db.dart';
 import 'package:nectar/src/exceptions/orm_exception.dart';
 import 'package:nectar/src/orm/model.dart';
@@ -115,5 +117,24 @@ abstract class InsertClause<T extends Model> {
       throw OrmException("Failed to update data.");
     }
     return instanceOfT()..fromRow(results);
+  }
+}
+
+abstract class Migration {
+  final String tableName;
+  Migration(this.tableName);
+
+  List<ColumnInfo> get columns;
+
+  Future<bool> createTable() async {
+    try {
+      await GetIt.I
+          .get<Db>()
+          .createTableIfNotExist(tableName: tableName, columns: columns);
+      return true;
+    } catch (e) {
+      Logger().e(e);
+      return false;
+    }
   }
 }

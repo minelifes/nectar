@@ -5,6 +5,7 @@ part 'books.g.dart';
 @Entity(tableName: "books")
 class _Book {
   @Id()
+  @AutoIncrement()
   int? id;
 
   @Column(name: "user_id")

@@ -1,6 +1,6 @@
 name: nectar_generator
 description: Generate all helper classes for nectar library.
-version: 1.0.3
+version: 1.0.4
 publish_to: none
 
 environment:
@@ -21,7 +21,6 @@ dependencies:
       path: ./nectar/
 #  nectar:
 #    path: ../nectar
-#  simple_mysql_orm: ^4.0.0
 
 dev_dependencies:
   lints: ^3.0.0

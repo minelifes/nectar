@@ -119,3 +119,31 @@ class TestInsertClause extends InsertClause<Test> {
         "test_string": model.testString,
       };
 }
+
+class TestMigration extends Migration {
+  TestMigration(super.tableName);
+
+  @override
+  List<ColumnInfo> get columns => [
+        ColumnInfo(
+          name: 'id',
+          columnType: ColumnType.varchar,
+          defaultValue: null,
+          isKey: true,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'test_string',
+          columnType: ColumnType.text,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        )
+      ];
+}

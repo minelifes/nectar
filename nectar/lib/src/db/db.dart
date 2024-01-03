@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nectar/nectar.dart';
 import 'package:nectar/src/callbacks/callbacks.dart';
+import 'package:nectar/src/orm/column_info.dart';
 import 'package:nectar/src/orm/mysql_utils.dart';
 
 import 'db_settings.dart';
@@ -56,6 +57,12 @@ class Db {
           debug: debug,
           haveJoins: haveJoins,
           forTable: forTable);
+
+  Future<ResultFormat> createTableIfNotExist({
+    required String tableName,
+    required List<ColumnInfo> columns,
+  }) =>
+      _utils!.createTableIfNotExist(table: tableName, columns: columns);
 
   Future<List<int>> queryMulti(String sql, Iterable<List<Object?>> values) =>
       _utils!.queryMulti(sql, values, debug: debug);
