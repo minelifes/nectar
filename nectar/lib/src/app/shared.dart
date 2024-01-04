@@ -14,7 +14,7 @@ registerFactory<T extends Object>(T Function() object) =>
 
 String generateUUID() => Uuid().v4();
 
-get logger => Logger(
+Logger get logger => Logger(
         printer: PrettyPrinter(
       methodCount: 0,
       printTime: true,

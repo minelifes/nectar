@@ -724,7 +724,7 @@ class MysqlUtils {
           ${_buildUniq(table, columns)}
         );
      ''';
-    print(sql);
+    logger.i(sql);
     return await query(sql);
   }
 
