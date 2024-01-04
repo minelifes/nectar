@@ -64,7 +64,7 @@ class OrmSerializer {
             bool haveJoins = false,
             String tableName = "",
           }) =>
-              GetIt.I
+              getIt
                   .get<Db>()
                   .query(sql, values: values, haveJoins: haveJoins, forTable: tableName);
         

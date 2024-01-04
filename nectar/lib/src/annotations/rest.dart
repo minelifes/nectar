@@ -6,37 +6,73 @@ class RestController {
 class GetMapping {
   final String path;
   final String method = "GET";
-  const GetMapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const GetMapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class PostMapping {
   final String path;
   final String method = "POST";
-  const PostMapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const PostMapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class PutMapping {
   final String path;
   final String method = "PUT";
-  const PutMapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const PutMapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class DeleteMapping {
   final String path;
   final String method = "DELETE";
-  const DeleteMapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const DeleteMapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class PatchMapping {
   final String path;
   final String method = "PATCH";
-  const PatchMapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const PatchMapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class Mapping {
   final String path;
   final String method = "ALL";
-  const Mapping(this.path);
+  final String contentType;
+  final Map<String, String> headers;
+  const Mapping(
+    this.path, {
+    this.headers = const {},
+    this.contentType = "application/json",
+  });
 }
 
 class PathVariable {
@@ -75,4 +111,9 @@ class HasPrivilege {
 class AuthWithJwt {
   final String methodName;
   const AuthWithJwt({this.methodName = "checkJwtMiddleware"});
+}
+
+class AddHeaders {
+  final Map<String, String> headers;
+  const AddHeaders(this.headers);
 }

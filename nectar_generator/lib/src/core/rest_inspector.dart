@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar_generator/src/utils/string_utils.dart';
@@ -43,17 +44,37 @@ class RestInspector {
     return "$mainPath/$path";
   }
 
-  String _addMiddlewaresIfNeed(MethodElement element) {
+  String _convertMapToStringMap(Map<DartObject?, DartObject?>? originalMap) {
+    String convertedMap = "";
+    if (originalMap != null) {
+      originalMap.forEach((key, value) {
+        if (key != null && value != null) {
+          convertedMap +=
+              "'${key.toStringValue()!}' : '${value.toStringValue()!}',";
+        }
+      });
+    }
+    return convertedMap;
+  }
+
+  String _addMiddlewaresIfNeed(MethodElement element, ElementAnnotation ann) {
     //TODO fix it if we will add new auth method!
     final jwtAuth = getAuthWithJwtAnnotation(element);
-    if (jwtAuth == null) return "";
     final privilege = getHasPrivilegeAnnotation(element);
     final role = getHasRoleAnnotation(element);
+    final contentType = getFieldNameFromRestAnnotation(ann, "contentType")
+        ?.toStringValue()
+        ?.toLowerCase();
+    final headers =
+        getFieldNameFromRestAnnotation(ann, "headers")?.toMapValue();
+    final hheaders = _convertMapToStringMap(headers);
     return ''' 
       use: Pipeline()
-            .addMiddleware(checkJwtMiddleware())
-            ${(role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
-            ${(privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+            .addMiddleware(setContentType('$contentType'))
+            .addMiddleware(setHeadersMiddleware({$hheaders}))
+            ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
+            ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+            ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
             .middleware,
     ''';
   }
@@ -80,7 +101,7 @@ class RestInspector {
          router.$method(
             "${_buildPath(path)}",
             controller._${element.name}Handler,
-            ${_addMiddlewaresIfNeed(element)}
+            ${_addMiddlewaresIfNeed(element, ann)}
          );
       ''';
   }
