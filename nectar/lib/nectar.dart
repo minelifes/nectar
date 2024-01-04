@@ -36,5 +36,6 @@ export 'src/extensions/router_extension.dart';
 export 'src/extensions/string_ext.dart';
 
 export '/src/orm/mysql_utils.dart';
+export '/src/security/password_security.dart';
 
 export 'package:json_annotation/json_annotation.dart';
