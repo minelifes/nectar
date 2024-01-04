@@ -215,7 +215,7 @@ class RestInspector {
           return await call();
         } on RestException catch (e) {
           return Response(e.statusCode, body: jsonEncode({"error": e.toString()}));
-        } on Exception catch (e) {
+        } catch (e) {
           return Response(500, body: jsonEncode({"error": e.toString()}));
         }
       }
