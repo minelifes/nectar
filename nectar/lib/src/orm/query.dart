@@ -4,6 +4,7 @@ import 'package:nectar/nectar.dart';
 import 'package:nectar/src/db/db.dart';
 import 'package:nectar/src/exceptions/orm_exception.dart';
 import 'package:nectar/src/orm/model.dart';
+import 'package:nectar/src/orm/mysql_utils.dart';
 
 typedef TInstance<T extends Model> = T Function();
 
@@ -76,6 +77,11 @@ abstract class ExecClause<T extends Model> {
 
     return results.map((e) => instanceOfT()..fromRow(e)).toList();
   }
+
+  Future<int> delete() => GetIt.I.get<Db>().delete(
+        table: model.tableName,
+        where: model.where,
+      );
 
   Future<T?> one() async {
     var results = await GetIt.I.get<Db>().getOne(

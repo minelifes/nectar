@@ -58,6 +58,16 @@ class OrmSerializer {
             ${fields.join("\n ")}
         }
         
+        static Future<ResultFormat> rawQuery(
+            String sql, {
+            Map<String, dynamic> values = const {},
+            bool haveJoins = false,
+            String tableName = "",
+          }) =>
+              GetIt.I
+                  .get<Db>()
+                  .query(sql, values: values, haveJoins: haveJoins, forTable: tableName);
+        
        static ${inspector.name}Migration migration() =>  ${inspector.name}Migration("${inspector.tableName}");
         
        static ${inspector.name}Query query() => ${inspector.name}Query();
