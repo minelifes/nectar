@@ -35,8 +35,13 @@ ElementAnnotation? getUUIdAnnotation(FieldElement e) =>
 ElementAnnotation? getAutoIncrementAnnotation(FieldElement e) =>
     getAnnotationFromField(e, "AutoIncrement");
 
+ElementAnnotation? getEnumColumnAnnotation(FieldElement e) =>
+    getAnnotationFromField(e, "EnumColumn");
+
 ElementAnnotation? getOrmAnnotation(FieldElement e) {
   var ann = getColumnAnnotation(e);
+  if (ann != null) return ann;
+  ann = getEnumColumnAnnotation(e);
   if (ann != null) return ann;
   ann = getRelationAnnotation(e);
   if (ann != null) return ann;

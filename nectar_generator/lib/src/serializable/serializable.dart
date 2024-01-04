@@ -16,7 +16,7 @@ class Serializable {
       };
       
       factory ${inspector.name}.fromJson(Map<String, dynamic> json) => 
-        ${inspector.name}()${inspector.fields.map((e) => _deserializeFieldIfAllowed(e)).join("")};
+        ${inspector.name}()${inspector.fields.map((e) => _deserializeFieldIfAllowed(e)).where((element) => element.isNotEmpty).join("\n")};
         
       _valueForList(e){
         if(e is String || e is num || e is bool || e is int || e is double || e is Enum || e is Map){
@@ -87,7 +87,8 @@ class Serializable {
     final serializeName = obj?.getField("name")?.toStringValue() ?? e.name;
     final canDeserealize = obj?.getField("deserialize")?.toBoolValue() ?? true;
     if (canDeserealize) {
-      return '..${e.name} = json["$serializeName"]';
+      return deserealizeField(serializeName, e);
+      // return '..${e.name} = json["$serializeName"]';
     }
     return "";
   }

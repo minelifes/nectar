@@ -118,3 +118,8 @@ class UuidGenerate {
 class AutoIncrement {
   const AutoIncrement();
 }
+
+class EnumColumn {
+  final String? name;
+  const EnumColumn({this.name});
+}

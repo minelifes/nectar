@@ -13,11 +13,13 @@ class OrmSerializer {
     final referenceClass =
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
+      final isEnum = getEnumColumnAnnotation(e) != null;
+      final className = e.type.getDisplayString(withNullability: false);
       return '''
         if(result.containsKey('${inspector.tableName}')){
-          ${e.name} = result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
         }else{
-          ${e.name} = result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'];
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
         }
       ''';
     }
@@ -35,8 +37,8 @@ class OrmSerializer {
       ''';
     }
     return '''
-      final l = (result["$foreignTableName"] as List?);
-      ${e.name} = (l == null || l.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l!.first);
+      final l_${e.name} = (result["$foreignTableName"] as List?);
+      ${e.name} = (l_${e.name} == null || l_${e.name}.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}!.first);
     ''';
   }
 

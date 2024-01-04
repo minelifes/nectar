@@ -35,15 +35,19 @@ class OrmInsertSerializer {
     if (e != null) {
       return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name} ?? generateUUID()";
     }
+    e = getEnumColumnAnnotation(element);
+    if (e != null) {
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}?.toString()";
+    }
     e = getOneToOneAnnotation(element);
     if (e != null) {
       final fieldName = await _getForeignValueFromReferenceClass(element, e);
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? ".$fieldName" : ""}";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? "?.$fieldName" : ""}";
     }
     e = getManyToOneAnnotation(element);
     if (e != null) {
       final fieldName = await _getForeignValueFromReferenceClass(element, e);
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? ".$fieldName" : ""}";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? "?.$fieldName" : ""}";
     }
     return "";
     // e = getOneToManyAnnotation(element);

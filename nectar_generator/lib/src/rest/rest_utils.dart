@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:nectar_generator/src/orm/orm_utils.dart';
 
 ElementAnnotation? getAnnotationFromMethod(MethodElement e, String name) =>
     e.metadata
@@ -79,17 +80,51 @@ bool isFieldList(FieldElement field) {
 
 bool isFieldEasyType(FieldElement field) {
   final type = field.type.getDisplayString(withNullability: false);
+  // final isEnum = getEnumColumnAnnotation(field) != null;
   return _allowedTypes.contains(type);
+}
+
+bool isFieldEnumType(FieldElement field) {
+  final isEnum = getEnumColumnAnnotation(field) != null;
+  return isEnum;
 }
 
 String serializeField(String key, FieldElement e) {
   if (isFieldEasyType(e)) {
     return '"$key": ${e.name}';
+  } else if (isFieldEnumType(e)) {
+    return '"$key": ${e.name}.toString()';
   } else if (isFieldDate(e)) {
-    return '"$key": ${e.name}.toIso8601String()';
+    return '"$key": ${e.name}?.toIso8601String()';
   } else if (isFieldList(e)) {
-    return '"$key": ${e.name}.map(_valueForList).toList()';
+    return '"$key": ${e.name}?.map(_valueForList).toList()';
   } else {
-    return '"$key": ${e.name}.toJson()';
+    return '"$key": ${e.name}?.toJson()';
+  }
+}
+
+enum a {
+  aa,
+  b,
+  c;
+}
+
+String deserealizeField(String serializeName, FieldElement e) {
+  if (isFieldEasyType(e)) {
+    return '..${e.name} = json["$serializeName"]';
+  } else if (isFieldEnumType(e)) {
+    return '..${e.name} = ${e.type.getDisplayString(withNullability: false)}.values.firstWhere((element) => element.name == json["$serializeName"])';
+  } else if (isFieldDate(e)) {
+    return '..${e.name} = DateTime.tryParse(json["$serializeName"]) ?? DateTime.fromMicrosecondsSinceEpoch(0, isUtc: false)'; //'"$key": ${e.name}?.toIso8601String()';
+  } else if (isFieldList(e)) {
+    final referenceClass = getFieldValueFromOrmAnnotation(e, "referenceClass")
+        ?.replaceFirst("_", "");
+    if (referenceClass?.isNotEmpty != true) return "";
+    return '..${e.name} = (json["$serializeName"] as List<dynamic>).map((e)=> $referenceClass.fromJson(e)).toList()';
+  } else {
+    final referenceClass = getFieldValueFromOrmAnnotation(e, "referenceClass")
+        ?.replaceFirst("_", "");
+    if (referenceClass?.isNotEmpty != true) return "";
+    return '..${e.name} = $referenceClass.fromJson(json["$serializeName"])';
   }
 }

@@ -13,7 +13,6 @@ class OrmMigrationSerializer {
       FieldElement element, int length, bool isKey) async {
     String fieldType =
         element.type.getDisplayString(withNullability: false).toLowerCase();
-    print("name: ${element.name}, fieldType: $fieldType");
     switch (fieldType) {
       case 'int':
         return "ColumnType.integer";
