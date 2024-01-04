@@ -58,6 +58,8 @@ class OrmSerializer {
             ${fields.join("\n ")}
         }
         
+       static ${inspector.name}Migration migration() =>  ${inspector.name}Migration("${inspector.tableName}");
+        
        static ${inspector.name}Query query() => ${inspector.name}Query();
        
        Future<${inspector.name}?> save() async => 

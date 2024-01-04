@@ -1,5 +1,7 @@
 library;
 
+export 'package:shelf_plus/shelf_plus.dart';
+
 export 'src/annotations/orm.dart';
 export 'src/annotations/rest.dart';
 export 'src/annotations/serialize.dart';
