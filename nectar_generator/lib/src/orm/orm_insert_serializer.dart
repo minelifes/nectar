@@ -33,7 +33,7 @@ class OrmInsertSerializer {
     }
     e = getIdAnnotation(element);
     if (e != null) {
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name} ?? generateUUID()";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name} ${getUUIdAnnotation(element) != null ? "?? generateUUID()" : ""} ";
     }
     e = getEnumColumnAnnotation(element);
     if (e != null) {
