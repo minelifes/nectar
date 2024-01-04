@@ -5,8 +5,6 @@ import 'package:nectar/nectar.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 
 class Nectar {
-  final _log = Logger();
-
   Nectar._() {
     GetIt.I.registerSingleton<Nectar>(this);
   }
@@ -78,17 +76,17 @@ class Nectar {
         defaultBindAddress: _host,
         defaultEnableHotReload: _enableHotReload,
         securityContext: _context, onStarted: (h, p) {
-      _log.i(
-          'Running at http://$h:$p${(_isJwtConfigured ? " with JWT security" : "")}');
+      logger.i(
+          'Running at ${_context != null ? "https://" : "http://"}$h:$p${(_isJwtConfigured ? " with JWT security" : "")}');
       _onStarted?.call();
     }, onStartFailed: (msg) {
-      _log.e("Can't start server details: ${msg.toString()}");
+      logger.e("Can't start server details: ${msg.toString()}");
       _onStartFailed?.call(msg.toString());
     }, onWillClose: () {
-      _log.i("Server stopping.");
+      logger.i("Server stopping.");
       _onWillClose?.call();
     }, onClosed: () {
-      _log.i("Server stopped.");
+      logger.i("Server stopped.");
       _onClose?.call();
     });
 

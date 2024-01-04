@@ -1,5 +1,6 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:logger/logger.dart';
+import 'package:nectar/nectar.dart';
 import 'package:nectar/src/types/types.dart';
 
 import 'jwt_payload.dart';
@@ -10,7 +11,6 @@ class JwtSecurity {
   String? _rsaPrivateKey;
   String? _ecPrivateKey;
   String? _ecPublicKey;
-  final _log = Logger();
   late JwtPayloadToUser userDetailsFromPayload;
 
   JwtSecurity({
@@ -64,7 +64,7 @@ class JwtSecurity {
       final jwt = JWT.verify(token, _getPublicKey());
       return JwtPayload.fromJson(jwt.payload);
     } catch (e) {
-      _log.e("Can't get payload: ${e.toString()}");
+      logger.e("Can't get payload: ${e.toString()}");
       return null;
     }
   }

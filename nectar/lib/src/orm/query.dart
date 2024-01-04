@@ -133,7 +133,7 @@ abstract class Migration {
           .createTableIfNotExist(tableName: tableName, columns: columns);
       return true;
     } catch (e) {
-      Logger().e(e);
+      logger.e(e);
       return false;
     }
   }

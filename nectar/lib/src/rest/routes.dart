@@ -1,4 +1,5 @@
 import 'package:logger/logger.dart';
+import 'package:nectar/nectar.dart';
 import 'package:nectar/src/types/types.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 
@@ -17,7 +18,7 @@ class Routes {
       e(_router);
     }
     if (_routes.isEmpty) {
-      Logger().w("Server don't have registered routes.");
+      logger.w("Server don't have registered routes.");
     }
     return _router;
   }

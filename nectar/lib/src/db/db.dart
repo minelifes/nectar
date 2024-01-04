@@ -10,7 +10,6 @@ import 'db_settings.dart';
 class Db {
   MysqlUtils? _utils;
   bool debug = false;
-  var logger = Logger();
 
   void _onError(error) {
     logger.e(error);
