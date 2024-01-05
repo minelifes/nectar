@@ -53,10 +53,16 @@ class OrmSerializer {
       ''';
     }
     return '''
-      final l_${e.name} = (result["$foreignTableName"] as List?);
-      ${e.name} = (l_${e.name} == null || l_${e.name}.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}!.first);
+      final l_${e.name} = (result["$foreignTableName"] as List<Map<String, dynamic>>?);
+      ${e.name} = (l_${e.name} == null ||
+              l_${e.name}.isNotEmpty != true ||
+              l_${e.name}.firstOrNull?.isNotEmpty != true)
+          ? ${getRawFieldValueFromOrmAnnotation(e, "nullable")?.toBoolValue() == true ? "null" : "${referenceClass.replaceFirst("_", "")}()"}
+          : (${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}.first));
     ''';
   }
+
+  //${e.name} = (l_${e.name} == null || l_${e.name}.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}!.first);
 
   String _getPrimaryKeyName() =>
       inspector.fields

@@ -80,6 +80,12 @@ String? getFieldValueFromOrmAnnotation(FieldElement e, String name) {
   return obj?.getField(name)?.toStringValue();
 }
 
+DartObject? getRawFieldValueFromOrmAnnotation(FieldElement e, String name) {
+  final annotation = getOrmAnnotation(e);
+  final obj = annotation?.computeConstantValue();
+  return obj?.getField(name);
+}
+
 String? getFieldValueFromRelationAnnotation(FieldElement e, String name) {
   final annotation = getRelationAnnotation(e);
   final obj = annotation?.computeConstantValue();
