@@ -12,6 +12,7 @@ class Nectar {
   factory Nectar.configure() => Nectar._();
 
   bool _isJwtConfigured = false;
+  bool _shared = false;
   bool get isJwtConfigured => _isJwtConfigured;
 
   Function? _onStarted;
@@ -54,6 +55,11 @@ class Nectar {
     return this;
   }
 
+  Nectar setShared(bool shared) {
+    _shared = shared;
+    return this;
+  }
+
   Nectar setContext(SecurityContext context) {
     _context = context;
     return this;
@@ -71,24 +77,31 @@ class Nectar {
   }
 
   Future<ShelfRunContext> start() async {
-    final server = await shelfRun(() => Routes.getRouter(),
-        defaultBindPort: _port,
-        defaultBindAddress: _host,
-        defaultEnableHotReload: _enableHotReload,
-        securityContext: _context, onStarted: (h, p) {
-      logger.i(
-          'Running at ${_context != null ? "https://" : "http://"}$h:$p${(_isJwtConfigured ? " with JWT security" : "")}');
-      _onStarted?.call();
-    }, onStartFailed: (msg) {
-      logger.e("Can't start server details: ${msg.toString()}");
-      _onStartFailed?.call(msg.toString());
-    }, onWillClose: () {
-      logger.i("Server stopping.");
-      _onWillClose?.call();
-    }, onClosed: () {
-      logger.i("Server stopped.");
-      _onClose?.call();
-    });
+    final server = await shelfRun(
+      () => Routes.getRouter(),
+      defaultBindPort: _port,
+      defaultBindAddress: _host,
+      defaultEnableHotReload: _enableHotReload,
+      defaultShared: _shared,
+      securityContext: _context,
+      onStarted: (h, p) {
+        logger.i(
+            'Running at ${_context != null ? "https://" : "http://"}$h:$p${(_isJwtConfigured ? " with JWT security" : "")}');
+        _onStarted?.call();
+      },
+      onStartFailed: (msg) {
+        logger.e("Can't start server details: ${msg.toString()}");
+        _onStartFailed?.call(msg.toString());
+      },
+      onWillClose: () {
+        logger.i("Server stopping.");
+        _onWillClose?.call();
+      },
+      onClosed: () {
+        logger.i("Server stopped.");
+        _onClose?.call();
+      },
+    );
 
     return server;
   }
