@@ -74,33 +74,36 @@ class OneToOne {
   final String mappedBy;
   final String foreignKey;
   final String referenceClass;
-  const OneToOne({
-    required this.referenceClass,
-    required this.mappedBy,
-    this.foreignKey = "id",
-  });
+  final bool nullable;
+  const OneToOne(
+      {required this.referenceClass,
+      required this.mappedBy,
+      this.foreignKey = "id",
+      this.nullable = false});
 }
 
 class OneToMany {
   final String mappedBy;
   final String foreignKey;
   final String referenceClass;
-  const OneToMany({
-    required this.referenceClass,
-    required this.mappedBy,
-    this.foreignKey = "id",
-  });
+  final bool nullable;
+  const OneToMany(
+      {required this.referenceClass,
+      required this.mappedBy,
+      this.foreignKey = "id",
+      this.nullable = false});
 }
 
 class ManyToOne {
   final String mappedBy;
   final String foreignKey;
   final String referenceClass;
-  const ManyToOne({
-    required this.referenceClass,
-    required this.mappedBy,
-    this.foreignKey = "id",
-  });
+  final bool nullable;
+  const ManyToOne(
+      {required this.referenceClass,
+      required this.mappedBy,
+      this.foreignKey = "id",
+      this.nullable = false});
 }
 
 class PostLoad {
