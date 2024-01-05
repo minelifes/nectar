@@ -75,6 +75,9 @@ class Book extends _Book implements Model {
             forTable: tableName,
           );
 
+  Future<int> delete() =>
+      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
+
   static BookMigration migration() => BookMigration("books");
 
   static BookQuery query() => BookQuery();

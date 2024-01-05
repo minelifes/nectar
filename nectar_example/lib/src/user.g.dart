@@ -136,6 +136,9 @@ class User extends _User implements Model {
             forTable: tableName,
           );
 
+  Future<int> delete() =>
+      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
+
   static UserMigration migration() => UserMigration("User");
 
   static UserQuery query() => UserQuery();

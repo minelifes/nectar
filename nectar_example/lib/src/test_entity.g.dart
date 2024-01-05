@@ -68,6 +68,9 @@ class Test extends _Test implements Model {
             forTable: tableName,
           );
 
+  Future<int> delete() =>
+      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
+
   static TestMigration migration() => TestMigration("test");
 
   static TestQuery query() => TestQuery();

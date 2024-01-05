@@ -68,6 +68,9 @@ class Role extends _Role implements Model {
             forTable: tableName,
           );
 
+  Future<int> delete() =>
+      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
+
   static RoleMigration migration() => RoleMigration("Role");
 
   static RoleQuery query() => RoleQuery();
