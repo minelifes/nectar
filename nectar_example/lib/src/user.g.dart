@@ -17,8 +17,8 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role.toJson(),
-        "books": books.map(_valueForList).toList()
+        "role": role?.toJson(),
+        "books": books?.map(_valueForList).toList()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -29,8 +29,9 @@ class User extends _User implements Model {
     ..phone = json["phone"]
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
-    ..role = json["role"]
-    ..books = json["books"];
+    ..role = Role.fromJson(json["role"])
+    ..books =
+        (json["books"] as List<dynamic>).map((e) => Book.fromJson(e)).toList();
 
   _valueForList(e) {
     if (e is String ||
@@ -103,29 +104,48 @@ class User extends _User implements Model {
     }
 
     if (result.containsKey('User')) {
-      isBlocked = result['User']['User_isBlocked'];
+      final wisBlocked = result['User']['User_isBlocked'];
+      isBlocked = (wisBlocked == 1) ? true : false;
     } else {
-      isBlocked = result['User_isBlocked'];
+      final wisBlocked = result['User_isBlocked'];
+      isBlocked = (wisBlocked == 1) ? true : false;
     }
 
-    final l = (result["Role"] as List?);
-    role = (l == null || l.isEmpty == true) ? Role() : Role()
-      ..fromRow(l!.first);
+    final l_role = (result["Role"] as List?);
+    role = (l_role == null || l_role.isEmpty == true) ? Role() : Role()
+      ..fromRow(l_role!.first);
 
     books =
         (result["books"] as List?)?.map((e) => Book()..fromRow(e)).toList() ??
             [];
   }
 
+  @override
+  String get primaryKeyName => "id";
+
+  static Future<ResultFormat> rawQuery(
+    String sql, {
+    Map<String, dynamic> values = const {},
+    bool haveJoins = false,
+    required String tableName,
+  }) =>
+      getIt.get<Db>().query(
+            sql,
+            values: values,
+            haveJoins: haveJoins,
+            forTable: tableName,
+          );
+
+  static UserMigration migration() => UserMigration("User");
+
   static UserQuery query() => UserQuery();
 
-  Future<User?> save() async => UserInsertClause(this, () => User()).insert();
-
-  Future<User?> update() async => UserInsertClause(this, () => User()).update();
+  Future<User?> save() async =>
+      await UserInsertClause(this, () => User()).insert();
 }
 
 class UserQuery extends Query<User> {
-  UserQuery() : super("User");
+  UserQuery() : super("User", "id");
 
   @override
   User instanceOfT() => User();
@@ -240,15 +260,19 @@ class UserInsertClause extends InsertClause<User> {
   UserInsertClause(super.model, super.instanceOfT);
 
   @override
+  Future<User?> selectOne(String primaryKeyName, dynamic value) =>
+      UserQuery().select().where().addCustom(primaryKeyName, value).one();
+
+  @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id ?? generateUUID(),
+        "id": model.id,
         "name": model.name,
         "last_name": model.lastName,
         "email": model.email,
         "phone": model.phone,
         "password": model.password,
         "isBlocked": model.isBlocked,
-        "roleId": model.role.id,
+        "roleId": model.role?.id,
       };
 }
 

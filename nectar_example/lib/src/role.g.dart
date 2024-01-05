@@ -52,15 +52,32 @@ class Role extends _Role implements Model {
     }
   }
 
+  @override
+  String get primaryKeyName => "id";
+
+  static Future<ResultFormat> rawQuery(
+    String sql, {
+    Map<String, dynamic> values = const {},
+    bool haveJoins = false,
+    required String tableName,
+  }) =>
+      getIt.get<Db>().query(
+            sql,
+            values: values,
+            haveJoins: haveJoins,
+            forTable: tableName,
+          );
+
+  static RoleMigration migration() => RoleMigration("Role");
+
   static RoleQuery query() => RoleQuery();
 
-  Future<Role?> save() async => RoleInsertClause(this, () => Role()).insert();
-
-  Future<Role?> update() async => RoleInsertClause(this, () => Role()).update();
+  Future<Role?> save() async =>
+      await RoleInsertClause(this, () => Role()).insert();
 }
 
 class RoleQuery extends Query<Role> {
-  RoleQuery() : super("Role");
+  RoleQuery() : super("Role", "id");
 
   @override
   Role instanceOfT() => Role();
@@ -112,6 +129,10 @@ class RoleWhereClause extends WhereClause<Role> {
 
 class RoleInsertClause extends InsertClause<Role> {
   RoleInsertClause(super.model, super.instanceOfT);
+
+  @override
+  Future<Role?> selectOne(String primaryKeyName, dynamic value) =>
+      RoleQuery().select().where().addCustom(primaryKeyName, value).one();
 
   @override
   Map<String, dynamic> toInsert() => {

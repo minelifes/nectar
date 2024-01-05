@@ -52,15 +52,32 @@ class Test extends _Test implements Model {
     }
   }
 
+  @override
+  String get primaryKeyName => "id";
+
+  static Future<ResultFormat> rawQuery(
+    String sql, {
+    Map<String, dynamic> values = const {},
+    bool haveJoins = false,
+    required String tableName,
+  }) =>
+      getIt.get<Db>().query(
+            sql,
+            values: values,
+            haveJoins: haveJoins,
+            forTable: tableName,
+          );
+
+  static TestMigration migration() => TestMigration("test");
+
   static TestQuery query() => TestQuery();
 
-  Future<Test?> save() async => TestInsertClause(this, () => Test()).insert();
-
-  Future<Test?> update() async => TestInsertClause(this, () => Test()).update();
+  Future<Test?> save() async =>
+      await TestInsertClause(this, () => Test()).insert();
 }
 
 class TestQuery extends Query<Test> {
-  TestQuery() : super("test");
+  TestQuery() : super("test", "id");
 
   @override
   Test instanceOfT() => Test();
@@ -114,8 +131,12 @@ class TestInsertClause extends InsertClause<Test> {
   TestInsertClause(super.model, super.instanceOfT);
 
   @override
+  Future<Test?> selectOne(String primaryKeyName, dynamic value) =>
+      TestQuery().select().where().addCustom(primaryKeyName, value).one();
+
+  @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id ?? generateUUID(),
+        "id": model.id,
         "test_string": model.testString,
       };
 }

@@ -15,33 +15,57 @@ class TestController extends _TestController {
       router.get(
         "/api/v1/users/",
         controller._getRolesHandler,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .middleware,
       );
 
       router.get(
         "/api/v1/users/<id>",
         controller._getByIdHandler,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .middleware,
       );
 
       router.get(
         "/api/v1/users/int/<id>",
         controller._getIntByIdHandler,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .middleware,
       );
 
       router.post(
         "/api/v1/users/body",
         controller._testBodyHandler,
-        use: Pipeline().addMiddleware(checkJwtMiddleware()).middleware,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(checkJwtMiddleware())
+            .middleware,
       );
 
       router.get(
         "/api/v1/users/secured",
         controller._securedHandler,
-        use: Pipeline().addMiddleware(checkJwtMiddleware()).middleware,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(checkJwtMiddleware())
+            .middleware,
       );
 
       router.get(
         "/api/v1/users/login",
         controller._loginHandler,
+        use: Pipeline()
+            .addMiddleware(setContentType('application/json'))
+            .addMiddleware(setHeadersMiddleware({}))
+            .middleware,
       );
     });
   }
@@ -119,7 +143,7 @@ class TestController extends _TestController {
       return await call();
     } on RestException catch (e) {
       return Response(e.statusCode, body: jsonEncode({"error": e.toString()}));
-    } on Exception catch (e) {
+    } catch (e) {
       return Response(500, body: jsonEncode({"error": e.toString()}));
     }
   }

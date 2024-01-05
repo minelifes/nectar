@@ -59,15 +59,32 @@ class Book extends _Book implements Model {
     }
   }
 
+  @override
+  String get primaryKeyName => "id";
+
+  static Future<ResultFormat> rawQuery(
+    String sql, {
+    Map<String, dynamic> values = const {},
+    bool haveJoins = false,
+    required String tableName,
+  }) =>
+      getIt.get<Db>().query(
+            sql,
+            values: values,
+            haveJoins: haveJoins,
+            forTable: tableName,
+          );
+
+  static BookMigration migration() => BookMigration("books");
+
   static BookQuery query() => BookQuery();
 
-  Future<Book?> save() async => BookInsertClause(this, () => Book()).insert();
-
-  Future<Book?> update() async => BookInsertClause(this, () => Book()).update();
+  Future<Book?> save() async =>
+      await BookInsertClause(this, () => Book()).insert();
 }
 
 class BookQuery extends Query<Book> {
-  BookQuery() : super("books");
+  BookQuery() : super("books", "id");
 
   @override
   Book instanceOfT() => Book();
@@ -129,8 +146,12 @@ class BookInsertClause extends InsertClause<Book> {
   BookInsertClause(super.model, super.instanceOfT);
 
   @override
+  Future<Book?> selectOne(String primaryKeyName, dynamic value) =>
+      BookQuery().select().where().addCustom(primaryKeyName, value).one();
+
+  @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id ?? generateUUID(),
+        "id": model.id,
         "user_id": model.userId,
         "title": model.title,
       };
