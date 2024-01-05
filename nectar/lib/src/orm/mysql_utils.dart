@@ -442,7 +442,7 @@ class MysqlUtils {
     StringBuffer str = StringBuffer();
     for (var join in joins) {
       str.write(
-          " join ${join.foreignTableName} on ${join.tableName}.${join.mappedBy} = ${join.foreignTableName}.${join.foreignKey} ");
+          " left join ${join.foreignTableName} on ${join.tableName}.${join.mappedBy} = ${join.foreignTableName}.${join.foreignKey} ");
     }
     return str.toString();
   }
