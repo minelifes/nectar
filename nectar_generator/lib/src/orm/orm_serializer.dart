@@ -93,6 +93,8 @@ class OrmSerializer {
               getIt
                   .get<Db>()
                   .query(sql, values: values, haveJoins: haveJoins, forTable: tableName,);
+                  
+       Future<int> delete() => getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: ${_getPrimaryKeyName()}});
         
        static ${inspector.name}Migration migration() =>  ${inspector.name}Migration("${inspector.tableName}");
         
