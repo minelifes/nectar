@@ -51,11 +51,13 @@ class Db {
     bool haveJoins = false,
     String forTable = "",
   }) =>
-      _utils!.query(sql,
-          values: values,
-          debug: debug,
-          haveJoins: haveJoins,
-          forTable: forTable);
+      _utils!.query(
+        sql,
+        values: values,
+        debug: debug,
+        haveJoins: haveJoins,
+        forTable: forTable,
+      );
 
   Future<ResultFormat> createTableIfNotExist({
     required String tableName,
@@ -74,7 +76,7 @@ class Db {
     String having = '',
     String order = '',
     List<JoinModel> joins = const [],
-    int limit = 100,
+    int limit = 1,
   }) =>
       _utils!.getOne(
           table: table,
@@ -92,7 +94,7 @@ class Db {
     List<String> fields = const [],
     where = const {},
     String order = '',
-    dynamic limit = '',
+    int limit = 100,
     String group = '',
     String having = '',
     List<JoinModel> joins = const [],
@@ -109,12 +111,14 @@ class Db {
         joins: joins,
       );
 
-  Future<Map?> insert({
+  Future<dynamic> insertOrUpdate({
     required String table,
     required Map<String, dynamic> insertData,
+    required String primaryKeyName,
     replace = false,
   }) =>
       _utils!.insertOrUpdate(
+        primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
         replace: replace,
@@ -124,24 +128,14 @@ class Db {
   Future<int> insertAll({
     required String table,
     required List<Map<String, dynamic>> insertData,
+    required String primaryKeyName,
     replace = false,
   }) =>
       _utils!.insertAll(
+        primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
         replace: replace,
-        debug: debug,
-      );
-
-  Future<ResultFormat> update({
-    required String table,
-    required Map<String, dynamic> updateData,
-    required where,
-  }) =>
-      _utils!.update(
-        table: table,
-        updateData: updateData,
-        where: where,
         debug: debug,
       );
 

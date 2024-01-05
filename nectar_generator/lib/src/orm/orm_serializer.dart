@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:collection/collection.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
 import 'package:nectar_generator/src/utils/string_utils.dart';
 
@@ -14,7 +15,22 @@ class OrmSerializer {
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
       final isEnum = getEnumColumnAnnotation(e) != null;
+      final isBool =
+          e.type.getDisplayString(withNullability: false).toLowerCase() ==
+              "bool";
       final className = e.type.getDisplayString(withNullability: false);
+      if (isBool) {
+        return '''
+        if(result.containsKey('${inspector.tableName}')){
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
+          ${e.name} = (w${e.name} == 1) ? true : false;
+        }else{
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = (w${e.name} == 1) ? true : false;
+        }
+      ''';
+      }
+
       return '''
         if(result.containsKey('${inspector.tableName}')){
           ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
@@ -42,6 +58,13 @@ class OrmSerializer {
     ''';
   }
 
+  String _getPrimaryKeyName() =>
+      inspector.fields
+          .where((e) => getIdAnnotation(e) != null)
+          .firstOrNull
+          ?.name ??
+      "";
+
   Future<String> generate() async {
     List<String> fields = await Future.wait(
         inspector.fields.map((e) async => await _fieldFromRow(e)));
@@ -58,25 +81,26 @@ class OrmSerializer {
             ${fields.join("\n ")}
         }
         
+        @override
+        String get primaryKeyName => "${_getPrimaryKeyName()}";
+        
         static Future<ResultFormat> rawQuery(
             String sql, {
             Map<String, dynamic> values = const {},
             bool haveJoins = false,
-            String tableName = "",
+            required String tableName,
           }) =>
               getIt
                   .get<Db>()
-                  .query(sql, values: values, haveJoins: haveJoins, forTable: tableName);
+                  .query(sql, values: values, haveJoins: haveJoins, forTable: tableName,);
         
        static ${inspector.name}Migration migration() =>  ${inspector.name}Migration("${inspector.tableName}");
         
        static ${inspector.name}Query query() => ${inspector.name}Query();
        
        Future<${inspector.name}?> save() async => 
-            ${inspector.name}InsertClause(this, () => ${inspector.name}()).insert();
+            await ${inspector.name}InsertClause(this,  () => ${inspector.name}()).insert();
           
-       Future<${inspector.name}?> update() async => 
-            ${inspector.name}InsertClause(this, () => ${inspector.name}()).update();
     ''';
   }
 }

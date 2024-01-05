@@ -170,6 +170,7 @@ class MysqlUtils {
     required String table,
     required Map<String, dynamic> updateData,
     required where,
+    required String primaryKeyName,
     bool debug = false,
   }) async {
     table = _tableParse(table);
@@ -218,6 +219,7 @@ class MysqlUtils {
   Future<int> insertAll({
     required String table,
     required List<Map<String, dynamic>> insertData,
+    required String primaryKeyName,
     replace = false,
     debug = false,
   }) async {
@@ -263,9 +265,10 @@ class MysqlUtils {
   ///   },
   /// );
   ///```
-  Future<Map?> insertOrUpdate({
+  Future<dynamic> insertOrUpdate({
     required String table,
     required Map<String, dynamic> insertData,
+    required String primaryKeyName,
     replace = false,
     debug = false,
   }) async {
@@ -287,12 +290,12 @@ class MysqlUtils {
     String _sql =
         '${replace ? 'REPLACE' : 'INSERT'} INTO $table ($_fieldsString) VALUES ($_valuesString) '
         'ON DUPLICATE KEY UPDATE ${_fields.map((e) => "`$e`=:$e").join(', ')}';
-    print(_sql);
-    await query(_sql, values: insertData, debug: debug);
-    final select = await query(
-        "Select * from $table where ${_fields.mapIndexed((i, e) => "$e=:$e").join(" and ")}",
-        values: insertData);
-    return select.rows.firstOrNull;
+    final inserted = await query(_sql, values: insertData, debug: debug);
+    if (inserted.affectedRows == 0) throw OrmException("Cant insert data");
+    if (inserted.lastInsertID > 0) {
+      return inserted.lastInsertID;
+    }
+    return insertData[primaryKeyName] ?? 1;
   }
 
   ///```
@@ -924,15 +927,12 @@ class ResultFormat {
         dataWithSamePrimaryData[primaryValue]!.add(row);
       }
 
-      // print(dataWithSamePrimaryData);
-
       // List<Map<String, dynamic>> result = dataWithSamePrimaryData.values
       //     .map((e) => _mergeAndGroupMaps(e))
       //     .toList();
       _rows = dataWithSamePrimaryData.values
           .map((value) => _mergeAndGroupMaps(forTable, haveJoins, value))
           .toList();
-      print(_rows);
 
       // final Map<dynamic, Map<String, dynamic>> parsedData = {};
       // print("results.rows: ${results.rows.map((e) => e.typedAssoc())}");

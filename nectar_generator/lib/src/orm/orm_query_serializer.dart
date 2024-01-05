@@ -74,6 +74,13 @@ class OrmQuerySerializer {
         )));
   }
 
+  String _getPrimaryKeyName() =>
+      inspector.fields
+          .where((e) => getIdAnnotation(e) != null)
+          .firstOrNull
+          ?.name ??
+      "";
+
   Future<String> generate() async {
     (await Future.wait(inspector.fields.map((e) async =>
         await _relationFieldList(e, true, inspector.tableName, "", "", ""))));
@@ -81,7 +88,7 @@ class OrmQuerySerializer {
         "JoinModel(tableName: '${value.tableName}', mappedBy: '${value.mappedBy}', foreignTableName: '${value.foreignTableName}', foreignKey: '${value.foreignKey}', fields: [${value.fields.map((e) => e.wrapWith()).join(', ')}],)");
     return '''
       class ${inspector.name}Query extends Query<${inspector.name}> {
-        ${inspector.name}Query() : super("${inspector.tableName}");
+        ${inspector.name}Query() : super("${inspector.tableName}", "${_getPrimaryKeyName()}");
       
         @override
         ${inspector.name} instanceOfT() => ${inspector.name}();

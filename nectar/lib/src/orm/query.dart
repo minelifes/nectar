@@ -1,10 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
 import 'package:nectar/nectar.dart';
-import 'package:nectar/src/db/db.dart';
-import 'package:nectar/src/exceptions/orm_exception.dart';
-import 'package:nectar/src/orm/model.dart';
-import 'package:nectar/src/orm/mysql_utils.dart';
 
 typedef TInstance<T extends Model> = T Function();
 
@@ -24,6 +19,7 @@ class JoinModel {
 }
 
 class QueryModel {
+  String primaryKey = "";
   String tableName = "";
   List<String> fields = [];
   String order = "";
@@ -34,14 +30,15 @@ class QueryModel {
 
   QueryModel({
     required this.tableName,
+    required this.primaryKey,
   });
 }
 
 abstract class Query<T extends Model> {
   late QueryModel model;
 
-  Query(String tableName) {
-    model = QueryModel(tableName: tableName);
+  Query(String tableName, String primaryKey) {
+    model = QueryModel(tableName: tableName, primaryKey: primaryKey);
   }
 
   T instanceOfT();
@@ -60,6 +57,10 @@ abstract class SelectClause<T extends Model> extends ExecClause<T> {
 
 abstract class WhereClause<T extends Model> extends ExecClause<T> {
   WhereClause(super._model, super.instanceOfT);
+  WhereClause<T> addCustom(String key, dynamic value, {String operator = "="}) {
+    model.where[key] = [operator, value];
+    return this;
+  }
 }
 
 abstract class ExecClause<T extends Model> {
@@ -103,26 +104,26 @@ abstract class InsertClause<T extends Model> {
 
   Map<String, dynamic> toInsert();
 
+  Future<T?> selectOne(String primaryKeyName, dynamic value);
+
   Future<T?> insert() async {
-    var results = await GetIt.I.get<Db>().insert(
+    var results = await getIt.get<Db>().insertOrUpdate(
+          primaryKeyName: model.primaryKeyName,
           table: model.tableName,
           insertData: toInsert(),
         );
     if (results == null) {
       throw OrmException("Failed to insert data.");
     }
-    return instanceOfT()..fromRow(results);
-  }
 
-  Future<T?> update() async {
-    var results = await GetIt.I.get<Db>().insert(
-          table: model.tableName,
-          insertData: toInsert(),
-        );
-    if (results == null) {
-      throw OrmException("Failed to update data.");
+    var value = results;
+    if (results is String) {
+      value = results.isNotEmpty ? results : toInsert()[model.primaryKeyName];
     }
-    return instanceOfT()..fromRow(results);
+
+    return await selectOne(model.primaryKeyName, value);
+
+    ///await query.select().where().addCustom(model.primaryKeyName, "").one();
   }
 }
 
@@ -134,7 +135,7 @@ abstract class Migration {
 
   Future<bool> createTable() async {
     try {
-      await GetIt.I
+      await getIt
           .get<Db>()
           .createTableIfNotExist(tableName: tableName, columns: columns);
       return true;
