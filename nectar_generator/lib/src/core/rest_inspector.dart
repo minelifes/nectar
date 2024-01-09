@@ -131,6 +131,29 @@ class RestInspector {
       final value = pathVariable.computeConstantValue();
       final fieldName = value?.getField("name")?.toStringValue();
       final defaultValue = value?.getField("defaultValue")?.toStringValue();
+      switch (typeName) {
+        case 'int':
+          return MapEntry("queryValue$index", ''' 
+             var queryValue$index = int.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? int.tryParse("'$defaultValue'");
+           ''');
+        case 'double':
+          return MapEntry("queryValue$index", ''' 
+             var queryValue$index = double.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? double.tryParse("'$defaultValue'");
+           ''');
+        case 'bool':
+          return MapEntry("queryValue$index", ''' 
+             var queryValue$index = bool.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? bool.tryParse("'$defaultValue'");
+           ''');
+        default:
+          return MapEntry("queryValue$index", ''' 
+             var queryValue$index = request.url.queryParameters["${fieldName ?? e.name}"];
+             final defaultValue$index = ${defaultValue == null ? null : "'$defaultValue'"};
+             if(defaultValue$index != null && queryValue$index == null){
+                 queryValue$index = defaultValue$index;
+             }
+           ''');
+      }
+
       return MapEntry("queryValue$index", ''' 
          var queryValue$index = request.url.queryParameters["${fieldName ?? e.name}"];
          final defaultValue$index = ${defaultValue == null ? null : "'$defaultValue'"};
