@@ -134,15 +134,15 @@ class RestInspector {
       switch (typeName) {
         case 'int':
           return MapEntry("queryValue$index", ''' 
-             var queryValue$index = int.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? int.tryParse("'$defaultValue'");
+             var queryValue$index = int.tryParse(request.url.queryParameters["${fieldName ?? e.name}"] ?? "") ?? int.tryParse("'$defaultValue'");
            ''');
         case 'double':
           return MapEntry("queryValue$index", ''' 
-             var queryValue$index = double.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? double.tryParse("'$defaultValue'");
+             var queryValue$index = double.tryParse(request.url.queryParameters["${fieldName ?? e.name}"] ?? "") ?? double.tryParse("'$defaultValue'");
            ''');
         case 'bool':
           return MapEntry("queryValue$index", ''' 
-             var queryValue$index = bool.tryParse(request.url.queryParameters["${fieldName ?? e.name}"]) ?? bool.tryParse("'$defaultValue'");
+             var queryValue$index = bool.tryParse(request.url.queryParameters["${fieldName ?? e.name}"] ?? "") ?? bool.tryParse("'$defaultValue'");
            ''');
         default:
           return MapEntry("queryValue$index", ''' 
