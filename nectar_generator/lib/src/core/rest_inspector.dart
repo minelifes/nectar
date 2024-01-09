@@ -204,7 +204,7 @@ class RestInspector {
             return MapEntry("body$index", ''' 
               final body$index = <String, MultipartFile>{}; //Uint8List
               requestFormData.forEach((key, value) { 
-                if(value is Uint8List){
+                if(value is MultipartFile){
                   body$index[key] = value;
                 }
               });
