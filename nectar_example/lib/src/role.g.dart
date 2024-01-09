@@ -134,8 +134,11 @@ class RoleInsertClause extends InsertClause<Role> {
   RoleInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Role?> selectOne(String primaryKeyName, dynamic value) =>
-      RoleQuery().select().where().addCustom(primaryKeyName, value).one();
+  Future<Role?> selectOne(String primaryKeyName, dynamic value) => RoleQuery()
+      .select()
+      .where()
+      .addCustom('Role.$primaryKeyName', value)
+      .one();
 
   @override
   Map<String, dynamic> toInsert() => {

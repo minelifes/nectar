@@ -75,45 +75,72 @@ class Mapping {
   });
 }
 
+///Apply to field to accept path variable '/ads/<id>' @PathVariable(name: "id") String pathVar
 class PathVariable {
   final String? name;
   final dynamic defaultValue;
   const PathVariable({this.name, this.defaultValue});
 }
 
+///Apply to field to accept query variable ?a=... @QueryVariable(name: "a") String aVariable
 class QueryVariable {
   final String? name;
   final dynamic defaultValue;
   const QueryVariable({this.name, this.defaultValue});
 }
 
+///Apply to field to accept json data into Model which should have fromJson factory or constructor
 class RequestBody {
   const RequestBody();
 }
 
-class RequiredRole {
-  final String name;
-  const RequiredRole(this.name);
-}
-
+///Apply to method if need to check role access before proceed
 class HasRole {
   final List<String> value;
   final String methodName;
   const HasRole(this.value, {this.methodName = "hasRoleMiddleware"});
 }
 
+///Apply to method if need to check privilege access before proceed
 class HasPrivilege {
   final List<String> value;
   final String methodName;
   const HasPrivilege(this.value, {this.methodName = "hasPrivilegeMiddleware"});
 }
 
+///Apply to method if need to handle jwt token and user data
 class AuthWithJwt {
   final String methodName;
   const AuthWithJwt({this.methodName = "checkJwtMiddleware"});
 }
 
+///Apply to method if need to response custom headers
 class AddHeaders {
   final Map<String, String> headers;
   const AddHeaders(this.headers);
+}
+
+///Apply to method if accept formData
+class AcceptMultipartFormData {
+  const AcceptMultipartFormData();
+}
+
+// ///Apply to method if accept formData
+// class AcceptFormData {
+//   const AcceptFormData();
+// }
+
+///Apply to field if need to get raw RawFormData (List<FormData>)
+class RawFormData {
+  const RawFormData();
+}
+
+///Apply to field if field accept file/s (Map<String, Uint8List>)
+class Files {
+  const Files();
+}
+
+///Apply to field if field accept FormData / MultipartFormData (Map<String, dynamic>)
+class MapFormData {
+  const MapFormData();
 }

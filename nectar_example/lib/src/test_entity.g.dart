@@ -134,8 +134,11 @@ class TestInsertClause extends InsertClause<Test> {
   TestInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Test?> selectOne(String primaryKeyName, dynamic value) =>
-      TestQuery().select().where().addCustom(primaryKeyName, value).one();
+  Future<Test?> selectOne(String primaryKeyName, dynamic value) => TestQuery()
+      .select()
+      .where()
+      .addCustom('test.$primaryKeyName', value)
+      .one();
 
   @override
   Map<String, dynamic> toInsert() => {

@@ -47,24 +47,24 @@ void main() async {
   // print(many.toMap());
   // print(many.rows[0]);
 
-  final columns = [
-    ColumnInfo(
-        isKey: true,
-        isAutoIncrement: true,
-        name: "id",
-        columnType: ColumnType.integer,
-        length: 11,
-        defaultValue: null,
-        nullable: false),
-    ColumnInfo(
-        name: "name",
-        columnType: ColumnType.varchar,
-        length: 64,
-        defaultValue: null,
-        nullable: false),
-    ColumnInfo(
-        name: "description", columnType: ColumnType.text, nullable: false)
-  ];
+  // final columns = [
+  //   ColumnInfo(
+  //       isKey: true,
+  //       isAutoIncrement: true,
+  //       name: "id",
+  //       columnType: ColumnType.integer,
+  //       length: 11,
+  //       defaultValue: null,
+  //       nullable: false),
+  //   ColumnInfo(
+  //       name: "name",
+  //       columnType: ColumnType.varchar,
+  //       length: 64,
+  //       defaultValue: null,
+  //       nullable: false),
+  //   ColumnInfo(
+  //       name: "description", columnType: ColumnType.text, nullable: false)
+  // ];
 
   // final user = await User.query().select().where().id(2).one();
   // print(user?.toJson());
@@ -72,9 +72,10 @@ void main() async {
   // final books = await Book.query().select().where().userId(2).list();
   // print(books.map((e) => e.toJson()));
   //
-  db.close();
-  return;
+  // db.close();
+  // return;
 
+  TestController.register();
   Nectar.configure()
       .enableJwtSecurity(JwtSecurity(
         secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",

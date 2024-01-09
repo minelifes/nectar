@@ -111,9 +111,12 @@ class User extends _User implements Model {
       isBlocked = (wisBlocked == 1) ? true : false;
     }
 
-    final l_role = (result["Role"] as List?);
-    role = (l_role == null || l_role.isEmpty == true) ? Role() : Role()
-      ..fromRow(l_role!.first);
+    final l_role = (result["Role"] as List<Map<String, dynamic>>?);
+    role = (l_role == null ||
+            l_role.isNotEmpty != true ||
+            l_role.firstOrNull?.isNotEmpty != true)
+        ? Role()
+        : (Role()..fromRow(l_role.first));
 
     books =
         (result["books"] as List?)?.map((e) => Book()..fromRow(e)).toList() ??
@@ -263,8 +266,11 @@ class UserInsertClause extends InsertClause<User> {
   UserInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<User?> selectOne(String primaryKeyName, dynamic value) =>
-      UserQuery().select().where().addCustom(primaryKeyName, value).one();
+  Future<User?> selectOne(String primaryKeyName, dynamic value) => UserQuery()
+      .select()
+      .where()
+      .addCustom('User.$primaryKeyName', value)
+      .one();
 
   @override
   Map<String, dynamic> toInsert() => {

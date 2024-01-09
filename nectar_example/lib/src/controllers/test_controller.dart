@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:mirrors';
+import 'dart:typed_data';
 
 import 'package:nectar/nectar.dart';
 import 'package:nectar_example/src/payloads/test_request.dart';
 import 'package:nectar_example/src/role.dart';
 import 'package:nectar_example/src/user.dart';
-import 'package:shelf/shelf.dart';
 
 part 'test_controller.g.dart';
 
@@ -14,13 +13,6 @@ class _TestController {
   @GetMapping("/")
   Future<List<Role>> getRoles() async {
     return [Role()..title = "myTitle"];
-  }
-
-  @GetMapping("/<id>")
-  Future<Role?> getById(@PathVariable(name: "id") String id) async {
-    return Role()
-      ..title = "myTitle"
-      ..id = id;
   }
 
   @GetMapping("/int/<id>")
@@ -40,7 +32,7 @@ class _TestController {
 
   @GetMapping("/secured")
   @AuthWithJwt()
-  @RequiredRole("admin")
+  @HasRole(["admin"])
   Future<List<Role>> secured() async {
     return [Role()..title = "myTitle"];
   }
@@ -48,5 +40,36 @@ class _TestController {
   @GetMapping("/login")
   Future<String> login() async {
     return getIt.get<JwtSecurity>().generateToken(JwtPayload(id: 2));
+  }
+
+  @PostMapping("/file")
+  @AcceptMultipartFormData()
+  Future<String> file(
+      @Files() Map<String, Uint8List> files, Request request) async {
+    return getIt.get<JwtSecurity>().generateToken(JwtPayload(id: 2));
+  }
+
+  @PostMapping("/form")
+  @AcceptMultipartFormData()
+  Future<String> form(
+    @MapFormData() Map<String, String> data,
+    @Files() Map<String, Uint8List> files,
+  ) async {
+    print("Map: ");
+    data.forEach((key, value) {
+      print("$key:$value");
+    });
+    print("\n\nFiles: ");
+    files.forEach((key, value) {
+      print("$key:$value");
+    });
+    return getIt.get<JwtSecurity>().generateToken(JwtPayload(id: 2));
+  }
+
+  @GetMapping("/<id>")
+  Future<Role?> getById(@PathVariable(name: "id") String id) async {
+    return Role()
+      ..title = "myTitle"
+      ..id = id;
   }
 }

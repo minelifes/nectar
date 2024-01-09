@@ -43,6 +43,18 @@ ElementAnnotation? getHasPrivilegeAnnotation(MethodElement e) =>
 ElementAnnotation? getAuthWithJwtAnnotation(MethodElement e) =>
     getAnnotationFromMethod(e, "AuthWithJwt");
 
+ElementAnnotation? getAcceptMultipartFormDataAnnotation(MethodElement e) =>
+    getAnnotationFromMethod(e, "AcceptMultipartFormData");
+
+ElementAnnotation? getRawFormDataAnnotation(ParameterElement e) =>
+    getAnnotationFromParameter(e, "RawFormData");
+
+ElementAnnotation? getFilesAnnotation(ParameterElement e) =>
+    getAnnotationFromParameter(e, "Files");
+
+ElementAnnotation? getFormDataAnnotation(ParameterElement e) =>
+    getAnnotationFromParameter(e, "MapFormData");
+
 bool hasOneOfMappingAnnotation(MethodElement e) =>
     (getGetMappingAnnotation(e) ??
         getPostMappingAnnotation(e) ??

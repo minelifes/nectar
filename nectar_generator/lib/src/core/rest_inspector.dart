@@ -112,7 +112,8 @@ class RestInspector {
       : "${applySymbol ? " , " : ""} ${e.parameters.map((e) => e.name).join(',')}";
 
   MapEntry<String, String>? _parameterReader(int index, ParameterElement e) {
-    var typeName = e.type.getDisplayString(withNullability: false);
+    var typeName =
+        e.type.getDisplayString(withNullability: false).split("<").first;
     var pathVariable = getAnnotationFromParameter(e, "PathVariable");
     if (pathVariable != null) {
       final value = pathVariable.computeConstantValue();
@@ -139,6 +140,9 @@ class RestInspector {
        ''');
     }
     pathVariable = getAnnotationFromParameter(e, "RequestBody");
+    pathVariable ??= getFilesAnnotation(e);
+    pathVariable ??= getFormDataAnnotation(e);
+    pathVariable ??= getRawFormDataAnnotation(e);
     if (pathVariable != null) {
       switch (typeName) {
         case 'String':
@@ -161,10 +165,29 @@ class RestInspector {
             final body$index = bool.tryParse(str$index);
           ''');
         case 'Map':
-          return MapEntry("body$index", ''' 
-            final str$index = await request.readAsString();
-            final body$index = jsonDecode(str$index);
-          ''');
+          final file = getFilesAnnotation(e);
+          final form = getFormDataAnnotation(e);
+          if (form != null) {
+            return MapEntry("body$index", ''' 
+              final body$index = <String, String>{};
+              requestFormData.forEach((key, value) { 
+                if(value is String){
+                  body$index[key] = value;
+                }
+                if(value is Uint8List){}
+              });
+              ''');
+          }
+          if (file != null) {
+            return MapEntry("body$index", ''' 
+              final body$index = <String, Uint8List>{};
+              requestFormData.forEach((key, value) { 
+                if(value is Uint8List){
+                  body$index[key] = value;
+                }
+              });
+              ''');
+          }
         default:
           return MapEntry("body$index", ''' 
             final str$index = await request.readAsString();
@@ -187,11 +210,22 @@ class RestInspector {
   }
 
   String _buildHandler(MethodElement e) {
+    final acceptForm = getAcceptMultipartFormDataAnnotation(e) != null;
     final fields = e.parameters
         .mapIndexed(_parameterReader)
         .where((element) => element != null);
     return ''' 
       Future<dynamic> _${e.name}Handler(Request request) async {
+         ${(acceptForm) ? ''' 
+        if(!request.isMultipart || !request.isMultipartForm){
+          throw RestException.badRequest(message: "request is not form");
+        }
+        final requestFormData = <String, dynamic>{
+          await for (final formData in request.multipartFormData)
+            if(formData.filename != null) formData.name: await formData.part.readBytes()
+            else formData.name: await formData.part.readString(),
+        };
+        ''' : ""}
         return await _returnResponseOrError(() async {
           ${fields.map((el) => el!.value).join("\n")}
           return await ${e.name}(${fields.map((el) => '${el!.key}').join(",")});

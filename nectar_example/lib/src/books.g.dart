@@ -149,8 +149,11 @@ class BookInsertClause extends InsertClause<Book> {
   BookInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Book?> selectOne(String primaryKeyName, dynamic value) =>
-      BookQuery().select().where().addCustom(primaryKeyName, value).one();
+  Future<Book?> selectOne(String primaryKeyName, dynamic value) => BookQuery()
+      .select()
+      .where()
+      .addCustom('books.$primaryKeyName', value)
+      .one();
 
   @override
   Map<String, dynamic> toInsert() => {
