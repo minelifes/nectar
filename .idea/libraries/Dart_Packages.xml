@@ -349,6 +349,13 @@
             </list>
           </value>
         </entry>
+        <entry key="nectar">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/git/nectar-d42dec762cdf2628b54489409b1c9582480fc7d0/nectar/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="node_preamble">
           <value>
             <list>
@@ -626,6 +633,7 @@
       </option>
     </properties>
     <CLASSES>
+      <root url="file://$USER_HOME$/.pub-cache/git/nectar-d42dec762cdf2628b54489409b1c9582480fc7d0/nectar/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-65.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/adaptive_number-1.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-6.3.0/lib" />

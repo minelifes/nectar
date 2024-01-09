@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class RestController {
   final String? path;
   const RestController({this.path});
@@ -135,7 +137,7 @@ class RawFormData {
   const RawFormData();
 }
 
-///Apply to field if field accept file/s (Map<String, Uint8List>)
+///Apply to field if field accept file/s (Map<String, MultipartFile>)
 class Files {
   const Files();
 }
@@ -143,4 +145,13 @@ class Files {
 ///Apply to field if field accept FormData / MultipartFormData (Map<String, dynamic>)
 class MapFormData {
   const MapFormData();
+}
+
+class MultipartFile {
+  final String name;
+  final Uint8List bytes;
+  const MultipartFile({
+    required this.name,
+    required this.bytes,
+  });
 }

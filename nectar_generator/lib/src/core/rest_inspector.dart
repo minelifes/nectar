@@ -197,13 +197,12 @@ class RestInspector {
                 if(value is String){
                   body$index[key] = value;
                 }
-                if(value is Uint8List){}
               });
               ''');
           }
           if (file != null) {
             return MapEntry("body$index", ''' 
-              final body$index = <String, Uint8List>{};
+              final body$index = <String, MultipartFile>{}; //Uint8List
               requestFormData.forEach((key, value) { 
                 if(value is Uint8List){
                   body$index[key] = value;
@@ -245,7 +244,7 @@ class RestInspector {
         }
         final requestFormData = <String, dynamic>{
           await for (final formData in request.multipartFormData)
-            if(formData.filename != null) formData.name: await formData.part.readBytes()
+            if(formData.filename != null) formData.name: MultipartFile(name: formData.filename!, bytes: await formData.part.readBytes(),)
             else formData.name: await formData.part.readString(),
         };
         ''' : ""}
