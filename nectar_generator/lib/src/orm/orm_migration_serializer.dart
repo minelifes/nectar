@@ -75,17 +75,29 @@ class OrmMigrationSerializer {
 
     final name = getFieldNameFromOrmAnnotation(element);
     final defaultValue =
-        getFieldValueFromColumn(element, "defaultValue")?.toStringValue();
+        getRawFieldValueFromOrmAnnotation(element, "defaultValue")
+            ?.toStringValue();
     final isKey = getIdAnnotation(element) != null;
     final isAutoIncrement = getAutoIncrementAnnotation(element) != null;
-    final unique = getFieldValueFromColumn(element, "unique")?.toBoolValue();
+    final unique =
+        getRawFieldValueFromOrmAnnotation(element, "unique")?.toBoolValue();
     final nullable =
-        getFieldValueFromColumn(element, "nullable")?.toBoolValue();
+        getRawFieldValueFromOrmAnnotation(element, "nullable")?.toBoolValue();
     final length =
-        getFieldValueFromColumn(element, "length")?.toIntValue() ?? 0;
+        getRawFieldValueFromOrmAnnotation(element, "length")?.toIntValue() ?? 0;
     final columnType = isAutoIncrement
         ? "ColumnType.integer"
         : await _getFieldElementType(element, length, isKey);
+
+    final id =
+        inspector.fields.where((e) => getIdAnnotation(e) != null).firstOrNull;
+    if (id == null) {
+      throw Exception(
+          "${inspector.classElement.name} don't have any filed with @Id annotation");
+    }
+    final idName = getFieldNameFromOrmAnnotation(id);
+
+    if (!isKey && name == idName) return "";
 
     return ''' 
       ColumnInfo(
