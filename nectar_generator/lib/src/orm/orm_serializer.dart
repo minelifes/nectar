@@ -24,8 +24,14 @@ class OrmSerializer {
         if(result.containsKey('${inspector.tableName}')){
           final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
           ${e.name} = (w${e.name} == 1) ? true : false;
-        }else{
+        } else if(result.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
           final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = (w${e.name} == 1) ? true : false;
+        } else if(allResponse?.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = (w${e.name} == 1) ? true : false;
+        } else {
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
           ${e.name} = (w${e.name} == 1) ? true : false;
         }
       ''';
@@ -34,8 +40,12 @@ class OrmSerializer {
       return '''
         if(result.containsKey('${inspector.tableName}')){
           ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
-        }else{
+        }else if(result.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
           ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+        } else if(allResponse?.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+        } else {
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
         }
       ''';
     }
@@ -49,16 +59,16 @@ class OrmSerializer {
         entity.computeConstantValue()!.getField("tableName")!.toStringValue()!;
     if (isFieldList(e)) {
       return '''
-        ${e.name} = (result["$foreignTableName"] as List?)?.map((e) => $className()..fromRow(e)).toList() ?? [];
+        ${e.name} = (result["$foreignTableName"] as List?)?.map((e) => $className()..fromRow(e, allResponse)).toList() ?? [];
       ''';
     }
     return '''
-      final l_${e.name} = (result["$foreignTableName"] as List<Map<String, dynamic>>?);
+      final l_${e.name} = (result["$foreignTableName"] as List<Map<String, dynamic>>?) ?? (allResponse?["$foreignTableName"] as List<Map<String, dynamic>>?);
       ${e.name} = (l_${e.name} == null ||
               l_${e.name}.isNotEmpty != true ||
               l_${e.name}.firstOrNull?.isNotEmpty != true)
           ? ${getRawFieldValueFromOrmAnnotation(e, "nullable")?.toBoolValue() == true ? "null" : "${referenceClass.replaceFirst("_", "")}()"}
-          : (${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}.first));
+          : (${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}.first, allResponse));
     ''';
   }
 
@@ -83,7 +93,7 @@ class OrmSerializer {
        String get tableName => "${inspector.tableName}";
        
         @override  
-        void fromRow(Map result) {
+        void fromRow(Map result, Map? allResponse) {
             ${fields.join("\n ")}
         }
         

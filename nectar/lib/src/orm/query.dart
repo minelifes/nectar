@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
 
@@ -76,7 +77,9 @@ abstract class ExecClause<T extends Model> {
           joins: model.joins,
         );
 
-    return results.map((e) => instanceOfT()..fromRow(e)).toList();
+    return results
+        .mapIndexed((i, e) => instanceOfT()..fromRow(e, results[i]))
+        .toList();
   }
 
   Future<int> delete() => GetIt.I.get<Db>().delete(
@@ -91,7 +94,7 @@ abstract class ExecClause<T extends Model> {
         where: model.where,
         joins: model.joins);
     if (results.isNotEmpty) {
-      return instanceOfT()..fromRow(results);
+      return instanceOfT()..fromRow(results, results);
     }
     return null;
   }

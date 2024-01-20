@@ -3,5 +3,5 @@ interface class Model {
   String get tableName => "";
   String get primaryKeyName => "";
 
-  void fromRow(Map result) {}
+  void fromRow(Map result, Map? allResponse) {}
 }
