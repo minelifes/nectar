@@ -64,11 +64,11 @@ class OrmQuerySerializer {
     if (entity == null) return;
     final _foreignTableName =
         entity.computeConstantValue()!.getField("tableName")!.toStringValue()!;
-    if (!isFirst) return;
+    // if (!isFirst) return;
     await Future.wait(clazz.fields.map((e) async => await _relationFieldList(
           e,
           false,
-          isFirst ? tableName : _foreignTableName,
+          isFirst ? tableName : foreignTableName,
           _mappedBy!,
           _foreignTableName,
           _foreignKey!,
