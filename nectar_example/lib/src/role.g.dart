@@ -38,7 +38,7 @@ class Role extends _Role implements Model {
   String get tableName => "Role";
 
   @override
-  void fromRow(Map result) {
+  void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('Role')) {
       id = result['Role']['Role_id'];
     } else {

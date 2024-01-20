@@ -38,7 +38,7 @@ class Test extends _Test implements Model {
   String get tableName => "test";
 
   @override
-  void fromRow(Map result) {
+  void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('test')) {
       id = result['test']['test_id'];
     } else {

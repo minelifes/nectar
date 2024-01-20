@@ -66,7 +66,7 @@ class User extends _User implements Model {
   String get tableName => "User";
 
   @override
-  void fromRow(Map result) {
+  void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('User')) {
       id = result['User']['User_id'];
     } else {
@@ -106,6 +106,12 @@ class User extends _User implements Model {
     if (result.containsKey('User')) {
       final wisBlocked = result['User']['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
+    } else if (allResponse?.containsKey('User') == true) {
+      final wisBlocked = allResponse!['User']['User_isBlocked'];
+      isBlocked = (wisBlocked == 1) ? true : false;
+    } else if (allResponse?.containsKey('User_isBlocked') == true) {
+      final wisBlocked = allResponse!['User_isBlocked'];
+      isBlocked = (wisBlocked == 1) ? true : false;
     } else {
       final wisBlocked = result['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
@@ -116,11 +122,12 @@ class User extends _User implements Model {
             l_role.isNotEmpty != true ||
             l_role.firstOrNull?.isNotEmpty != true)
         ? Role()
-        : (Role()..fromRow(l_role.first));
+        : (Role()..fromRow(l_role.first, allResponse));
 
-    books =
-        (result["books"] as List?)?.map((e) => Book()..fromRow(e)).toList() ??
-            [];
+    books = (result["books"] as List?)
+            ?.map((e) => Book()..fromRow(e, allResponse))
+            .toList() ??
+        [];
   }
 
   @override

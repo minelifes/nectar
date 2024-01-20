@@ -45,7 +45,7 @@ class _TestController {
   @PostMapping("/file")
   @AcceptMultipartFormData()
   Future<String> file(
-      @Files() Map<String, Uint8List> files, Request request) async {
+      @Files() Map<String, MultipartFile> files, Request request) async {
     return getIt.get<JwtSecurity>().generateToken(JwtPayload(id: 2));
   }
 
@@ -53,7 +53,7 @@ class _TestController {
   @AcceptMultipartFormData()
   Future<String> form(
     @MapFormData() Map<String, String> data,
-    @Files() Map<String, Uint8List> files,
+    @Files() Map<String, MultipartFile> files,
   ) async {
     print("Map: ");
     data.forEach((key, value) {

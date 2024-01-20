@@ -39,7 +39,7 @@ class Book extends _Book implements Model {
   String get tableName => "books";
 
   @override
-  void fromRow(Map result) {
+  void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('books')) {
       id = result['books']['books_id'];
     } else {

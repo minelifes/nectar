@@ -137,15 +137,18 @@ class TestController extends _TestController {
     final requestFormData = <String, dynamic>{
       await for (final formData in request.multipartFormData)
         if (formData.filename != null)
-          formData.name: await formData.part.readBytes()
+          formData.name: MultipartFile(
+            name: formData.filename!,
+            bytes: await formData.part.readBytes(),
+          )
         else
           formData.name: await formData.part.readString(),
     };
 
     return await _returnResponseOrError(() async {
-      final body0 = <String, Uint8List>{};
+      final body0 = <String, MultipartFile>{}; //Uint8List
       requestFormData.forEach((key, value) {
-        if (value is Uint8List) {
+        if (value is MultipartFile) {
           body0[key] = value;
         }
       });
@@ -163,7 +166,10 @@ class TestController extends _TestController {
     final requestFormData = <String, dynamic>{
       await for (final formData in request.multipartFormData)
         if (formData.filename != null)
-          formData.name: await formData.part.readBytes()
+          formData.name: MultipartFile(
+            name: formData.filename!,
+            bytes: await formData.part.readBytes(),
+          )
         else
           formData.name: await formData.part.readString(),
     };
@@ -174,12 +180,11 @@ class TestController extends _TestController {
         if (value is String) {
           body0[key] = value;
         }
-        if (value is Uint8List) {}
       });
 
-      final body1 = <String, Uint8List>{};
+      final body1 = <String, MultipartFile>{}; //Uint8List
       requestFormData.forEach((key, value) {
-        if (value is Uint8List) {
+        if (value is MultipartFile) {
           body1[key] = value;
         }
       });
