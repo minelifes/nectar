@@ -76,9 +76,16 @@ class Nectar {
     return this;
   }
 
-  Future<ShelfRunContext> start() async {
+  Future<ShelfRunContext> start(
+      {RouterPlus Function(RouterPlus app)? customConfiguration}) async {
     final server = await shelfRun(
-      () => Routes.getRouter(),
+      () {
+        var app = Routes.getRouter();
+        if (customConfiguration != null) {
+          app = customConfiguration(app);
+        }
+        return app;
+      },
       defaultBindPort: _port,
       defaultBindAddress: _host,
       defaultEnableHotReload: _enableHotReload,

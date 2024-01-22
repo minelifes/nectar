@@ -13,7 +13,7 @@ class Routes {
 
   static int get registeredControllers => _routes.length;
 
-  static Handler getRouter() {
+  static RouterPlus getRouter() {
     for (var e in _routes) {
       e(_router);
     }
