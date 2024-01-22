@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
 import 'package:nectar/nectar.dart';
-import 'package:shelf_plus/shelf_plus.dart';
 
 class Nectar {
   Nectar._() {
@@ -24,6 +22,7 @@ class Nectar {
   int _port = 8080;
   SecurityContext? _context;
   bool _enableHotReload = false;
+  List<Middleware> _middlewares = [];
 
   Nectar onStart(Function method) {
     _onStarted = method;
@@ -76,13 +75,17 @@ class Nectar {
     return this;
   }
 
-  Future<ShelfRunContext> start(
-      {RouterPlus Function(RouterPlus app)? customConfiguration}) async {
+  Nectar addAppMiddleware(Middleware middleware) {
+    _middlewares.add(middleware);
+    return this;
+  }
+
+  Future<ShelfRunContext> start() async {
     final server = await shelfRun(
       () {
         var app = Routes.getRouter();
-        if (customConfiguration != null) {
-          app = customConfiguration(app);
+        for (var middle in _middlewares) {
+          app.use(middle);
         }
         return app;
       },

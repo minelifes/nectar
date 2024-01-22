@@ -30,6 +30,7 @@ export 'src/middlewares/jwt_middleware.dart';
 export 'src/middlewares/has_role_middleware.dart';
 export 'src/middlewares/has_privilege_middleware.dart';
 export 'src/middlewares/headers_middleware.dart';
+export 'src/middlewares/use_cors.dart';
 
 export 'src/extensions/middleware_ext.dart';
 export 'src/extensions/router_extension.dart';
