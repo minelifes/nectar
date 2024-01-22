@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
 
+typedef RouterConfigurer = RouterPlus Function(RouterPlus);
+
 class Nectar {
   Nectar._() {
     GetIt.I.registerSingleton<Nectar>(this);
@@ -22,7 +24,9 @@ class Nectar {
   int _port = 8080;
   SecurityContext? _context;
   bool _enableHotReload = false;
-  List<Middleware> _middlewares = [];
+  bool _useCors = false;
+  Map<String, String>? _headers;
+  OriginChecker? _originChecker;
 
   Nectar onStart(Function method) {
     _onStarted = method;
@@ -75,14 +79,33 @@ class Nectar {
     return this;
   }
 
-  Nectar addAppMiddleware(Middleware middleware) {
-    _middlewares.add(middleware);
+  Nectar useCors({
+    Map<String, String>? headers,
+    OriginChecker? originChecker,
+  }) {
+    _useCors = true;
+    headers = headers;
+    originChecker = originChecker;
     return this;
   }
 
-  Future<ShelfRunContext> start() async {
+  Future<ShelfRunContext> start({RouterConfigurer? configurer}) async {
     final server = await shelfRun(
-      () => Routes.getRouter(middlewares: _middlewares),
+      () {
+        var router = Routes.getRouter();
+        if (_useCors) {
+          router.options("/**", () async {
+            return Response.ok("");
+          },
+              use: corsHeaders(
+                  headers: _headers,
+                  originChecker: _originChecker ?? originAllowAll));
+        }
+        if (configurer != null) {
+          router = configurer(router);
+        }
+        return router;
+      },
       defaultBindPort: _port,
       defaultBindAddress: _host,
       defaultEnableHotReload: _enableHotReload,

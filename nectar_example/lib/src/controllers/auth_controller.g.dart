@@ -12,21 +12,20 @@ class AuthController extends _AuthController {
   static void register() {
     Routes.registerRoute((router) {
       final controller = AuthController();
-      router.post("/api/v1/auth/register", controller._registerUserHandler,
-          use: (call) {
-        var p = setContentType('application/json');
+      router.post(
+        "/api/v1/auth/register",
+        controller._registerUserHandler,
+        use: setContentType('application/json'),
+      );
 
-        return p(call);
-      });
-
-      router.post("/api/v1/auth/login", controller._loginHandler, use: (call) {
-        var p = setContentType('application/json');
-        p = p.addMiddleware(setHeadersMiddleware({
+      router.post(
+        "/api/v1/auth/login",
+        controller._loginHandler,
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({
           'TestHeader': 'asdfsfg',
-        }));
-
-        return p(call);
-      });
+        })),
+      );
     });
   }
 

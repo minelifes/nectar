@@ -37,6 +37,9 @@ ElementAnnotation? getRequiredRoleAnnotation(MethodElement e) =>
 ElementAnnotation? getHasRoleAnnotation(MethodElement e) =>
     getAnnotationFromMethod(e, "HasRole");
 
+ElementAnnotation? getAddHeadersAnnotation(MethodElement e) =>
+    getAnnotationFromMethod(e, "AddHeaders");
+
 ElementAnnotation? getHasPrivilegeAnnotation(MethodElement e) =>
     getAnnotationFromMethod(e, "HasPrivilege");
 

@@ -12,61 +12,56 @@ class TestController extends _TestController {
   static void register() {
     Routes.registerRoute((router) {
       final controller = TestController();
-      router.get("/api/v1/users/", controller._getRolesHandler, use: (call) {
-        var p = setContentType('application/json');
+      router.get(
+        "/api/v1/users/",
+        controller._getRolesHandler,
+        use: setContentType('application/json'),
+      );
 
-        return p(call);
-      });
+      router.get(
+        "/api/v1/users/int/<id>",
+        controller._getIntByIdHandler,
+        use: setContentType('application/json'),
+      );
 
-      router.get("/api/v1/users/int/<id>", controller._getIntByIdHandler,
-          use: (call) {
-        var p = setContentType('application/json');
+      router.post(
+        "/api/v1/users/body",
+        controller._testBodyHandler,
+        use: setContentType('application/json')
+            .addMiddleware(checkJwtMiddleware()),
+      );
 
-        return p(call);
-      });
+      router.get(
+        "/api/v1/users/secured",
+        controller._securedHandler,
+        use: setContentType('application/json')
+            .addMiddleware(checkJwtMiddleware())
+            .addMiddleware(hasRoleMiddleware(['admin'])),
+      );
 
-      router.post("/api/v1/users/body", controller._testBodyHandler,
-          use: (call) {
-        var p = setContentType('application/json');
+      router.get(
+        "/api/v1/users/login",
+        controller._loginHandler,
+        use: setContentType('application/json'),
+      );
 
-        p = p.addMiddleware(checkJwtMiddleware());
+      router.post(
+        "/api/v1/users/file",
+        controller._fileHandler,
+        use: setContentType('application/json'),
+      );
 
-        return p(call);
-      });
+      router.post(
+        "/api/v1/users/form",
+        controller._formHandler,
+        use: setContentType('application/json'),
+      );
 
-      router.get("/api/v1/users/secured", controller._securedHandler,
-          use: (call) {
-        var p = setContentType('application/json');
-
-        p = p.addMiddleware(checkJwtMiddleware());
-        p = p.addMiddleware(hasRoleMiddleware(['admin']));
-
-        return p(call);
-      });
-
-      router.get("/api/v1/users/login", controller._loginHandler, use: (call) {
-        var p = setContentType('application/json');
-
-        return p(call);
-      });
-
-      router.post("/api/v1/users/file", controller._fileHandler, use: (call) {
-        var p = setContentType('application/json');
-
-        return p(call);
-      });
-
-      router.post("/api/v1/users/form", controller._formHandler, use: (call) {
-        var p = setContentType('application/json');
-
-        return p(call);
-      });
-
-      router.get("/api/v1/users/<id>", controller._getByIdHandler, use: (call) {
-        var p = setContentType('application/json');
-
-        return p(call);
-      });
+      router.get(
+        "/api/v1/users/<id>",
+        controller._getByIdHandler,
+        use: setContentType('application/json'),
+      );
     });
   }
 

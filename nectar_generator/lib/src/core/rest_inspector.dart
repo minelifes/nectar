@@ -62,27 +62,24 @@ class RestInspector {
     final jwtAuth = getAuthWithJwtAnnotation(element);
     final privilege = getHasPrivilegeAnnotation(element);
     final role = getHasRoleAnnotation(element);
+    final headerAnn = getAddHeadersAnnotation(element);
     final contentType = getFieldNameFromRestAnnotation(ann, "contentType")
         ?.toStringValue()
         ?.toLowerCase();
-    final headers =
-        getFieldNameFromRestAnnotation(ann, "headers")?.toMapValue();
-    final hheaders = _convertMapToStringMap(headers);
+
+    String? headersString;
+    if (headerAnn != null) {
+      final headers =
+          getFieldNameFromRestAnnotation(headerAnn, "headers")?.toMapValue();
+      headersString = _convertMapToStringMap(headers);
+    }
     return ''' 
-      use: (call){
-        final p = Pipeline();
-        for(var middle in middlewares){
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('$contentType'))
-            .addMiddleware(setHeadersMiddleware({$hheaders}))
-            ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
-            ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
-            ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
-            .middleware(call);
-      }
-    ''';
+      use: setContentType('$contentType')
+        ${headersString == null ? "" : ".addMiddleware(setHeadersMiddleware({$headersString}))"}
+        ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
+        ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+        ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+    ,''';
   }
 
   String _buildRouteRegister(MethodElement element) {
@@ -269,7 +266,7 @@ class RestInspector {
       $name();
       
       static void register() {
-        Routes.registerRoute((router, middlewares) {
+        Routes.registerRoute((router) {
           final controller = $name();
           ${methods.map(_buildRouteRegister).join("\n\n")}
         });

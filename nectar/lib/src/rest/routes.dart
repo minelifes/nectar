@@ -13,9 +13,9 @@ class Routes {
 
   static int get registeredControllers => _routes.length;
 
-  static Handler getRouter({List<Middleware>? middlewares}) {
+  static RouterPlus getRouter() {
     for (var e in _routes) {
-      e(_router, middlewares ?? []);
+      e(_router);
     }
     if (_routes.isEmpty) {
       logger.w("Server don't have registered routes.");
