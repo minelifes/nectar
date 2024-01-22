@@ -41,14 +41,22 @@ class Role extends _Role implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('Role')) {
       id = result['Role']['Role_id'];
-    } else {
+    } else if (result.containsKey('Role_id') == true) {
       id = result['Role_id'];
+    } else if (allResponse?.containsKey('Role_id') == true) {
+      id = allResponse!['Role_id'];
+    } else {
+      id = allResponse!['Role'].first['Role_id'];
     }
 
     if (result.containsKey('Role')) {
       title = result['Role']['Role_title'];
-    } else {
+    } else if (result.containsKey('Role_title') == true) {
       title = result['Role_title'];
+    } else if (allResponse?.containsKey('Role_title') == true) {
+      title = allResponse!['Role_title'];
+    } else {
+      title = allResponse!['Role'].first['Role_title'];
     }
   }
 

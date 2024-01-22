@@ -42,20 +42,32 @@ class Book extends _Book implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('books')) {
       id = result['books']['books_id'];
-    } else {
+    } else if (result.containsKey('books_id') == true) {
       id = result['books_id'];
+    } else if (allResponse?.containsKey('books_id') == true) {
+      id = allResponse!['books_id'];
+    } else {
+      id = allResponse!['books'].first['books_id'];
     }
 
     if (result.containsKey('books')) {
       userId = result['books']['books_user_id'];
-    } else {
+    } else if (result.containsKey('books_user_id') == true) {
       userId = result['books_user_id'];
+    } else if (allResponse?.containsKey('books_user_id') == true) {
+      userId = allResponse!['books_user_id'];
+    } else {
+      userId = allResponse!['books'].first['books_user_id'];
     }
 
     if (result.containsKey('books')) {
       title = result['books']['books_title'];
-    } else {
+    } else if (result.containsKey('books_title') == true) {
       title = result['books_title'];
+    } else if (allResponse?.containsKey('books_title') == true) {
+      title = allResponse!['books_title'];
+    } else {
+      title = allResponse!['books'].first['books_title'];
     }
   }
 

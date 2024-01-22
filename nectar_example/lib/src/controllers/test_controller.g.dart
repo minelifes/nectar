@@ -10,82 +10,101 @@ class TestController extends _TestController {
   TestController();
 
   static void register() {
-    Routes.registerRoute((router) {
+    Routes.registerRoute((router, middlewares) {
       final controller = TestController();
-      router.get(
-        "/api/v1/users/",
-        controller._getRolesHandler,
-        use: Pipeline()
+      router.get("/api/v1/users/", controller._getRolesHandler, use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.get(
-        "/api/v1/users/int/<id>",
-        controller._getIntByIdHandler,
-        use: Pipeline()
+      router.get("/api/v1/users/int/<id>", controller._getIntByIdHandler,
+          use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.post(
-        "/api/v1/users/body",
-        controller._testBodyHandler,
-        use: Pipeline()
+      router.post("/api/v1/users/body", controller._testBodyHandler,
+          use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
             .addMiddleware(checkJwtMiddleware())
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.get(
-        "/api/v1/users/secured",
-        controller._securedHandler,
-        use: Pipeline()
+      router.get("/api/v1/users/secured", controller._securedHandler,
+          use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
             .addMiddleware(checkJwtMiddleware())
             .addMiddleware(hasRoleMiddleware(['admin']))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.get(
-        "/api/v1/users/login",
-        controller._loginHandler,
-        use: Pipeline()
+      router.get("/api/v1/users/login", controller._loginHandler, use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.post(
-        "/api/v1/users/file",
-        controller._fileHandler,
-        use: Pipeline()
+      router.post("/api/v1/users/file", controller._fileHandler, use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.post(
-        "/api/v1/users/form",
-        controller._formHandler,
-        use: Pipeline()
+      router.post("/api/v1/users/form", controller._formHandler, use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
 
-      router.get(
-        "/api/v1/users/<id>",
-        controller._getByIdHandler,
-        use: Pipeline()
+      router.get("/api/v1/users/<id>", controller._getByIdHandler, use: (call) {
+        final p = Pipeline();
+        for (var middle in middlewares) {
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('application/json'))
             .addMiddleware(setHeadersMiddleware({}))
-            .middleware,
-      );
+            .middleware(call);
+      });
     });
   }
 

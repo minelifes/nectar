@@ -69,55 +69,80 @@ class User extends _User implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('User')) {
       id = result['User']['User_id'];
-    } else {
+    } else if (result.containsKey('User_id') == true) {
       id = result['User_id'];
+    } else if (allResponse?.containsKey('User_id') == true) {
+      id = allResponse!['User_id'];
+    } else {
+      id = allResponse!['User'].first['User_id'];
     }
 
     if (result.containsKey('User')) {
       name = result['User']['User_name'];
-    } else {
+    } else if (result.containsKey('User_name') == true) {
       name = result['User_name'];
+    } else if (allResponse?.containsKey('User_name') == true) {
+      name = allResponse!['User_name'];
+    } else {
+      name = allResponse!['User'].first['User_name'];
     }
 
     if (result.containsKey('User')) {
       lastName = result['User']['User_last_name'];
-    } else {
+    } else if (result.containsKey('User_last_name') == true) {
       lastName = result['User_last_name'];
+    } else if (allResponse?.containsKey('User_last_name') == true) {
+      lastName = allResponse!['User_last_name'];
+    } else {
+      lastName = allResponse!['User'].first['User_last_name'];
     }
 
     if (result.containsKey('User')) {
       email = result['User']['User_email'];
-    } else {
+    } else if (result.containsKey('User_email') == true) {
       email = result['User_email'];
+    } else if (allResponse?.containsKey('User_email') == true) {
+      email = allResponse!['User_email'];
+    } else {
+      email = allResponse!['User'].first['User_email'];
     }
 
     if (result.containsKey('User')) {
       phone = result['User']['User_phone'];
-    } else {
+    } else if (result.containsKey('User_phone') == true) {
       phone = result['User_phone'];
+    } else if (allResponse?.containsKey('User_phone') == true) {
+      phone = allResponse!['User_phone'];
+    } else {
+      phone = allResponse!['User'].first['User_phone'];
     }
 
     if (result.containsKey('User')) {
       password = result['User']['User_password'];
-    } else {
+    } else if (result.containsKey('User_password') == true) {
       password = result['User_password'];
+    } else if (allResponse?.containsKey('User_password') == true) {
+      password = allResponse!['User_password'];
+    } else {
+      password = allResponse!['User'].first['User_password'];
     }
 
     if (result.containsKey('User')) {
       final wisBlocked = result['User']['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
-    } else if (allResponse?.containsKey('User') == true) {
-      final wisBlocked = allResponse!['User']['User_isBlocked'];
+    } else if (result.containsKey('User_isBlocked') == true) {
+      final wisBlocked = result['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     } else if (allResponse?.containsKey('User_isBlocked') == true) {
       final wisBlocked = allResponse!['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     } else {
-      final wisBlocked = result['User_isBlocked'];
+      final wisBlocked = allResponse!['User'].first['User_isBlocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     }
 
-    final l_role = (result["Role"] as List<Map<String, dynamic>>?);
+    final l_role = (result["Role"] as List<Map<String, dynamic>>?) ??
+        (allResponse?["Role"] as List<Map<String, dynamic>>?);
     role = (l_role == null ||
             l_role.isNotEmpty != true ||
             l_role.firstOrNull?.isNotEmpty != true)

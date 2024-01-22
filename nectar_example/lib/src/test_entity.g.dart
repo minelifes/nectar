@@ -41,14 +41,22 @@ class Test extends _Test implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('test')) {
       id = result['test']['test_id'];
-    } else {
+    } else if (result.containsKey('test_id') == true) {
       id = result['test_id'];
+    } else if (allResponse?.containsKey('test_id') == true) {
+      id = allResponse!['test_id'];
+    } else {
+      id = allResponse!['test'].first['test_id'];
     }
 
     if (result.containsKey('test')) {
       testString = result['test']['test_test_string'];
-    } else {
+    } else if (result.containsKey('test_test_string') == true) {
       testString = result['test_test_string'];
+    } else if (allResponse?.containsKey('test_test_string') == true) {
+      testString = allResponse!['test_test_string'];
+    } else {
+      testString = allResponse!['test'].first['test_test_string'];
     }
   }
 

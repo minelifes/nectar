@@ -69,13 +69,19 @@ class RestInspector {
         getFieldNameFromRestAnnotation(ann, "headers")?.toMapValue();
     final hheaders = _convertMapToStringMap(headers);
     return ''' 
-      use: Pipeline()
+      use: (call){
+        final p = Pipeline();
+        for(var middle in middlewares){
+          p.addMiddleware(middle);
+        }
+        return p
             .addMiddleware(setContentType('$contentType'))
             .addMiddleware(setHeadersMiddleware({$hheaders}))
             ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
             ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
             ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
-            .middleware,
+            .middleware(call);
+      }
     ''';
   }
 
@@ -263,7 +269,7 @@ class RestInspector {
       $name();
       
       static void register() {
-        Routes.registerRoute((router) {
+        Routes.registerRoute((router, middlewares) {
           final controller = $name();
           ${methods.map(_buildRouteRegister).join("\n\n")}
         });
