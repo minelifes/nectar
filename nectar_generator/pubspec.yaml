@@ -15,12 +15,12 @@ dependencies:
   logging: ^1.2.0
   mysql1: ^0.20.0
   collection: ^1.18.0
-#  nectar:
-#    git:
-#      url: https://github.com/minelifes/nectar.git
-#      path: ./nectar/
   nectar:
-    path: ../nectar
+    git:
+      url: https://github.com/minelifes/nectar.git
+      path: ./nectar/
+#  nectar:
+#    path: ../nectar
 
 dev_dependencies:
   lints: ^3.0.0
