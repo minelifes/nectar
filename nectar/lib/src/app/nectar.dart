@@ -82,13 +82,7 @@ class Nectar {
 
   Future<ShelfRunContext> start() async {
     final server = await shelfRun(
-      () {
-        var app = Routes.getRouter();
-        for (var middle in _middlewares) {
-          app.use(middle);
-        }
-        return app;
-      },
+      () => Routes.getRouter(middlewares: _middlewares),
       defaultBindPort: _port,
       defaultBindAddress: _host,
       defaultEnableHotReload: _enableHotReload,

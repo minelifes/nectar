@@ -13,7 +13,10 @@ class Routes {
 
   static int get registeredControllers => _routes.length;
 
-  static RouterPlus getRouter() {
+  static RouterPlus getRouter({List<Middleware>? middlewares}) {
+    middlewares?.forEach((element) {
+      _router.use(element);
+    });
     for (var e in _routes) {
       e(_router);
     }
