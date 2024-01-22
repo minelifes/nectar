@@ -2,12 +2,11 @@ import 'package:nectar/nectar.dart';
 
 part 'role.g.dart';
 
-@Entity(tableName: "Role")
+@Entity(tableName: "roles")
 class _Role {
   @Id()
-  @UuidGenerate()
-  String? id;
+  String? key;
 
   @Column()
-  late String title;
+  late String name;
 }

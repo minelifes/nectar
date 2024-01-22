@@ -17,8 +17,7 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role?.toJson(),
-        "books": books?.map(_valueForList).toList()
+        "role": role?.toJson()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -29,9 +28,7 @@ class User extends _User implements Model {
     ..phone = json["phone"]
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
-    ..role = Role.fromJson(json["role"])
-    ..books =
-        (json["books"] as List<dynamic>).map((e) => Book.fromJson(e)).toList();
+    ..role = Role.fromJson(json["role"]);
 
   _valueForList(e) {
     if (e is String ||
@@ -57,102 +54,96 @@ class User extends _User implements Model {
         "email",
         "phone",
         "password",
-        "isBlocked",
-        "roleId",
-        "id"
+        "is_blocked",
+        "role_id"
       ];
 
   @override
-  String get tableName => "User";
+  String get tableName => "users";
 
   @override
   void fromRow(Map result, Map? allResponse) {
-    if (result.containsKey('User')) {
-      id = result['User']['User_id'];
-    } else if (result.containsKey('User_id') == true) {
-      id = result['User_id'];
-    } else if (allResponse?.containsKey('User_id') == true) {
-      id = allResponse!['User_id'];
+    if (result.containsKey('users')) {
+      id = result['users']['users_id'];
+    } else if (result.containsKey('users_id') == true) {
+      id = result['users_id'];
+    } else if (allResponse?.containsKey('users_id') == true) {
+      id = allResponse!['users_id'];
     } else {
-      id = allResponse!['User'].first['User_id'];
+      id = allResponse!['users'].first['users_id'];
     }
 
-    if (result.containsKey('User')) {
-      name = result['User']['User_name'];
-    } else if (result.containsKey('User_name') == true) {
-      name = result['User_name'];
-    } else if (allResponse?.containsKey('User_name') == true) {
-      name = allResponse!['User_name'];
+    if (result.containsKey('users')) {
+      name = result['users']['users_name'];
+    } else if (result.containsKey('users_name') == true) {
+      name = result['users_name'];
+    } else if (allResponse?.containsKey('users_name') == true) {
+      name = allResponse!['users_name'];
     } else {
-      name = allResponse!['User'].first['User_name'];
+      name = allResponse!['users'].first['users_name'];
     }
 
-    if (result.containsKey('User')) {
-      lastName = result['User']['User_last_name'];
-    } else if (result.containsKey('User_last_name') == true) {
-      lastName = result['User_last_name'];
-    } else if (allResponse?.containsKey('User_last_name') == true) {
-      lastName = allResponse!['User_last_name'];
+    if (result.containsKey('users')) {
+      lastName = result['users']['users_last_name'];
+    } else if (result.containsKey('users_last_name') == true) {
+      lastName = result['users_last_name'];
+    } else if (allResponse?.containsKey('users_last_name') == true) {
+      lastName = allResponse!['users_last_name'];
     } else {
-      lastName = allResponse!['User'].first['User_last_name'];
+      lastName = allResponse!['users'].first['users_last_name'];
     }
 
-    if (result.containsKey('User')) {
-      email = result['User']['User_email'];
-    } else if (result.containsKey('User_email') == true) {
-      email = result['User_email'];
-    } else if (allResponse?.containsKey('User_email') == true) {
-      email = allResponse!['User_email'];
+    if (result.containsKey('users')) {
+      email = result['users']['users_email'];
+    } else if (result.containsKey('users_email') == true) {
+      email = result['users_email'];
+    } else if (allResponse?.containsKey('users_email') == true) {
+      email = allResponse!['users_email'];
     } else {
-      email = allResponse!['User'].first['User_email'];
+      email = allResponse!['users'].first['users_email'];
     }
 
-    if (result.containsKey('User')) {
-      phone = result['User']['User_phone'];
-    } else if (result.containsKey('User_phone') == true) {
-      phone = result['User_phone'];
-    } else if (allResponse?.containsKey('User_phone') == true) {
-      phone = allResponse!['User_phone'];
+    if (result.containsKey('users')) {
+      phone = result['users']['users_phone'];
+    } else if (result.containsKey('users_phone') == true) {
+      phone = result['users_phone'];
+    } else if (allResponse?.containsKey('users_phone') == true) {
+      phone = allResponse!['users_phone'];
     } else {
-      phone = allResponse!['User'].first['User_phone'];
+      phone = allResponse!['users'].first['users_phone'];
     }
 
-    if (result.containsKey('User')) {
-      password = result['User']['User_password'];
-    } else if (result.containsKey('User_password') == true) {
-      password = result['User_password'];
-    } else if (allResponse?.containsKey('User_password') == true) {
-      password = allResponse!['User_password'];
+    if (result.containsKey('users')) {
+      password = result['users']['users_password'];
+    } else if (result.containsKey('users_password') == true) {
+      password = result['users_password'];
+    } else if (allResponse?.containsKey('users_password') == true) {
+      password = allResponse!['users_password'];
     } else {
-      password = allResponse!['User'].first['User_password'];
+      password = allResponse!['users'].first['users_password'];
     }
 
-    if (result.containsKey('User')) {
-      final wisBlocked = result['User']['User_isBlocked'];
+    if (result.containsKey('users')) {
+      final wisBlocked = result['users']['users_is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
-    } else if (result.containsKey('User_isBlocked') == true) {
-      final wisBlocked = result['User_isBlocked'];
+    } else if (result.containsKey('users_is_blocked') == true) {
+      final wisBlocked = result['users_is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
-    } else if (allResponse?.containsKey('User_isBlocked') == true) {
-      final wisBlocked = allResponse!['User_isBlocked'];
+    } else if (allResponse?.containsKey('users_is_blocked') == true) {
+      final wisBlocked = allResponse!['users_is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     } else {
-      final wisBlocked = allResponse!['User'].first['User_isBlocked'];
+      final wisBlocked = allResponse!['users'].first['users_is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     }
 
-    final l_role = (result["Role"] as List<Map<String, dynamic>>?) ??
-        (allResponse?["Role"] as List<Map<String, dynamic>>?);
+    final l_role = (result["roles"] as List<Map<String, dynamic>>?) ??
+        (allResponse?["roles"] as List<Map<String, dynamic>>?);
     role = (l_role == null ||
             l_role.isNotEmpty != true ||
             l_role.firstOrNull?.isNotEmpty != true)
         ? Role()
         : (Role()..fromRow(l_role.first, allResponse));
-
-    books = (result["books"] as List?)
-            ?.map((e) => Book()..fromRow(e, allResponse))
-            .toList() ??
-        [];
   }
 
   @override
@@ -174,7 +165,7 @@ class User extends _User implements Model {
   Future<int> delete() =>
       getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
 
-  static UserMigration migration() => UserMigration("User");
+  static UserMigration migration() => UserMigration("users");
 
   static UserQuery query() => UserQuery();
 
@@ -183,19 +174,19 @@ class User extends _User implements Model {
 }
 
 class UserQuery extends Query<User> {
-  UserQuery() : super("User", "id");
+  UserQuery() : super("users", "id");
 
   @override
   User instanceOfT() => User();
 
   List<String> get _defaultTableFields => [
-        "User.id as User_id",
-        "User.name as User_name",
-        "User.last_name as User_last_name",
-        "User.email as User_email",
-        "User.phone as User_phone",
-        "User.password as User_password",
-        "User.isBlocked as User_isBlocked"
+        "users.id as users_id",
+        "users.name as users_name",
+        "users.last_name as users_last_name",
+        "users.email as users_email",
+        "users.phone as users_phone",
+        "users.password as users_password",
+        "users.is_blocked as users_is_blocked"
       ];
 
   @override
@@ -205,22 +196,11 @@ class UserQuery extends Query<User> {
     model.fields = (fields.isEmpty) ? _defaultTableFields : fields;
     model.joins = [
       JoinModel(
-        tableName: 'User',
-        mappedBy: 'roleId',
-        foreignTableName: 'Role',
-        foreignKey: 'id',
-        fields: ["Role.id as Role_id", "Role.title as Role_title"],
-      ),
-      JoinModel(
-        tableName: 'User',
-        mappedBy: 'id',
-        foreignTableName: 'books',
-        foreignKey: 'user_id',
-        fields: [
-          "books.id as books_id",
-          "books.user_id as books_user_id",
-          "books.title as books_title"
-        ],
+        tableName: 'users',
+        mappedBy: 'role_id',
+        foreignTableName: 'roles',
+        foreignKey: 'key',
+        fields: ["roles.key as roles_key", "roles.name as roles_name"],
       )
     ];
     return UserSelectClause(model, instanceOfT);
@@ -244,47 +224,42 @@ class UserWhereClause extends WhereClause<User> {
   UserWhereClause(super.model, super.instanceOfT);
 
   UserWhereClause id(int? value, {operator = "="}) {
-    model.where["User.id"] = [operator, value];
+    model.where["users.id"] = [operator, value];
     return this;
   }
 
   UserWhereClause name(String value, {operator = "="}) {
-    model.where["User.name"] = [operator, value];
+    model.where["users.name"] = [operator, value];
     return this;
   }
 
   UserWhereClause lastName(String value, {operator = "="}) {
-    model.where["User.last_name"] = [operator, value];
+    model.where["users.last_name"] = [operator, value];
     return this;
   }
 
   UserWhereClause email(String? value, {operator = "="}) {
-    model.where["User.email"] = [operator, value];
+    model.where["users.email"] = [operator, value];
     return this;
   }
 
   UserWhereClause phone(String value, {operator = "="}) {
-    model.where["User.phone"] = [operator, value];
+    model.where["users.phone"] = [operator, value];
     return this;
   }
 
   UserWhereClause password(String value, {operator = "="}) {
-    model.where["User.password"] = [operator, value];
+    model.where["users.password"] = [operator, value];
     return this;
   }
 
   UserWhereClause isBlocked(bool value, {operator = "="}) {
-    model.where["User.isBlocked"] = [operator, value];
+    model.where["users.is_blocked"] = [operator, value];
     return this;
   }
 
-  UserWhereClause roleId(String? value, {operator = "="}) {
-    model.where["User.roleId"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause bookId(int? value, {operator = "="}) {
-    model.where["User.id"] = [operator, value];
+  UserWhereClause roleKey(String? value, {operator = "="}) {
+    model.where["users.role_id"] = [operator, value];
     return this;
   }
 
@@ -301,7 +276,7 @@ class UserInsertClause extends InsertClause<User> {
   Future<User?> selectOne(String primaryKeyName, dynamic value) => UserQuery()
       .select()
       .where()
-      .addCustom('User.$primaryKeyName', value)
+      .addCustom('users.$primaryKeyName', value)
       .one();
 
   @override
@@ -312,8 +287,8 @@ class UserInsertClause extends InsertClause<User> {
         "email": model.email,
         "phone": model.phone,
         "password": model.password,
-        "isBlocked": model.isBlocked,
-        "roleId": model.role?.id,
+        "is_blocked": model.isBlocked,
+        "role_id": model.role?.key,
       };
 }
 
@@ -383,7 +358,7 @@ class UserMigration extends Migration {
           length: 0,
         ),
         ColumnInfo(
-          name: 'isBlocked',
+          name: 'is_blocked',
           columnType: ColumnType.bool,
           defaultValue: null,
           isKey: false,
@@ -393,7 +368,7 @@ class UserMigration extends Migration {
           length: 0,
         ),
         ColumnInfo(
-          name: 'roleId',
+          name: 'role_id',
           columnType: ColumnType.varchar,
           defaultValue: null,
           isKey: false,

@@ -1,10 +1,12 @@
 import 'package:nectar/nectar.dart';
 import 'package:nectar_example/src/books.dart';
+import 'package:nectar_example/src/controllers/auth_controller.dart';
 import 'package:nectar_example/src/controllers/test_controller.dart';
 import 'package:nectar_example/src/security/user_details.dart';
 import 'package:nectar_example/src/user.dart';
 
 late Db db;
+
 void createDbConnection() {
   db = Db()
     ..connect(DbSettings(
@@ -16,7 +18,13 @@ void createDbConnection() {
     ));
 }
 
+void _registerRoutes() {
+  TestController.register();
+  AuthController.register();
+}
+
 void main() async {
+  _registerRoutes();
   createDbConnection();
   // final test = await Test.query().select().list();
   //
@@ -75,17 +83,18 @@ void main() async {
   // db.close();
   // return;
 
-  TestController.register();
   Nectar.configure()
       .enableJwtSecurity(JwtSecurity(
-        secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",
-        userDetailsFromPayload: (JwtPayload payload) async {
-          final user = await User.query().select().where().id(payload.id).one();
-          if (user == null) return null;
-          return AppUserDetails(user);
-        },
-      ))
-      .start();
-
-  db.close();
+    secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",
+    userDetailsFromPayload: (JwtPayload payload) async {
+      final user = await User.query().select().where().id(payload.id).one();
+      if (user == null) return null;
+      return AppUserDetails(user);
+    },
+  ))
+      .useCors(headers: {
+    ACCESS_CONTROL_ALLOW_ORIGIN: "http://localhost:5173, http://localhost:5174"
+  }).onWillClose(() {
+    db.close();
+  }).start();
 }

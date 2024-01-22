@@ -10,100 +10,62 @@ class TestController extends _TestController {
   TestController();
 
   static void register() {
-    Routes.registerRoute((router, middlewares) {
+    Routes.registerRoute((router) {
       final controller = TestController();
       router.get("/api/v1/users/", controller._getRolesHandler, use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
 
       router.get("/api/v1/users/int/<id>", controller._getIntByIdHandler,
           use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
 
       router.post("/api/v1/users/body", controller._testBodyHandler,
           use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .addMiddleware(checkJwtMiddleware())
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        p = p.addMiddleware(checkJwtMiddleware());
+
+        return p(call);
       });
 
       router.get("/api/v1/users/secured", controller._securedHandler,
           use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .addMiddleware(checkJwtMiddleware())
-            .addMiddleware(hasRoleMiddleware(['admin']))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        p = p.addMiddleware(checkJwtMiddleware());
+        p = p.addMiddleware(hasRoleMiddleware(['admin']));
+
+        return p(call);
       });
 
       router.get("/api/v1/users/login", controller._loginHandler, use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
 
       router.post("/api/v1/users/file", controller._fileHandler, use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
 
       router.post("/api/v1/users/form", controller._formHandler, use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
 
       router.get("/api/v1/users/<id>", controller._getByIdHandler, use: (call) {
-        final p = Pipeline();
-        for (var middle in middlewares) {
-          p.addMiddleware(middle);
-        }
-        return p
-            .addMiddleware(setContentType('application/json'))
-            .addMiddleware(setHeadersMiddleware({}))
-            .middleware(call);
+        var p = setContentType('application/json');
+
+        return p(call);
       });
     });
   }

@@ -9,11 +9,11 @@ part of 'role.dart';
 class Role extends _Role implements Model {
   Role();
 
-  Map<String, dynamic> toJson() => {"id": id, "title": title};
+  Map<String, dynamic> toJson() => {"key": key, "name": name};
 
   factory Role.fromJson(Map<String, dynamic> json) => Role()
-    ..id = json["id"]
-    ..title = json["title"];
+    ..key = json["key"]
+    ..name = json["name"];
 
   _valueForList(e) {
     if (e is String ||
@@ -32,36 +32,36 @@ class Role extends _Role implements Model {
   }
 
   @override
-  List<String> get columns => ["id", "title"];
+  List<String> get columns => ["key", "name"];
 
   @override
-  String get tableName => "Role";
+  String get tableName => "roles";
 
   @override
   void fromRow(Map result, Map? allResponse) {
-    if (result.containsKey('Role')) {
-      id = result['Role']['Role_id'];
-    } else if (result.containsKey('Role_id') == true) {
-      id = result['Role_id'];
-    } else if (allResponse?.containsKey('Role_id') == true) {
-      id = allResponse!['Role_id'];
+    if (result.containsKey('roles')) {
+      key = result['roles']['roles_key'];
+    } else if (result.containsKey('roles_key') == true) {
+      key = result['roles_key'];
+    } else if (allResponse?.containsKey('roles_key') == true) {
+      key = allResponse!['roles_key'];
     } else {
-      id = allResponse!['Role'].first['Role_id'];
+      key = allResponse!['roles'].first['roles_key'];
     }
 
-    if (result.containsKey('Role')) {
-      title = result['Role']['Role_title'];
-    } else if (result.containsKey('Role_title') == true) {
-      title = result['Role_title'];
-    } else if (allResponse?.containsKey('Role_title') == true) {
-      title = allResponse!['Role_title'];
+    if (result.containsKey('roles')) {
+      name = result['roles']['roles_name'];
+    } else if (result.containsKey('roles_name') == true) {
+      name = result['roles_name'];
+    } else if (allResponse?.containsKey('roles_name') == true) {
+      name = allResponse!['roles_name'];
     } else {
-      title = allResponse!['Role'].first['Role_title'];
+      name = allResponse!['roles'].first['roles_name'];
     }
   }
 
   @override
-  String get primaryKeyName => "id";
+  String get primaryKeyName => "key";
 
   static Future<ResultFormat> rawQuery(
     String sql, {
@@ -77,9 +77,9 @@ class Role extends _Role implements Model {
           );
 
   Future<int> delete() =>
-      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: id});
+      getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: key});
 
-  static RoleMigration migration() => RoleMigration("Role");
+  static RoleMigration migration() => RoleMigration("roles");
 
   static RoleQuery query() => RoleQuery();
 
@@ -88,13 +88,13 @@ class Role extends _Role implements Model {
 }
 
 class RoleQuery extends Query<Role> {
-  RoleQuery() : super("Role", "id");
+  RoleQuery() : super("roles", "key");
 
   @override
   Role instanceOfT() => Role();
 
   List<String> get _defaultTableFields =>
-      ["Role.id as Role_id", "Role.title as Role_title"];
+      ["roles.key as roles_key", "roles.name as roles_name"];
 
   @override
   RoleSelectClause select({
@@ -122,13 +122,13 @@ class RoleSelectClause extends SelectClause<Role> {
 class RoleWhereClause extends WhereClause<Role> {
   RoleWhereClause(super.model, super.instanceOfT);
 
-  RoleWhereClause id(String? value, {operator = "="}) {
-    model.where["Role.id"] = [operator, value];
+  RoleWhereClause key(String? value, {operator = "="}) {
+    model.where["roles.key"] = [operator, value];
     return this;
   }
 
-  RoleWhereClause title(String value, {operator = "="}) {
-    model.where["Role.title"] = [operator, value];
+  RoleWhereClause name(String value, {operator = "="}) {
+    model.where["roles.name"] = [operator, value];
     return this;
   }
 
@@ -145,13 +145,13 @@ class RoleInsertClause extends InsertClause<Role> {
   Future<Role?> selectOne(String primaryKeyName, dynamic value) => RoleQuery()
       .select()
       .where()
-      .addCustom('Role.$primaryKeyName', value)
+      .addCustom('roles.$primaryKeyName', value)
       .one();
 
   @override
   Map<String, dynamic> toInsert() => {
-        "id": model.id ?? generateUUID(),
-        "title": model.title,
+        "key": model.key,
+        "name": model.name,
       };
 }
 
@@ -161,7 +161,7 @@ class RoleMigration extends Migration {
   @override
   List<ColumnInfo> get columns => [
         ColumnInfo(
-          name: 'id',
+          name: 'key',
           columnType: ColumnType.varchar,
           defaultValue: null,
           isKey: true,
@@ -171,7 +171,7 @@ class RoleMigration extends Migration {
           length: 0,
         ),
         ColumnInfo(
-          name: 'title',
+          name: 'name',
           columnType: ColumnType.text,
           defaultValue: null,
           isKey: false,

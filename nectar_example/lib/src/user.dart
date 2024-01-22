@@ -5,7 +5,7 @@ import 'role.dart';
 
 part 'user.g.dart';
 
-@Entity(tableName: "User")
+@Entity(tableName: "users")
 class _User {
   @Id()
   int? id;
@@ -25,12 +25,9 @@ class _User {
   @Column()
   late String password;
 
-  @Column()
+  @Column(name: "is_blocked")
   bool isBlocked = false;
 
-  @OneToOne(mappedBy: "roleId", referenceClass: "_Role")
+  @OneToOne(mappedBy: "role_id", referenceClass: "_Role", foreignKey: "key")
   late Role role;
-
-  @OneToMany(mappedBy: "id", referenceClass: "_Book", foreignKey: "user_id")
-  List<Book> books = [];
 }

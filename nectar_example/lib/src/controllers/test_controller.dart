@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:nectar/nectar.dart';
 import 'package:nectar_example/src/payloads/test_request.dart';
 import 'package:nectar_example/src/role.dart';
@@ -12,7 +9,7 @@ part 'test_controller.g.dart';
 class _TestController {
   @GetMapping("/")
   Future<List<Role>> getRoles() async {
-    return [Role()..title = "myTitle"];
+    return [Role()..name = "myTitle"];
   }
 
   @GetMapping("/int/<id>")
@@ -34,7 +31,7 @@ class _TestController {
   @AuthWithJwt()
   @HasRole(["admin"])
   Future<List<Role>> secured() async {
-    return [Role()..title = "myTitle"];
+    return [Role()..name = "myTitle"];
   }
 
   @GetMapping("/login")
@@ -69,7 +66,7 @@ class _TestController {
   @GetMapping("/<id>")
   Future<Role?> getById(@PathVariable(name: "id") String id) async {
     return Role()
-      ..title = "myTitle"
-      ..id = id;
+      ..name = "myTitle"
+      ..key = id;
   }
 }
