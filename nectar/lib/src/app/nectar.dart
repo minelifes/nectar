@@ -90,6 +90,11 @@ class Nectar {
     return this;
   }
 
+  Nectar useCustomMiddlewareForCORS(Middleware middleware) {
+    _corsMiddleware = middleware;
+    return this;
+  }
+
   Future<ShelfRunContext> start({RouterConfigurer? configurer}) async {
     final server = await shelfRun(
       () {
