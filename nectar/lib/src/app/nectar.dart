@@ -28,7 +28,7 @@ class Nectar {
 
   Middleware? _corsMiddleware;
 
-  Middleware? get corsMiddleware => _corsMiddleware;
+  Middleware get corsMiddleware => _corsMiddleware ?? corsHeaders();
 
   Nectar onStart(Function method) {
     _onStarted = method;
