@@ -13,6 +13,7 @@ class Nectar {
 
   bool _isJwtConfigured = false;
   bool _shared = false;
+
   bool get isJwtConfigured => _isJwtConfigured;
 
   Function? _onStarted;
@@ -24,9 +25,10 @@ class Nectar {
   int _port = 8080;
   SecurityContext? _context;
   bool _enableHotReload = false;
-  bool _useCors = false;
-  Map<String, String>? _headers;
-  OriginChecker? _originChecker;
+
+  Middleware? _corsMiddleware;
+
+  Middleware? get corsMiddleware => _corsMiddleware;
 
   Nectar onStart(Function method) {
     _onStarted = method;
@@ -83,9 +85,8 @@ class Nectar {
     Map<String, String>? headers,
     OriginChecker? originChecker,
   }) {
-    _useCors = true;
-    headers = headers;
-    originChecker = originChecker;
+    _corsMiddleware = corsHeaders(
+        headers: headers, originChecker: originChecker ?? originAllowAll);
     return this;
   }
 
@@ -93,13 +94,10 @@ class Nectar {
     final server = await shelfRun(
       () {
         var router = Routes.getRouter();
-        if (_useCors) {
+        if (_corsMiddleware != null) {
           router.options("/**", () async {
             return Response.ok("");
-          },
-              use: corsHeaders(
-                  headers: _headers,
-                  originChecker: _originChecker ?? originAllowAll));
+          }, use: _corsMiddleware);
         }
         if (configurer != null) {
           router = configurer(router);

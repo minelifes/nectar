@@ -74,11 +74,18 @@ class RestInspector {
       headersString = _convertMapToStringMap(headers);
     }
     return ''' 
-      use: setContentType('$contentType')
+      use: (call){
+        var middle = setContentType('$contentType')
         ${headersString == null ? "" : ".addMiddleware(setHeadersMiddleware({$headersString}))"}
         ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
         ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
         ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+        ;
+        if(corsMiddleware != null){
+          middle.addMiddleware(corsMiddleware);
+        }
+      }
+
     ,''';
   }
 
@@ -266,6 +273,7 @@ class RestInspector {
       $name();
       
       static void register() {
+        final corsMiddleware = getIt.get<Nectar>().corsMiddleware;
         Routes.registerRoute((router) {
           final controller = $name();
           ${methods.map(_buildRouteRegister).join("\n\n")}
