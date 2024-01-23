@@ -75,7 +75,7 @@ class RestInspector {
     }
     return ''' 
       use: setContentType('$contentType')
-            .addMiddleware(setHeadersMiddleware({${headersString ?? "{}"}))
+            .addMiddleware(setHeadersMiddleware(${headersString ?? "{}"}))
             ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
             ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
             ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
