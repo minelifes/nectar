@@ -9,6 +9,7 @@ const ACCESS_CONTROL_MAX_AGE = 'Access-Control-Max-Age';
 const VARY = 'Vary';
 
 const ORIGIN = 'origin';
+const REFERER = 'referer';
 
 const _defaultHeadersList = [
   'accept',
@@ -54,7 +55,11 @@ Middleware corsHeaders({
   final headersAll = headers?.map((key, value) => MapEntry(key, [value]));
   return (Handler handler) {
     return (Request request) async {
-      final origin = request.headers[ORIGIN];
+      String? referer = request.headers[REFERER];
+      if (referer != null && referer.isNotEmpty) {
+        referer = referer.substring(0, referer.length - 1);
+      }
+      final origin = request.headers[ORIGIN] ?? referer;
 
       if (origin == null || !originChecker(origin)) {
         return handler(request);
