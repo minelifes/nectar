@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
 
-typedef RouterConfigurer = RouterPlus Function(RouterPlus);
+typedef RouterConfigurer = Handler Function(RouterPlus);
 
 class Nectar {
   Nectar._() {
@@ -105,7 +105,7 @@ class Nectar {
           }, use: _corsMiddleware);
         }
         if (configurer != null) {
-          router = configurer(router);
+          return configurer(router);
         }
         return router;
       },
