@@ -15,8 +15,8 @@ class AuthController extends _AuthController {
       router.post(
         "/api/v1/auth/register",
         controller._registerUserHandler,
-        use: setContentType('application/json')..addMiddleware(),
-      );
+        use: setContentType('application/json'),
+      );s
 
       router.post(
         "/api/v1/auth/login",

@@ -84,6 +84,7 @@ class RestInspector {
         if(corsMiddleware != null){
           middle.addMiddleware(corsMiddleware);
         }
+        return middle(call);
       }
 
     ,''';
