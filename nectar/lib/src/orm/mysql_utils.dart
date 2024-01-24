@@ -289,7 +289,7 @@ class MysqlUtils {
     String _sql = 'INSERT INTO $table ($_fieldsString) VALUES ($_valuesString) '
         'ON DUPLICATE KEY UPDATE ${(_fields..remove(primaryKeyName)).map((e) => "`$e`=:$e").join(', ')}';
     final inserted = await query(_sql, values: insertData, debug: debug);
-    if (inserted.affectedRows == 0) throw OrmException("Cant insert data");
+    // if (inserted.affectedRows == 0) throw OrmException("Cant insert data");
     if (inserted.lastInsertID > 0) {
       return inserted.lastInsertID;
     }
