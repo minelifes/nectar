@@ -17,7 +17,7 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role?.toJson()
+        "role": role.toJson()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -65,75 +65,75 @@ class User extends _User implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('users')) {
       id = result['users']['users_id'];
-    } else if (result.containsKey('users_id') == true) {
-      id = result['users_id'];
-    } else if (allResponse?.containsKey('users_id') == true) {
-      id = allResponse!['users_id'];
+    } else if (result.containsKey('users\$id') == true) {
+      id = result['users\$id'];
+    } else if (allResponse?.containsKey('users\$id') == true) {
+      id = allResponse!['users\$id'];
     } else {
-      id = allResponse!['users'].first['users_id'];
+      id = allResponse!['users'].first['users\$id'];
     }
 
     if (result.containsKey('users')) {
       name = result['users']['users_name'];
-    } else if (result.containsKey('users_name') == true) {
-      name = result['users_name'];
-    } else if (allResponse?.containsKey('users_name') == true) {
-      name = allResponse!['users_name'];
+    } else if (result.containsKey('users\$name') == true) {
+      name = result['users\$name'];
+    } else if (allResponse?.containsKey('users\$name') == true) {
+      name = allResponse!['users\$name'];
     } else {
-      name = allResponse!['users'].first['users_name'];
+      name = allResponse!['users'].first['users\$name'];
     }
 
     if (result.containsKey('users')) {
       lastName = result['users']['users_last_name'];
-    } else if (result.containsKey('users_last_name') == true) {
-      lastName = result['users_last_name'];
-    } else if (allResponse?.containsKey('users_last_name') == true) {
-      lastName = allResponse!['users_last_name'];
+    } else if (result.containsKey('users\$last_name') == true) {
+      lastName = result['users\$last_name'];
+    } else if (allResponse?.containsKey('users\$last_name') == true) {
+      lastName = allResponse!['users\$last_name'];
     } else {
-      lastName = allResponse!['users'].first['users_last_name'];
+      lastName = allResponse!['users'].first['users\$last_name'];
     }
 
     if (result.containsKey('users')) {
       email = result['users']['users_email'];
-    } else if (result.containsKey('users_email') == true) {
-      email = result['users_email'];
-    } else if (allResponse?.containsKey('users_email') == true) {
-      email = allResponse!['users_email'];
+    } else if (result.containsKey('users\$email') == true) {
+      email = result['users\$email'];
+    } else if (allResponse?.containsKey('users\$email') == true) {
+      email = allResponse!['users\$email'];
     } else {
-      email = allResponse!['users'].first['users_email'];
+      email = allResponse!['users'].first['users\$email'];
     }
 
     if (result.containsKey('users')) {
       phone = result['users']['users_phone'];
-    } else if (result.containsKey('users_phone') == true) {
-      phone = result['users_phone'];
-    } else if (allResponse?.containsKey('users_phone') == true) {
-      phone = allResponse!['users_phone'];
+    } else if (result.containsKey('users\$phone') == true) {
+      phone = result['users\$phone'];
+    } else if (allResponse?.containsKey('users\$phone') == true) {
+      phone = allResponse!['users\$phone'];
     } else {
-      phone = allResponse!['users'].first['users_phone'];
+      phone = allResponse!['users'].first['users\$phone'];
     }
 
     if (result.containsKey('users')) {
       password = result['users']['users_password'];
-    } else if (result.containsKey('users_password') == true) {
-      password = result['users_password'];
-    } else if (allResponse?.containsKey('users_password') == true) {
-      password = allResponse!['users_password'];
+    } else if (result.containsKey('users\$password') == true) {
+      password = result['users\$password'];
+    } else if (allResponse?.containsKey('users\$password') == true) {
+      password = allResponse!['users\$password'];
     } else {
-      password = allResponse!['users'].first['users_password'];
+      password = allResponse!['users'].first['users\$password'];
     }
 
     if (result.containsKey('users')) {
       final wisBlocked = result['users']['users_is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
-    } else if (result.containsKey('users_is_blocked') == true) {
-      final wisBlocked = result['users_is_blocked'];
+    } else if (result.containsKey('users\$is_blocked') == true) {
+      final wisBlocked = result['users\$is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
-    } else if (allResponse?.containsKey('users_is_blocked') == true) {
-      final wisBlocked = allResponse!['users_is_blocked'];
+    } else if (allResponse?.containsKey('users\$is_blocked') == true) {
+      final wisBlocked = allResponse!['users\$is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     } else {
-      final wisBlocked = allResponse!['users'].first['users_is_blocked'];
+      final wisBlocked = allResponse!['users'].first['users\$is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     }
 
@@ -180,13 +180,13 @@ class UserQuery extends Query<User> {
   User instanceOfT() => User();
 
   List<String> get _defaultTableFields => [
-        "users.id as users_id",
-        "users.name as users_name",
-        "users.last_name as users_last_name",
-        "users.email as users_email",
-        "users.phone as users_phone",
-        "users.password as users_password",
-        "users.is_blocked as users_is_blocked"
+        "users.id as users\$id",
+        "users.name as users\$name",
+        "users.last_name as users\$last_name",
+        "users.email as users\$email",
+        "users.phone as users\$phone",
+        "users.password as users\$password",
+        "users.is_blocked as users\$is_blocked"
       ];
 
   @override
@@ -200,7 +200,7 @@ class UserQuery extends Query<User> {
         mappedBy: 'role_id',
         foreignTableName: 'roles',
         foreignKey: 'key',
-        fields: ["roles.key as roles_key", "roles.name as roles_name"],
+        fields: ["roles.key as roles\$key", "roles.name as roles\$name"],
       )
     ];
     return UserSelectClause(model, instanceOfT);
@@ -273,11 +273,13 @@ class UserInsertClause extends InsertClause<User> {
   UserInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<User?> selectOne(String primaryKeyName, dynamic value) => UserQuery()
-      .select()
-      .where()
-      .addCustom('users.$primaryKeyName', value)
-      .one();
+  Future<User?> selectOne(String primaryKeyName, dynamic value) async =>
+      (await UserQuery()
+              .select()
+              .where()
+              .addCustom('users.$primaryKeyName', value)
+              .list())
+          .firstOrNull;
 
   @override
   Map<String, dynamic> toInsert() => {
@@ -288,7 +290,7 @@ class UserInsertClause extends InsertClause<User> {
         "phone": model.phone,
         "password": model.password,
         "is_blocked": model.isBlocked,
-        "role_id": model.role?.key,
+        "role_id": model.role.key,
       };
 }
 

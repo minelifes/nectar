@@ -41,22 +41,22 @@ class Role extends _Role implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('roles')) {
       key = result['roles']['roles_key'];
-    } else if (result.containsKey('roles_key') == true) {
-      key = result['roles_key'];
-    } else if (allResponse?.containsKey('roles_key') == true) {
-      key = allResponse!['roles_key'];
+    } else if (result.containsKey('roles\$key') == true) {
+      key = result['roles\$key'];
+    } else if (allResponse?.containsKey('roles\$key') == true) {
+      key = allResponse!['roles\$key'];
     } else {
-      key = allResponse!['roles'].first['roles_key'];
+      key = allResponse!['roles'].first['roles\$key'];
     }
 
     if (result.containsKey('roles')) {
       name = result['roles']['roles_name'];
-    } else if (result.containsKey('roles_name') == true) {
-      name = result['roles_name'];
-    } else if (allResponse?.containsKey('roles_name') == true) {
-      name = allResponse!['roles_name'];
+    } else if (result.containsKey('roles\$name') == true) {
+      name = result['roles\$name'];
+    } else if (allResponse?.containsKey('roles\$name') == true) {
+      name = allResponse!['roles\$name'];
     } else {
-      name = allResponse!['roles'].first['roles_name'];
+      name = allResponse!['roles'].first['roles\$name'];
     }
   }
 
@@ -94,7 +94,7 @@ class RoleQuery extends Query<Role> {
   Role instanceOfT() => Role();
 
   List<String> get _defaultTableFields =>
-      ["roles.key as roles_key", "roles.name as roles_name"];
+      ["roles.key as roles\$key", "roles.name as roles\$name"];
 
   @override
   RoleSelectClause select({
@@ -142,11 +142,13 @@ class RoleInsertClause extends InsertClause<Role> {
   RoleInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Role?> selectOne(String primaryKeyName, dynamic value) => RoleQuery()
-      .select()
-      .where()
-      .addCustom('roles.$primaryKeyName', value)
-      .one();
+  Future<Role?> selectOne(String primaryKeyName, dynamic value) async =>
+      (await RoleQuery()
+              .select()
+              .where()
+              .addCustom('roles.$primaryKeyName', value)
+              .list())
+          .firstOrNull;
 
   @override
   Map<String, dynamic> toInsert() => {

@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:nectar_generator/src/orm/orm_utils.dart';
 import 'package:nectar_generator/src/rest/rest_utils.dart';
 import 'dart:mirrors';
 
@@ -38,10 +39,21 @@ class Serializable {
     final obj = annotation?.computeConstantValue();
     final serializeName = obj?.getField("name")?.toStringValue() ?? e.name;
     final canSerialize = obj?.getField("serialize")?.toBoolValue() ?? true;
-    if (canSerialize) {
-      return serializeField(serializeName, e);
+    if (!canSerialize) return "";
+    final ann = getColumnAnnotation(e) ??
+        getOneToManyAnnotation(e) ??
+        getOneToOneAnnotation(e) ??
+        getManyToOneAnnotation(e);
+    var nullable = false;
+    if (ann != null) {
+      nullable =
+          getFieldNameFromRestAnnotation(ann, "nullable")?.toBoolValue() ??
+              false;
+    } else {
+      final nullableAnn = obj?.getField("nullable")?.toBoolValue() ?? false;
+      nullable = e.computeConstantValue()?.isNull ?? nullableAnn;
     }
-    return "";
+    return serializeField(serializeName, e, nullable: nullable);
   }
 
   dynamic _getValueFromDartObject(DartObject? value) {

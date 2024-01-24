@@ -12,55 +12,72 @@ class TestController extends _TestController {
   static void register() {
     Routes.registerRoute((router) {
       final controller = TestController();
+      final corsMiddleware = getIt.get<Nectar>().corsMiddleware;
       router.get(
         "/api/v1/users/",
         controller._getRolesHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
 
       router.get(
         "/api/v1/users/int/<id>",
         controller._getIntByIdHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
 
       router.post(
         "/api/v1/users/body",
         controller._testBodyHandler,
         use: setContentType('application/json')
-            .addMiddleware(checkJwtMiddleware()),
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(checkJwtMiddleware())
+            .addMiddleware(corsMiddleware),
       );
 
       router.get(
         "/api/v1/users/secured",
         controller._securedHandler,
         use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
             .addMiddleware(checkJwtMiddleware())
-            .addMiddleware(hasRoleMiddleware(['admin'])),
+            .addMiddleware(hasRoleMiddleware(['admin']))
+            .addMiddleware(corsMiddleware),
       );
 
       router.get(
         "/api/v1/users/login",
         controller._loginHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
 
       router.post(
         "/api/v1/users/file",
         controller._fileHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
 
       router.post(
         "/api/v1/users/form",
         controller._formHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
 
       router.get(
         "/api/v1/users/<id>",
         controller._getByIdHandler,
-        use: setContentType('application/json'),
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
       );
     });
   }

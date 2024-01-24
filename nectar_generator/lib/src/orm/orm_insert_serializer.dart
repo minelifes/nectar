@@ -5,25 +5,34 @@ import 'package:nectar_generator/src/utils/string_utils.dart';
 
 import 'orm_utils.dart';
 
+class FieldInfo {
+  final bool isNullable;
+  final String name;
+
+  const FieldInfo({required this.name, this.isNullable = false});
+}
+
 class OrmInsertSerializer {
   final ClassInspector inspector;
   const OrmInsertSerializer(this.inspector);
 
-  Future<String> _getForeignValueFromReferenceClass(
+  Future<FieldInfo> _getForeignValueFromReferenceClass(
       FieldElement element, ElementAnnotation ann) async {
     final referenceClass =
         getFieldFromAnnotation(ann, "referenceClass")?.toStringValue();
     final foreignKey =
         getFieldFromAnnotation(ann, "foreignKey")?.toStringValue();
-    if (foreignKey == "id") return "id";
-    if (referenceClass == null || foreignKey == null) return "";
+    final nullable = getFieldFromAnnotation(ann, "nullable")?.toBoolValue();
+    if (foreignKey == "id") return FieldInfo(name: "id");
+    if (referenceClass == null || foreignKey == null) {
+      return FieldInfo(name: "");
+    }
     final clazz = await getClassInfo(inspector, referenceClass);
-    if (clazz == null) return "";
-    return clazz.fields
-            .firstWhereOrNull((element) =>
-                getFieldNameFromOrmAnnotation(element) == foreignKey)
-            ?.name ??
-        "";
+    if (clazz == null) return FieldInfo(name: "");
+    final foreignField = clazz.fields.firstWhereOrNull(
+        (element) => getFieldNameFromOrmAnnotation(element) == foreignKey);
+    if (foreignField == null) return FieldInfo(name: "");
+    return FieldInfo(name: foreignField.name, isNullable: nullable ?? false);
   }
 
   Future<String> _getFieldData(FieldElement element) async {
@@ -42,12 +51,12 @@ class OrmInsertSerializer {
     e = getOneToOneAnnotation(element);
     if (e != null) {
       final fieldName = await _getForeignValueFromReferenceClass(element, e);
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? "?.$fieldName" : ""}";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.name.isNotEmpty ? "${fieldName.isNullable ? "?" : ""}.${fieldName.name}" : ""}";
     }
     e = getManyToOneAnnotation(element);
     if (e != null) {
       final fieldName = await _getForeignValueFromReferenceClass(element, e);
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.isNotEmpty ? "?.$fieldName" : ""}";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${fieldName.name.isNotEmpty ? "${fieldName.isNullable ? "?" : ""}.${fieldName.name}" : ""}";
     }
     return "";
     // e = getOneToManyAnnotation(element);

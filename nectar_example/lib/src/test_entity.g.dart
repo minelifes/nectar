@@ -41,22 +41,22 @@ class Test extends _Test implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('test')) {
       id = result['test']['test_id'];
-    } else if (result.containsKey('test_id') == true) {
-      id = result['test_id'];
-    } else if (allResponse?.containsKey('test_id') == true) {
-      id = allResponse!['test_id'];
+    } else if (result.containsKey('test\$id') == true) {
+      id = result['test\$id'];
+    } else if (allResponse?.containsKey('test\$id') == true) {
+      id = allResponse!['test\$id'];
     } else {
-      id = allResponse!['test'].first['test_id'];
+      id = allResponse!['test'].first['test\$id'];
     }
 
     if (result.containsKey('test')) {
       testString = result['test']['test_test_string'];
-    } else if (result.containsKey('test_test_string') == true) {
-      testString = result['test_test_string'];
-    } else if (allResponse?.containsKey('test_test_string') == true) {
-      testString = allResponse!['test_test_string'];
+    } else if (result.containsKey('test\$test_string') == true) {
+      testString = result['test\$test_string'];
+    } else if (allResponse?.containsKey('test\$test_string') == true) {
+      testString = allResponse!['test\$test_string'];
     } else {
-      testString = allResponse!['test'].first['test_test_string'];
+      testString = allResponse!['test'].first['test\$test_string'];
     }
   }
 
@@ -94,7 +94,7 @@ class TestQuery extends Query<Test> {
   Test instanceOfT() => Test();
 
   List<String> get _defaultTableFields =>
-      ["test.id as test_id", "test.test_string as test_test_string"];
+      ["test.id as test\$id", "test.test_string as test\$test_string"];
 
   @override
   TestSelectClause select({
@@ -142,11 +142,13 @@ class TestInsertClause extends InsertClause<Test> {
   TestInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Test?> selectOne(String primaryKeyName, dynamic value) => TestQuery()
-      .select()
-      .where()
-      .addCustom('test.$primaryKeyName', value)
-      .one();
+  Future<Test?> selectOne(String primaryKeyName, dynamic value) async =>
+      (await TestQuery()
+              .select()
+              .where()
+              .addCustom('test.$primaryKeyName', value)
+              .list())
+          .firstOrNull;
 
   @override
   Map<String, dynamic> toInsert() => {

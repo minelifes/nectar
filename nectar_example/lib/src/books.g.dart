@@ -42,32 +42,32 @@ class Book extends _Book implements Model {
   void fromRow(Map result, Map? allResponse) {
     if (result.containsKey('books')) {
       id = result['books']['books_id'];
-    } else if (result.containsKey('books_id') == true) {
-      id = result['books_id'];
-    } else if (allResponse?.containsKey('books_id') == true) {
-      id = allResponse!['books_id'];
+    } else if (result.containsKey('books\$id') == true) {
+      id = result['books\$id'];
+    } else if (allResponse?.containsKey('books\$id') == true) {
+      id = allResponse!['books\$id'];
     } else {
-      id = allResponse!['books'].first['books_id'];
+      id = allResponse!['books'].first['books\$id'];
     }
 
     if (result.containsKey('books')) {
       userId = result['books']['books_user_id'];
-    } else if (result.containsKey('books_user_id') == true) {
-      userId = result['books_user_id'];
-    } else if (allResponse?.containsKey('books_user_id') == true) {
-      userId = allResponse!['books_user_id'];
+    } else if (result.containsKey('books\$user_id') == true) {
+      userId = result['books\$user_id'];
+    } else if (allResponse?.containsKey('books\$user_id') == true) {
+      userId = allResponse!['books\$user_id'];
     } else {
-      userId = allResponse!['books'].first['books_user_id'];
+      userId = allResponse!['books'].first['books\$user_id'];
     }
 
     if (result.containsKey('books')) {
       title = result['books']['books_title'];
-    } else if (result.containsKey('books_title') == true) {
-      title = result['books_title'];
-    } else if (allResponse?.containsKey('books_title') == true) {
-      title = allResponse!['books_title'];
+    } else if (result.containsKey('books\$title') == true) {
+      title = result['books\$title'];
+    } else if (allResponse?.containsKey('books\$title') == true) {
+      title = allResponse!['books\$title'];
     } else {
-      title = allResponse!['books'].first['books_title'];
+      title = allResponse!['books'].first['books\$title'];
     }
   }
 
@@ -105,9 +105,9 @@ class BookQuery extends Query<Book> {
   Book instanceOfT() => Book();
 
   List<String> get _defaultTableFields => [
-        "books.id as books_id",
-        "books.user_id as books_user_id",
-        "books.title as books_title"
+        "books.id as books\$id",
+        "books.user_id as books\$user_id",
+        "books.title as books\$title"
       ];
 
   @override
@@ -161,11 +161,13 @@ class BookInsertClause extends InsertClause<Book> {
   BookInsertClause(super.model, super.instanceOfT);
 
   @override
-  Future<Book?> selectOne(String primaryKeyName, dynamic value) => BookQuery()
-      .select()
-      .where()
-      .addCustom('books.$primaryKeyName', value)
-      .one();
+  Future<Book?> selectOne(String primaryKeyName, dynamic value) async =>
+      (await BookQuery()
+              .select()
+              .where()
+              .addCustom('books.$primaryKeyName', value)
+              .list())
+          .firstOrNull;
 
   @override
   Map<String, dynamic> toInsert() => {

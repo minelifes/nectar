@@ -104,24 +104,18 @@ bool isFieldEnumType(FieldElement field) {
   return isEnum;
 }
 
-String serializeField(String key, FieldElement e) {
+String serializeField(String key, FieldElement e, {bool nullable = false}) {
   if (isFieldEasyType(e)) {
     return '"$key": ${e.name}';
   } else if (isFieldEnumType(e)) {
-    return '"$key": ${e.name}.toString()';
+    return '"$key": ${e.name}${nullable ? "?" : ""}.toString()';
   } else if (isFieldDate(e)) {
-    return '"$key": ${e.name}?.toIso8601String()';
+    return '"$key": ${e.name}${nullable ? "?" : ""}.toIso8601String()';
   } else if (isFieldList(e)) {
-    return '"$key": ${e.name}?.map(_valueForList).toList()';
+    return '"$key": ${e.name}${nullable ? "?" : ""}.map(_valueForList).toList()';
   } else {
-    return '"$key": ${e.name}?.toJson()';
+    return '"$key": ${e.name}${nullable ? "?" : ""}.toJson()';
   }
-}
-
-enum a {
-  aa,
-  b,
-  c;
 }
 
 String deserealizeField(String serializeName, FieldElement e) {

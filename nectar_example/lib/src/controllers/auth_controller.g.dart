@@ -12,19 +12,23 @@ class AuthController extends _AuthController {
   static void register() {
     Routes.registerRoute((router) {
       final controller = AuthController();
+      final corsMiddleware = getIt.get<Nectar>().corsMiddleware;
       router.post(
         "/api/v1/auth/register",
         controller._registerUserHandler,
-        use: setContentType('application/json'),
-      );s
+        use: setContentType('application/json')
+            .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(corsMiddleware),
+      );
 
       router.post(
         "/api/v1/auth/login",
         controller._loginHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({
-          'TestHeader': 'asdfsfg',
-        })),
+              'TestHeader': 'asdfsfg',
+            }))
+            .addMiddleware(corsMiddleware),
       );
     });
   }
