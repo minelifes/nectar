@@ -886,7 +886,7 @@ class ResultFormat {
     for (var e in maps) {
       for (var entry in e.keys) {
         if (entry.startsWith(tableName)) continue;
-        final joinTable = entry.split("_").first;
+        final joinTable = entry.split("\$").first;
         tables.add(joinTable);
       }
     }

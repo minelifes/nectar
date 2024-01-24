@@ -41,7 +41,7 @@ class OrmQuerySerializer {
     if (referenceClass == null) {
       if (isFirst == true) return;
       final rowName =
-          "$foreignTableName.${getFieldNameFromOrmAnnotation(e)} as ${foreignTableName}_${getFieldNameFromOrmAnnotation(e)}";
+          "$foreignTableName.${getFieldNameFromOrmAnnotation(e)} as ${foreignTableName}\$${getFieldNameFromOrmAnnotation(e)}";
       if (!_joins.containsKey(foreignTableName)) {
         _joins[foreignTableName] = JoinModel(
           tableName: tableName,
