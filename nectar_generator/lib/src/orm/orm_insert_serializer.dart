@@ -64,7 +64,7 @@ class OrmInsertSerializer {
         ${inspector.name}InsertClause(super.model, super.instanceOfT);
         
         @override
-        Future<${inspector.name}?> selectOne(String primaryKeyName, dynamic value) => ${inspector.name}Query().select().where().addCustom('${inspector.tableName}.\$primaryKeyName', value).list();
+        Future<${inspector.name}?> selectOne(String primaryKeyName, dynamic value) async => (await ${inspector.name}Query().select().where().addCustom('${inspector.tableName}.\$primaryKeyName', value).list()).firstOrNull;
       
         @override
         Map<String, dynamic> toInsert() => {
