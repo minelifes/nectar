@@ -14,7 +14,7 @@ class OrmQuerySerializer {
     final referenceClass =
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
-      return "${inspector.tableName}.${getFieldNameFromOrmAnnotation(e)} as ${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}";
+      return "${inspector.tableName}.${getFieldNameFromOrmAnnotation(e)} as ${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}";
     }
     return null;
   }

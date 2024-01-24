@@ -25,10 +25,10 @@ class OrmSerializer {
           final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
           ${e.name} = (w${e.name} == 1) ? true : false;
         } else if(result.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
           ${e.name} = (w${e.name} == 1) ? true : false;
         } else if(allResponse?.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
           ${e.name} = (w${e.name} == 1) ? true : false;
         } else {
           final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
@@ -41,9 +41,9 @@ class OrmSerializer {
         if(result.containsKey('${inspector.tableName}')){
           ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
         }else if(result.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
         } else if(allResponse?.containsKey('${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}') == true){
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
         } else {
           ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
         }
