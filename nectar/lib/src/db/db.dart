@@ -115,13 +115,11 @@ class Db {
     required String table,
     required Map<String, dynamic> insertData,
     required String primaryKeyName,
-    replace = false,
   }) =>
       _utils!.insertOrUpdate(
         primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
-        replace: replace,
         debug: debug,
       );
 
