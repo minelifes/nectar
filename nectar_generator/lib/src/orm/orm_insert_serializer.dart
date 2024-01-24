@@ -20,10 +20,13 @@ class OrmInsertSerializer {
       FieldElement element, ElementAnnotation ann) async {
     final referenceClass =
         getFieldFromAnnotation(ann, "referenceClass")?.toStringValue();
+
     final foreignKey =
         getFieldFromAnnotation(ann, "foreignKey")?.toStringValue();
     final nullable = getFieldFromAnnotation(ann, "nullable")?.toBoolValue();
-    if (foreignKey == "id") return FieldInfo(name: "id");
+    if (foreignKey == "id") {
+      return FieldInfo(name: "id", isNullable: nullable ?? false);
+    }
     if (referenceClass == null || foreignKey == null) {
       return FieldInfo(name: "");
     }
@@ -46,7 +49,7 @@ class OrmInsertSerializer {
     }
     e = getEnumColumnAnnotation(element);
     if (e != null) {
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}?.toString()";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${e.computeConstantValue()?.isNull ?? true ? "?" : ""}.toString()";
     }
     e = getOneToOneAnnotation(element);
     if (e != null) {
