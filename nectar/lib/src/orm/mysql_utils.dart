@@ -269,7 +269,6 @@ class MysqlUtils {
     required String table,
     required Map<String, dynamic> insertData,
     required String primaryKeyName,
-    replace = false,
     debug = false,
   }) async {
     if (insertData.isEmpty) {
@@ -287,9 +286,8 @@ class MysqlUtils {
     });
     String _fieldsString = _fields.map((e) => "`$e`").join(',');
     String _valuesString = _values.join(',');
-    String _sql =
-        '${replace ? 'REPLACE' : 'INSERT'} INTO $table ($_fieldsString) VALUES ($_valuesString) '
-        'ON DUPLICATE KEY UPDATE ${_fields.map((e) => "`$e`=:$e").join(', ')}';
+    String _sql = 'INSERT INTO $table ($_fieldsString) VALUES ($_valuesString) '
+        'ON DUPLICATE KEY UPDATE ${(_fields..remove(primaryKeyName)).map((e) => "`$e`=:$e").join(', ')}';
     final inserted = await query(_sql, values: insertData, debug: debug);
     if (inserted.affectedRows == 0) throw OrmException("Cant insert data");
     if (inserted.lastInsertID > 0) {
