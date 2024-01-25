@@ -59,7 +59,7 @@ class OrmSerializer {
         entity.computeConstantValue()!.getField("tableName")!.toStringValue()!;
     if (isFieldList(e)) {
       return '''
-        ${e.name} = ((result["$foreignTableName"] as List?) ?? (allResponse["$foreignTableName"] as List?))?.map((e) => $className()..fromRow(e, allResponse)).toList() ?? [];
+        ${e.name} = ((result["$foreignTableName"] as List?) ?? (allResponse?["$foreignTableName"] as List?))?.map((e) => $className()..fromRow(e, allResponse)).toList() ?? [];
       ''';
     }
     return '''
