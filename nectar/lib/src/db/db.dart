@@ -76,7 +76,7 @@ class Db {
     String having = '',
     String order = '',
     List<JoinModel> joins = const [],
-    int limit = 1,
+    int limit = 100,
   }) =>
       _utils!.getOne(
           table: table,
