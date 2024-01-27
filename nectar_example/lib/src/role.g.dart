@@ -38,25 +38,19 @@ class Role extends _Role implements Model {
   String get tableName => "roles";
 
   @override
-  void fromRow(Map result, Map? allResponse) {
+  void fromRow(Map result) {
     if (result.containsKey('roles')) {
-      key = result['roles']['roles_key'];
-    } else if (result.containsKey('roles\$key') == true) {
-      key = result['roles\$key'];
-    } else if (allResponse?.containsKey('roles\$key') == true) {
-      key = allResponse!['roles\$key'];
+      key = result['roles']['key'];
     } else {
-      key = allResponse!['roles'].first['roles\$key'];
+      // if(result.containsKey('key') == true)
+      key = result['key'];
     }
 
     if (result.containsKey('roles')) {
-      name = result['roles']['roles_name'];
-    } else if (result.containsKey('roles\$name') == true) {
-      name = result['roles\$name'];
-    } else if (allResponse?.containsKey('roles\$name') == true) {
-      name = allResponse!['roles\$name'];
+      name = result['roles']['name'];
     } else {
-      name = allResponse!['roles'].first['roles\$name'];
+      // if(result.containsKey('name') == true)
+      name = result['name'];
     }
   }
 
@@ -66,13 +60,13 @@ class Role extends _Role implements Model {
   static Future<ResultFormat> rawQuery(
     String sql, {
     Map<String, dynamic> values = const {},
-    bool haveJoins = false,
+    List<JoinModel> joins = const [],
     required String tableName,
   }) =>
       getIt.get<Db>().query(
             sql,
             values: values,
-            haveJoins: haveJoins,
+            joins: joins,
             forTable: tableName,
           );
 

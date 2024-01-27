@@ -38,25 +38,19 @@ class Test extends _Test implements Model {
   String get tableName => "test";
 
   @override
-  void fromRow(Map result, Map? allResponse) {
+  void fromRow(Map result) {
     if (result.containsKey('test')) {
-      id = result['test']['test_id'];
-    } else if (result.containsKey('test\$id') == true) {
-      id = result['test\$id'];
-    } else if (allResponse?.containsKey('test\$id') == true) {
-      id = allResponse!['test\$id'];
+      id = result['test']['id'];
     } else {
-      id = allResponse!['test'].first['test\$id'];
+      // if(result.containsKey('id') == true)
+      id = result['id'];
     }
 
     if (result.containsKey('test')) {
-      testString = result['test']['test_test_string'];
-    } else if (result.containsKey('test\$test_string') == true) {
-      testString = result['test\$test_string'];
-    } else if (allResponse?.containsKey('test\$test_string') == true) {
-      testString = allResponse!['test\$test_string'];
+      testString = result['test']['test_string'];
     } else {
-      testString = allResponse!['test'].first['test\$test_string'];
+      // if(result.containsKey('test_string') == true)
+      testString = result['test_string'];
     }
   }
 
@@ -66,13 +60,13 @@ class Test extends _Test implements Model {
   static Future<ResultFormat> rawQuery(
     String sql, {
     Map<String, dynamic> values = const {},
-    bool haveJoins = false,
+    List<JoinModel> joins = const [],
     required String tableName,
   }) =>
       getIt.get<Db>().query(
             sql,
             values: values,
-            haveJoins: haveJoins,
+            joins: joins,
             forTable: tableName,
           );
 

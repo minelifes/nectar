@@ -39,35 +39,26 @@ class Book extends _Book implements Model {
   String get tableName => "books";
 
   @override
-  void fromRow(Map result, Map? allResponse) {
+  void fromRow(Map result) {
     if (result.containsKey('books')) {
-      id = result['books']['books_id'];
-    } else if (result.containsKey('books\$id') == true) {
-      id = result['books\$id'];
-    } else if (allResponse?.containsKey('books\$id') == true) {
-      id = allResponse!['books\$id'];
+      id = result['books']['id'];
     } else {
-      id = allResponse!['books'].first['books\$id'];
+      // if(result.containsKey('id') == true)
+      id = result['id'];
     }
 
     if (result.containsKey('books')) {
-      userId = result['books']['books_user_id'];
-    } else if (result.containsKey('books\$user_id') == true) {
-      userId = result['books\$user_id'];
-    } else if (allResponse?.containsKey('books\$user_id') == true) {
-      userId = allResponse!['books\$user_id'];
+      userId = result['books']['user_id'];
     } else {
-      userId = allResponse!['books'].first['books\$user_id'];
+      // if(result.containsKey('user_id') == true)
+      userId = result['user_id'];
     }
 
     if (result.containsKey('books')) {
-      title = result['books']['books_title'];
-    } else if (result.containsKey('books\$title') == true) {
-      title = result['books\$title'];
-    } else if (allResponse?.containsKey('books\$title') == true) {
-      title = allResponse!['books\$title'];
+      title = result['books']['title'];
     } else {
-      title = allResponse!['books'].first['books\$title'];
+      // if(result.containsKey('title') == true)
+      title = result['title'];
     }
   }
 
@@ -77,13 +68,13 @@ class Book extends _Book implements Model {
   static Future<ResultFormat> rawQuery(
     String sql, {
     Map<String, dynamic> values = const {},
-    bool haveJoins = false,
+    List<JoinModel> joins = const [],
     required String tableName,
   }) =>
       getIt.get<Db>().query(
             sql,
             values: values,
-            haveJoins: haveJoins,
+            joins: joins,
             forTable: tableName,
           );
 
