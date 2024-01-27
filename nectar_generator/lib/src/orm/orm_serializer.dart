@@ -22,16 +22,10 @@ class OrmSerializer {
       if (isBool) {
         return '''
         if(result.containsKey('${inspector.tableName}')){
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
+          final w${e.name} = result['${inspector.tableName}']['${getFieldNameFromOrmAnnotation(e)}'];
           ${e.name} = (w${e.name} == 1) ? true : false;
-        } else if(result.containsKey('${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}') == true){
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
-          ${e.name} = (w${e.name} == 1) ? true : false;
-        } else if(allResponse?.containsKey('${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}') == true){
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
-          ${e.name} = (w${e.name} == 1) ? true : false;
-        } else {
-          final w${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
+        } else { 
+          final w${e.name} = result['${getFieldNameFromOrmAnnotation(e)}'];
           ${e.name} = (w${e.name} == 1) ? true : false;
         }
       ''';
@@ -39,13 +33,9 @@ class OrmSerializer {
 
       return '''
         if(result.containsKey('${inspector.tableName}')){
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${inspector.tableName}_${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
-        }else if(result.containsKey('${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}') == true){
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
-        } else if(allResponse?.containsKey('${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}') == true){
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${inspector.tableName}']['${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
         } else {
-          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} allResponse!['${inspector.tableName}'].first['${inspector.tableName}\\\$${getFieldNameFromOrmAnnotation(e)}'] ${(isEnum) ? ")" : ""};
+          ${e.name} = ${(isEnum) ? "$className.values.firstWhere((e) => e.name == " : ""} result['${getFieldNameFromOrmAnnotation(e)}']  ${(isEnum) ? ")" : ""};
         }
       ''';
     }
@@ -59,20 +49,16 @@ class OrmSerializer {
         entity.computeConstantValue()!.getField("tableName")!.toStringValue()!;
     if (isFieldList(e)) {
       return '''
-        ${e.name} = ((result["$foreignTableName"] as List?) ?? (allResponse?["$foreignTableName"] as List?))?.map((e) => $className()..fromRow(e, allResponse)).toList() ?? [];
+        ${e.name} = ((result["$foreignTableName"] as Map<dynamic, dynamic>?))?.values.map((e) => $className()..fromRow(e)).toList() ?? [];
       ''';
     }
     return '''
-      final l_${e.name} = (result["$foreignTableName"] as List<Map<String, dynamic>>?) ?? (allResponse?["$foreignTableName"] as List<Map<String, dynamic>>?);
-      ${e.name} = (l_${e.name} == null ||
-              l_${e.name}.isNotEmpty != true ||
-              l_${e.name}.firstOrNull?.isNotEmpty != true)
+      final l_${e.name} = (result["$foreignTableName"] as Map<dynamic, dynamic>?);
+      ${e.name} = (l_${e.name} == null || l_${e.name}.isNotEmpty != true)
           ? ${getRawFieldValueFromOrmAnnotation(e, "nullable")?.toBoolValue() == true ? "null" : "${referenceClass.replaceFirst("_", "")}()"}
-          : (${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}.first, allResponse));
+          : (${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}.values.first));
     ''';
   }
-
-  //${e.name} = (l_${e.name} == null || l_${e.name}.isEmpty == true) ? ${referenceClass.replaceFirst("_", "")}() : ${referenceClass.replaceFirst("_", "")}()..fromRow(l_${e.name}!.first);
 
   String _getPrimaryKeyName() =>
       inspector.fields
@@ -93,7 +79,7 @@ class OrmSerializer {
        String get tableName => "${inspector.tableName}";
        
         @override  
-        void fromRow(Map result, Map? allResponse) {
+        void fromRow(Map result) {
             ${fields.join("\n ")}
         }
         
@@ -103,12 +89,12 @@ class OrmSerializer {
         static Future<ResultFormat> rawQuery(
             String sql, {
             Map<String, dynamic> values = const {},
-            bool haveJoins = false,
+            List<JoinModel> joins = const [],
             required String tableName,
           }) =>
               getIt
                   .get<Db>()
-                  .query(sql, values: values, haveJoins: haveJoins, forTable: tableName,);
+                  .query(sql, values: values, joins: joins, forTable: tableName,);
                   
        Future<int> delete() => getIt.get<Db>().delete(table: tableName, where: {primaryKeyName: ${_getPrimaryKeyName()}});
         

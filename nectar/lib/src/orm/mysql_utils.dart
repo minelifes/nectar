@@ -3,8 +3,6 @@ import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
 
-import 'column_info.dart';
-
 ///mysql helper
 class MysqlUtils {
   ///pool connect
@@ -15,9 +13,6 @@ class MysqlUtils {
 
   ///mysql setting
   late Map _settings = {};
-
-  ///query Times
-  int queryTimes = 0;
 
   ///transaction start
   int transTimes = 0;
@@ -486,14 +481,18 @@ class MysqlUtils {
     limit = _limitParse(limit);
     String join = _joinParse(joins);
 
-    List<String> allFields =
-        (fields + joins.map((e) => e.fields).flattened.toList());
+    List<String> allFields = (fields +
+        joins
+            .map((e) => e.fields
+                .map((f) => "${e.foreignTableName}.${f.name} as ${f.mappedAs}"))
+            .flattened
+            .toList());
 
     String _sql =
         'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM $table $join $_where $group $having $order $limit';
 
-    ResultFormat results = await query(_sql,
-        debug: debug, haveJoins: joins.isNotEmpty, forTable: rawTable);
+    ResultFormat results =
+        await query(_sql, debug: debug, joins: joins, forTable: rawTable);
 
     if (results.numOfRows > 0) {
       return results.rows;
@@ -529,7 +528,6 @@ class MysqlUtils {
     String having = '',
     String order = '',
     bool debug = false,
-    int limit = 100,
     List<JoinModel> joins = const [],
   }) async {
     List<dynamic> res = await getAll(
@@ -539,7 +537,6 @@ class MysqlUtils {
       group: group,
       having: having,
       order: order,
-      limit: limit,
       debug: debug,
       joins: joins,
     );
@@ -733,10 +730,9 @@ class MysqlUtils {
   Future<ResultFormat> query(String sql,
       {Map<String, dynamic> values = const {},
       debug = false,
-      bool haveJoins = false,
+      List<JoinModel> joins = const [],
       String forTable = ""}) async {
     var queryStr = '$sql  $values';
-    queryTimes++;
     if (debug) _sqlLog(queryStr);
     bool transaction = false;
     if (sql == 'start transaction' || sql == 'commit' || sql == 'rollback') {
@@ -758,7 +754,7 @@ class MysqlUtils {
         }
       }
 
-      ResultFormat _res = ResultFormat.from(res, haveJoins, forTable);
+      ResultFormat _res = ResultFormat.from(res, joins, forTable);
       return _res;
     } catch (e) {
       _errorLog(e.toString());
@@ -771,7 +767,6 @@ class MysqlUtils {
   Future<List<int>> queryMulti(String sql, Iterable<List<Object?>> values,
       {debug = false, bool haveJoins = false, String forTable = ""}) async {
     var queryStr = '$sql  $values';
-    queryTimes++;
     if (debug) _sqlLog(queryStr);
     PreparedStmt stmt;
     if (_settings['pool']) {
@@ -840,153 +835,88 @@ class ResultFormat {
     required this.rowsStream,
   });
 
-  Map<String, dynamic> _mergeData(
-    List<Map<String, dynamic>> data,
-    String skipKey,
-    List<String> prefixes,
+  Map<dynamic, dynamic> addJoins(
+    Map<dynamic, dynamic> row,
+    List<JoinModel> joins,
+    String forTable,
+    Map<dynamic, dynamic> prevData,
   ) {
-    Map<String, dynamic> mainMap = {};
-    Map<String, List<Map<String, dynamic>>> groupedItems = {};
-
-    for (var entry in data) {
-      for (var prefix in prefixes) {
-        groupedItems.putIfAbsent(prefix, () => []);
-        Map<String, dynamic> tempMap = {};
-
-        for (var key in entry.keys) {
-          if (key.startsWith(skipKey)) continue;
-          if (entry[key] != null && key.startsWith(prefix)) {
-            tempMap[key] = entry[key];
-          }
-        }
-
-        if (tempMap.isNotEmpty) {
-          groupedItems[prefix]?.add(tempMap);
-        }
+    Map<dynamic, dynamic> newRow = {...row};
+    var primaryKey =
+        row.keys.firstWhereOrNull((element) => element.startsWith(forTable));
+    if (primaryKey == null) return {};
+    var primaryValue = row[primaryKey];
+    if (primaryValue == null) return {};
+    final tableData =
+        row.keys.where((element) => element.contains("$forTable\$"));
+    for (var keyForTable in tableData) {
+      if (!prevData.containsKey(primaryValue)) prevData[primaryValue] = {};
+      prevData[primaryValue]![keyForTable.substring(
+          forTable.length + 1, keyForTable.length)] = row[keyForTable];
+      newRow.removeWhere((key, value) => key == keyForTable);
+    }
+    joins.where((element) => element.tableName == forTable).forEach((join) {
+      if (!prevData.containsKey(join.foreignTableName)) {
+        prevData[primaryValue]![join.foreignTableName] = {};
       }
-    }
-
-    for (var prefix in prefixes) {
-      mainMap[prefix] = groupedItems[prefix];
-    }
-
-    return mainMap;
+      prevData[primaryValue]![join.foreignTableName] = {
+        ...prevData[primaryValue]![join.foreignTableName],
+        ...addJoins(newRow, joins, join.foreignTableName,
+            prevData[primaryValue]![join.foreignTableName])
+      };
+    });
+    return prevData;
   }
 
-  Map<String, dynamic> _mergeAndGroupMaps(
-      String tableName, bool haveJoins, List<Map<String, dynamic>> maps) {
-    Map<String, dynamic> result = {};
-    maps.first.forEach((key, value) {
-      if (key.startsWith(tableName)) {
-        result[key] = value;
+  Map<dynamic, dynamic> deepMerge(
+      Map<dynamic, dynamic> map1, Map<dynamic, dynamic> map2) {
+    final resultMap = Map.from(map1);
+
+    map2.forEach((key, value) {
+      if (map1[key] is Map && value is Map) {
+        resultMap[key] = deepMerge(map1[key], value);
+      } else {
+        resultMap[key] = value;
       }
     });
-    if (!haveJoins) return result;
-    Set<String> tables = {};
-    for (var e in maps) {
-      for (var entry in e.keys) {
-        if (entry.startsWith(tableName)) continue;
-        final joinTable = entry.split("\$").first;
-        tables.add(joinTable);
-      }
-    }
 
-    return {...result, ..._mergeData(maps, tableName, tables.toList())};
-
-    // for (var map in maps) {
-    //   Map<String, dynamic> object = {};
-    //   String joinTable = "";
-    //   for (var entry in map.entries) {
-    //     if (entry.key.startsWith(tableName)) continue;
-    //     final joinTable = entry.key.split("_").first;
-    //     if (!joins.containsKey(joinTable)) joins[joinTable] = [];
-    //   }
-    //   joins[joinTable] = object;
-    // }
-
-    return result;
+    return resultMap;
   }
 
-  ResultFormat.from(IResultSet results, bool haveJoins, String forTable) {
+  Map<dynamic, Map<dynamic, dynamic>> buildResult(
+      IResultSet results, List<JoinModel> joins, String forTable) {
+    final listData = results.rows.map((e) => e.typedAssoc());
+    List<Map<dynamic, Map<dynamic, dynamic>>> list = [];
+    for (var row in listData) {
+      // data = {...data};
+      Map<dynamic, Map<dynamic, dynamic>> data = {};
+      addJoins(row, joins, forTable, data).forEach((key, value) {
+        if (!data.containsKey(key)) {
+          data[key] = {};
+        }
+        data[key] = {...data[key]!, ...value};
+      });
+      list.add(data);
+    }
+    Map<dynamic, Map<dynamic, dynamic>> joined = {};
+    for (var map in list) {
+      map.forEach((key, value) {
+        if (joined[key] is Map) {
+          value = deepMerge(joined[key]!, value);
+        }
+        joined[key] = value;
+      });
+    }
+    return joined;
+  }
+
+  ResultFormat.from(
+      IResultSet results, List<JoinModel> joins, String forTable) {
     List _rows = [];
     List _cols = [];
     List _rowsAssoc = [];
     if (results.rows.isNotEmpty) {
-      Map<dynamic, List<Map<String, dynamic>>> dataWithSamePrimaryData = {};
-      for (var e in results.rows) {
-        final row = e.typedAssoc();
-        var primaryKey = row.keys
-            .firstWhereOrNull((element) => element.startsWith(forTable));
-        if (primaryKey == null) continue;
-        var primaryValue = row[primaryKey];
-        if (!dataWithSamePrimaryData.containsKey(primaryValue)) {
-          dataWithSamePrimaryData[primaryValue] = [];
-        }
-        dataWithSamePrimaryData[primaryValue]!.add(row);
-      }
-
-      // List<Map<String, dynamic>> result = dataWithSamePrimaryData.values
-      //     .map((e) => _mergeAndGroupMaps(e))
-      //     .toList();
-      _rows = dataWithSamePrimaryData.values
-          .map((value) => _mergeAndGroupMaps(forTable, haveJoins, value))
-          .toList();
-
-      // final Map<dynamic, Map<String, dynamic>> parsedData = {};
-      // print("results.rows: ${results.rows.map((e) => e.typedAssoc())}");
-      // for (var e in results.rows) {
-      //   final Map<String, dynamic> object = {};
-      //   final row = e.typedAssoc();
-      //   var primaryKey = row.keys.firstWhere((element) => element.startsWith(forTable));
-      //   var primaryValue = row[primaryKey];
-      //   if (haveJoins) {
-      //     if (!parsedData.containsKey(primaryKey)) {
-      //       for (var element in row.keys) {
-      //         if (element.startsWith(forTable)) {
-      //           object[element] = row[element];
-      //         } else {
-      //           final foreignTable = element.split("_").first;
-      //           if (!object.containsKey(foreignTable)) {
-      //             object[foreignTable] = {};
-      //           }
-      //           object[foreignTable][element] = row[element];
-      //         }
-      //       }
-      //       parsedData[row[primaryValue]] = object;
-      //     } else {
-      //       for (var element in row.keys) {
-      //         if (!element.startsWith(forTable)){
-      //           final foreignTable = element.split("_").first;
-      //           if (!object.containsKey(foreignTable)) {
-      //             object[foreignTable] = {};
-      //           }
-      //           object[foreignTable][element] = row[element];
-      //         }
-      //       }
-      //       parsedData[row[primaryValue][foreignTable].add();
-      //     }
-      //
-      //     // if (!parsedData.containsKey(primaryKey)) {
-      //     //   parsedData[row[primaryKey]] = object;
-      //     // }
-      //     //
-      //     // for (var element in row.keys) {
-      //     //   if (element.startsWith(forTable)) {
-      //     //     object[element] = row[element];
-      //     //   } else {
-      //     //     final foreignTable = element.split("_").first;
-      //     //     if (!object.containsKey(foreignTable)) {
-      //     //       object[foreignTable] = {};
-      //     //     }
-      //     //     object[foreignTable][element] = row[element];
-      //     //   }
-      //     // }
-      //     // parsedData.add(object);
-      //   } else {
-      //     parsedData[primaryValue] = e.typedAssoc();
-      //   }
-      //   _rowsAssoc.add(e);
-      // }
+      _rows = buildResult(results, joins, forTable).values.toList();
     }
     if (results.cols.isNotEmpty) {
       for (var e in results.cols) {

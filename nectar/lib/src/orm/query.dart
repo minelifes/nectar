@@ -4,12 +4,18 @@ import 'package:nectar/nectar.dart';
 
 typedef TInstance<T extends Model> = T Function();
 
+class JoinField {
+  final String name;
+  final String mappedAs;
+  JoinField({required this.name, required this.mappedAs});
+}
+
 class JoinModel {
   final String tableName;
   final String mappedBy;
   final String foreignKey;
   final String foreignTableName;
-  final List<String> fields;
+  final List<JoinField> fields;
   const JoinModel({
     required this.tableName,
     required this.mappedBy,
@@ -78,7 +84,7 @@ abstract class ExecClause<T extends Model> {
         );
 
     return results
-        .mapIndexed((i, e) => instanceOfT()..fromRow(e, results[i]))
+        .mapIndexed((i, e) => instanceOfT()..fromRow(e))
         .toList();
   }
 
@@ -94,7 +100,7 @@ abstract class ExecClause<T extends Model> {
         where: model.where,
         joins: model.joins);
     if (results.isNotEmpty) {
-      return instanceOfT()..fromRow(results, results);
+      return instanceOfT()..fromRow(results);
     }
     return null;
   }

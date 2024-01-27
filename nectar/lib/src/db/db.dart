@@ -48,14 +48,14 @@ class Db {
   Future<ResultFormat> query(
     String sql, {
     Map<String, dynamic> values = const {},
-    bool haveJoins = false,
+    List<JoinModel> joins = const [],
     String forTable = "",
   }) =>
       _utils!.query(
         sql,
         values: values,
         debug: debug,
-        haveJoins: haveJoins,
+        joins: joins,
         forTable: forTable,
       );
 
@@ -76,7 +76,6 @@ class Db {
     String having = '',
     String order = '',
     List<JoinModel> joins = const [],
-    int limit = 100,
   }) =>
       _utils!.getOne(
           table: table,
@@ -86,8 +85,7 @@ class Db {
           having: having,
           order: order,
           debug: debug,
-          joins: joins,
-          limit: limit);
+          joins: joins);
 
   Future<List<dynamic>> getAll({
     required String table,
