@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
-import 'package:nectar/src/orm/paginated.dart';
 
 ///mysql helper
 class MysqlUtils {
@@ -470,7 +470,7 @@ class MysqlUtils {
     );
     return Paginated(
       allPages: (c / perPage).ceil(),
-      itemsCount: list.length,
+      perPage: perPage,
       page: page,
       count: c,
       items: list.map(instanceOfT).toList(),
@@ -621,6 +621,9 @@ class MysqlUtils {
     }
     if (limit is String && limit != '') {
       return 'LIMIT $limit';
+    }
+    if (limit is List && limit.length == 2) {
+      return 'LIMIT ${limit[0]}, ${limit[1]}';
     }
     return '';
   }
