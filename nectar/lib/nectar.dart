@@ -38,6 +38,7 @@ export 'src/extensions/string_ext.dart';
 
 export '/src/orm/mysql_utils.dart';
 export '/src/security/password_security.dart';
+export '/src/orm/paginated.dart';
 
 export 'package:json_annotation/json_annotation.dart';
 export 'package:shelf_multipart/multipart.dart';

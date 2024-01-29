@@ -7,6 +7,7 @@ typedef TInstance<T extends Model> = T Function();
 class JoinField {
   final String name;
   final String mappedAs;
+
   JoinField({required this.name, required this.mappedAs});
 }
 
@@ -16,6 +17,7 @@ class JoinModel {
   final String foreignKey;
   final String foreignTableName;
   final List<JoinField> fields;
+
   const JoinModel({
     required this.tableName,
     required this.mappedBy,
@@ -64,6 +66,7 @@ abstract class SelectClause<T extends Model> extends ExecClause<T> {
 
 abstract class WhereClause<T extends Model> extends ExecClause<T> {
   WhereClause(super._model, super.instanceOfT);
+
   WhereClause<T> addCustom(String key, dynamic value, {String operator = "="}) {
     model.where[key] = [operator, value];
     return this;
@@ -73,6 +76,7 @@ abstract class WhereClause<T extends Model> extends ExecClause<T> {
 abstract class ExecClause<T extends Model> {
   QueryModel model;
   TInstance<T> instanceOfT;
+
   ExecClause(this.model, this.instanceOfT);
 
   Future<List<T>> list() async {
@@ -83,9 +87,19 @@ abstract class ExecClause<T extends Model> {
           joins: model.joins,
         );
 
-    return results
-        .mapIndexed((i, e) => instanceOfT()..fromRow(e))
-        .toList();
+    return results.mapIndexed((i, e) => instanceOfT()..fromRow(e)).toList();
+  }
+
+  Future<Paginated> paginated({required int page, int perPage = 20}) async {
+    var results = await GetIt.I.get<Db>().paginated<T>(
+        table: model.tableName,
+        fields: model.fields,
+        where: model.where,
+        joins: model.joins,
+        instanceOfT: (e) => instanceOfT()..fromRow(e),
+        perPage: perPage,
+        page: page);
+    return results;
   }
 
   Future<int> delete() => GetIt.I.get<Db>().delete(
@@ -109,6 +123,7 @@ abstract class ExecClause<T extends Model> {
 abstract class InsertClause<T extends Model> {
   T model;
   TInstance<T> instanceOfT;
+
   InsertClause(this.model, this.instanceOfT);
 
   Map<String, dynamic> toInsert();
@@ -138,6 +153,7 @@ abstract class InsertClause<T extends Model> {
 
 abstract class Migration {
   final String tableName;
+
   Migration(this.tableName);
 
   List<ColumnInfo> get columns;

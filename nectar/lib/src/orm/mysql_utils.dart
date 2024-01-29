@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
+import 'package:nectar/src/orm/paginated.dart';
 
 ///mysql helper
 class MysqlUtils {
@@ -315,12 +316,13 @@ class MysqlUtils {
     if (having != '') having = 'HAVING $having';
 
     String _where = _whereParse(where);
-    table = _tableParse(table);
+    var formattedTable = _tableParse(table);
 
     ResultFormat results = await query(
-        'SELECT count($fields) as _count FROM $table $_where $group $having',
+        forTable: table,
+        'SELECT count($fields) $table\$count FROM $formattedTable $_where $group $having',
         debug: debug);
-    return results.rows.first['_count'];
+    return results.rows.first['count'];
   }
 
   ///```
@@ -438,6 +440,42 @@ class MysqlUtils {
           " left join ${join.foreignTableName} on ${join.tableName}.${join.mappedBy} = ${join.foreignTableName}.${join.foreignKey} ");
     }
     return str.toString();
+  }
+
+  Future<Paginated> paginated<T extends Model>({
+    required String table,
+    required int page,
+    int perPage = 20,
+    List<String> fields = const [],
+    where = const {},
+    String order = '',
+    String group = '',
+    String having = '',
+    bool debug = false,
+    List<JoinModel> joins = const [],
+    required T Function(dynamic) instanceOfT,
+  }) async {
+    final c = await count(
+        table: table, where: where, group: group, having: having, debug: debug);
+    final list = await getAll(
+      table: table,
+      limit: [(page - 1) * perPage, perPage],
+      fields: fields,
+      where: where,
+      order: order,
+      group: group,
+      having: having,
+      debug: debug,
+      joins: joins,
+    );
+    print(list);
+    return Paginated(
+      allPages: (c / perPage).ceil(),
+      itemsCount: list.length,
+      page: page,
+      count: c,
+      items: list.map(instanceOfT).toList(),
+    );
   }
 
   ///```

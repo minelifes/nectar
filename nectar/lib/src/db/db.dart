@@ -1,11 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
 import 'package:nectar/nectar.dart';
 import 'package:nectar/src/callbacks/callbacks.dart';
-import 'package:nectar/src/orm/column_info.dart';
-import 'package:nectar/src/orm/mysql_utils.dart';
-
-import 'db_settings.dart';
 
 class Db {
   MysqlUtils? _utils;
@@ -144,4 +139,29 @@ class Db {
         where: where,
         debug: debug,
       );
+
+  Future<Paginated> paginated<T extends Model>({
+    required String table,
+    required int page,
+    int perPage = 20,
+    List<String> fields = const [],
+    where = const {},
+    String order = '',
+    String group = '',
+    String having = '',
+    List<JoinModel> joins = const [],
+    required T Function(dynamic) instanceOfT,
+  }) =>
+      _utils!.paginated<T>(
+          table: table,
+          perPage: perPage,
+          fields: fields,
+          where: where,
+          order: order,
+          group: group,
+          having: having,
+          debug: debug,
+          joins: joins,
+          page: page,
+          instanceOfT: instanceOfT);
 }
