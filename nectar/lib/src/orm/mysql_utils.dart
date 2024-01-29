@@ -468,7 +468,6 @@ class MysqlUtils {
       debug: debug,
       joins: joins,
     );
-    print(list);
     return Paginated(
       allPages: (c / perPage).ceil(),
       itemsCount: list.length,
@@ -649,7 +648,6 @@ class MysqlUtils {
             }
           } else if (value is num) {
             if (_keys == '') {
-              print("we here $key");
               _keys = '($key = $value)';
             } else {
               _keys += ' AND ($key = $value)';
