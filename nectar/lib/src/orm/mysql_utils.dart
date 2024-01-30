@@ -638,9 +638,9 @@ class MysqlUtils {
       where.forEach((key, value) {
         if (key == '_SQL') {
           if (_keys == '') {
-            _keys = '${sqlEscapeString(value)}';
+            _keys = value;
           } else {
-            _keys += ' AND ${sqlEscapeString(value)}';
+            _keys += ' AND $value';
           }
         } else if (value is String || value is num) {
           if (value is String) {

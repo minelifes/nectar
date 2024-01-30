@@ -23,6 +23,11 @@ class OrmWhereSerializer {
           model.where[key] = [operator, value];
           return this;
         }
+        
+        ${inspector.name}WhereClause customWhere(String where) {
+          model.where["_SQL"] = where;
+          return this;
+        }
       }
     ''';
   }
