@@ -33,7 +33,8 @@ class QueryModel {
   List<String> fields = [];
   String order = "";
   Map<String, dynamic> where = {};
-  String limit = "";
+  int limit = 20;
+  int startFrom = 0;
   String group = "";
   List<JoinModel> joins = [];
 
@@ -73,20 +74,37 @@ abstract class WhereClause<T extends Model> extends ExecClause<T> {
   }
 }
 
+enum SortTypes {
+  DESC,
+  ASC,
+}
+
 abstract class ExecClause<T extends Model> {
   QueryModel model;
   TInstance<T> instanceOfT;
 
   ExecClause(this.model, this.instanceOfT);
 
-  Future<List<T>> list({int limit = 20, int startFrom = 0}) async {
+  ExecClause<T> limit(int limit, {int startFrom = 0}) {
+    model.limit = limit;
+    model.startFrom = startFrom;
+    return this;
+  }
+
+  ExecClause<T> order(String key, SortTypes type) {
+    model.order = "$key ${type.name}";
+    return this;
+  }
+
+  Future<List<T>> list() async {
     var results = await GetIt.I.get<Db>().getAll(
           table: model.tableName,
           fields: model.fields,
           where: model.where,
           joins: model.joins,
-          limit: limit,
-          startFrom: startFrom,
+          limit: model.limit,
+          order: model.order,
+          startFrom: model.startFrom,
         );
 
     return results.mapIndexed((i, e) => instanceOfT()..fromRow(e)).toList();
