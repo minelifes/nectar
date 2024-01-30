@@ -79,12 +79,14 @@ abstract class ExecClause<T extends Model> {
 
   ExecClause(this.model, this.instanceOfT);
 
-  Future<List<T>> list() async {
+  Future<List<T>> list({int limit = 20, int startFrom = 0}) async {
     var results = await GetIt.I.get<Db>().getAll(
           table: model.tableName,
           fields: model.fields,
           where: model.where,
           joins: model.joins,
+          limit: limit,
+          startFrom: startFrom,
         );
 
     return results.mapIndexed((i, e) => instanceOfT()..fromRow(e)).toList();
