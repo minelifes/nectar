@@ -66,6 +66,8 @@ class OrmMigrationSerializer {
     e = getOneToOneAnnotation(element);
     if (e != null) return true;
     e = getManyToOneAnnotation(element);
+    if (e != null) return true;
+    e = getEnumColumnAnnotation(element);
     return e != null;
   }
 
