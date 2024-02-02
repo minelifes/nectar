@@ -15,7 +15,7 @@ class OrmSerializer {
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
       final isEnum = getEnumColumnAnnotation(e) != null;
-      final isDate = e.computeConstantValue()?.type is DateTime;
+      final isDate = e.type.toString() == "DateTime";
       final isBool =
           e.type.getDisplayString(withNullability: false).toLowerCase() ==
               "bool";
