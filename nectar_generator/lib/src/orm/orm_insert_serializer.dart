@@ -41,7 +41,7 @@ class OrmInsertSerializer {
   Future<String> _getFieldData(FieldElement element) async {
     var e = getColumnAnnotation(element);
     if (e != null) {
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: (model.${element.name} is Date) ? model.${element.name}.toIso8601String() : model.${element.name}";
     }
     e = getIdAnnotation(element);
     if (e != null) {
@@ -49,7 +49,7 @@ class OrmInsertSerializer {
     }
     e = getEnumColumnAnnotation(element);
     if (e != null) {
-      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${e.computeConstantValue()?.isNull ?? true ? "?" : ""}.toString()";
+      return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: model.${element.name}${e.computeConstantValue()?.isNull ?? true ? "?" : ""}.name";
     }
     e = getOneToOneAnnotation(element);
     if (e != null) {
