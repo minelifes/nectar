@@ -15,6 +15,7 @@ class OrmSerializer {
         getFieldValueFromRelationAnnotation(e, "referenceClass");
     if (referenceClass == null) {
       final isEnum = getEnumColumnAnnotation(e) != null;
+      final isDate = e.computeConstantValue()?.type is DateTime;
       final isBool =
           e.type.getDisplayString(withNullability: false).toLowerCase() ==
               "bool";
@@ -27,6 +28,18 @@ class OrmSerializer {
         } else { 
           final w${e.name} = result['${getFieldNameFromOrmAnnotation(e)}'];
           ${e.name} = (w${e.name} == 1) ? true : false;
+        }
+      ''';
+      }
+
+      if (isDate) {
+        return '''
+        if(result.containsKey('${inspector.tableName}')){
+          final w${e.name} = result['${inspector.tableName}']['${getFieldNameFromOrmAnnotation(e)}'];
+          ${e.name} = DateTime.parse(w${e.name});
+        } else { 
+          final w${e.name} = result['${getFieldNameFromOrmAnnotation(e)}'];
+          ${e.name} = DateTime.parse(w${e.name});
         }
       ''';
       }
