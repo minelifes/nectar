@@ -28,7 +28,15 @@ class OrmMigrationSerializer {
         return "ColumnType.bool";
       case 'enum':
         return "ColumnType.varchar";
+      case 'datetime':
+        return "ColumnType.timestamp";
       default:
+        if (element.computeConstantValue()?.type is Enum) {
+          return "ColumnType.varchar";
+        }
+        if (element.computeConstantValue()?.type is DateTime) {
+          return "ColumnType.timestamp";
+        }
         final rel = getRelationAnnotation(element);
         final ref =
             getFieldFromAnnotation(rel, "referenceClass")?.toStringValue();

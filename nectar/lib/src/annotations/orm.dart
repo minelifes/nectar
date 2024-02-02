@@ -11,6 +11,9 @@ enum ColumnType {
   double,
   text,
   varchar,
+  timestamp,
+  date,
+  time,
   blob;
 
   String getSqlType(int length) {
@@ -27,6 +30,12 @@ enum ColumnType {
         return "text${length > 0 ? "($length)" : ""}";
       case ColumnType.varchar:
         return "varchar${length > 0 ? "($length)" : "(255)"}";
+      case ColumnType.timestamp:
+        return "timestamp";
+      case ColumnType.date:
+        return "date";
+      case ColumnType.time:
+        return "time";
       default:
         return "blob${length > 0 ? "($length)" : ""}";
     }
