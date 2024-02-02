@@ -31,9 +31,6 @@ class OrmMigrationSerializer {
       case 'datetime':
         return "ColumnType.timestamp";
       default:
-        if (element.computeConstantValue()?.type is Enum) {
-          return "ColumnType.varchar";
-        }
         if (element.computeConstantValue()?.type is DateTime) {
           return "ColumnType.timestamp";
         }
@@ -75,13 +72,13 @@ class OrmMigrationSerializer {
     if (e != null) return true;
     e = getManyToOneAnnotation(element);
     if (e != null) return true;
-    e = getEnumColumnAnnotation(element);
     return e != null;
   }
 
   Future<String> getColumnInfoFromFieldElement(FieldElement element) async {
     final includeField = _isFieldContainsColumnOrIdOrRelation(element);
-    if (!includeField) return "";
+    final isEnum = getEnumColumnAnnotation(element) != null;
+    if (!includeField && !isEnum) return "";
 
     final name = getFieldNameFromOrmAnnotation(element);
     final defaultValue =
@@ -97,7 +94,9 @@ class OrmMigrationSerializer {
         getRawFieldValueFromOrmAnnotation(element, "length")?.toIntValue() ?? 0;
     final columnType = isAutoIncrement
         ? "ColumnType.integer"
-        : await _getFieldElementType(element, length, isKey);
+        : (isEnum
+            ? "ColumnType.varchar"
+            : await _getFieldElementType(element, length, isKey));
 
     final id =
         inspector.fields.where((e) => getIdAnnotation(e) != null).firstOrNull;
