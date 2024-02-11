@@ -108,7 +108,7 @@ String serializeField(String key, FieldElement e, {bool nullable = false}) {
   if (isFieldEasyType(e)) {
     return '"$key": ${e.name}';
   } else if (isFieldEnumType(e)) {
-    return '"$key": ${e.name}${nullable ? "?" : ""}.toString()';
+    return '"$key": ${e.name}${nullable ? "?" : ""}.name';
   } else if (isFieldDate(e)) {
     return '"$key": ${e.name}${nullable ? "?" : ""}.toIso8601String()';
   } else if (isFieldList(e)) {
