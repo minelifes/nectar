@@ -116,6 +116,7 @@ abstract class ExecClause<T extends Model> {
         fields: model.fields,
         where: model.where,
         joins: model.joins,
+        order: model.order,
         instanceOfT: (e) => instanceOfT()..fromRow(e),
         perPage: perPage,
         page: page);
