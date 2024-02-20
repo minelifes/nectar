@@ -39,6 +39,17 @@ class OrmInsertSerializer {
   }
 
   Future<String> _getFieldData(FieldElement element) async {
+    final isKey = getIdAnnotation(element) != null;
+    final name = getFieldNameFromOrmAnnotation(element);
+    final id =
+        inspector.fields.where((e) => getIdAnnotation(e) != null).firstOrNull;
+    if (id == null) {
+      throw Exception(
+          "${inspector.classElement.name} don't have any filed with @Id annotation");
+    }
+    final idName = getFieldNameFromOrmAnnotation(id);
+    if (!isKey && name == idName) return "";
+
     var e = getColumnAnnotation(element);
     if (e != null) {
       return "${getFieldNameFromOrmAnnotation(element).wrapWith()}: ${element.computeConstantValue()?.type is DateTime ? "model.${element.name}.toIso8601String()" : "model.${element.name}"}";
