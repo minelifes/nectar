@@ -287,7 +287,8 @@ class MysqlUtils {
     final inserted = await query(_sql, values: insertData, debug: debug);
     // if (inserted.affectedRows == 0) throw OrmException("Cant insert data");
     if (insertData.containsKey(primaryKeyName)) {
-      return insertData[primaryKeyName];
+      final id = insertData[primaryKeyName];
+      if (id != null) return id;
     }
     if (inserted.lastInsertID > 0) {
       return inserted.lastInsertID;
