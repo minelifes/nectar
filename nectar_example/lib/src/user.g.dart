@@ -17,7 +17,8 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role.toJson()
+        "role": role.toJson(),
+        "role2": role2.toJson()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -28,7 +29,8 @@ class User extends _User implements Model {
     ..phone = json["phone"]
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
-    ..role = Role.fromJson(json["role"]);
+    ..role = Role.fromJson(json["role"])
+    ..role2 = Role.fromJson(json["role2"]);
 
   _valueForList(e) {
     if (e is String ||
@@ -55,7 +57,8 @@ class User extends _User implements Model {
         "phone",
         "password",
         "is_blocked",
-        "role_id"
+        "role_id",
+        "role_id_2"
       ];
 
   @override
@@ -66,42 +69,36 @@ class User extends _User implements Model {
     if (result.containsKey('users')) {
       id = result['users']['id'];
     } else {
-      // if(result.containsKey('id') == true)
       id = result['id'];
     }
 
     if (result.containsKey('users')) {
       name = result['users']['name'];
     } else {
-      // if(result.containsKey('name') == true)
       name = result['name'];
     }
 
     if (result.containsKey('users')) {
       lastName = result['users']['last_name'];
     } else {
-      // if(result.containsKey('last_name') == true)
       lastName = result['last_name'];
     }
 
     if (result.containsKey('users')) {
       email = result['users']['email'];
     } else {
-      // if(result.containsKey('email') == true)
       email = result['email'];
     }
 
     if (result.containsKey('users')) {
       phone = result['users']['phone'];
     } else {
-      // if(result.containsKey('phone') == true)
       phone = result['phone'];
     }
 
     if (result.containsKey('users')) {
       password = result['users']['password'];
     } else {
-      // if(result.containsKey('password') == true)
       password = result['password'];
     }
 
@@ -109,7 +106,6 @@ class User extends _User implements Model {
       final wisBlocked = result['users']['is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     } else {
-      //if(result.containsKey('is_blocked') == true)
       final wisBlocked = result['is_blocked'];
       isBlocked = (wisBlocked == 1) ? true : false;
     }
@@ -118,6 +114,11 @@ class User extends _User implements Model {
     role = (l_role == null || l_role.isNotEmpty != true)
         ? Role()
         : (Role()..fromRow(l_role.values.first));
+
+    final l_role2 = (result["roles"] as Map<dynamic, dynamic>?);
+    role2 = (l_role2 == null || l_role2.isNotEmpty != true)
+        ? Role()
+        : (Role()..fromRow(l_role2.values.first));
   }
 
   @override
@@ -176,6 +177,8 @@ class UserQuery extends Query<User> {
         foreignKey: 'key',
         fields: [
           JoinField(name: 'key', mappedAs: 'roles\$key'),
+          JoinField(name: 'name', mappedAs: 'roles\$name'),
+          JoinField(name: 'key', mappedAs: 'roles\$key'),
           JoinField(name: 'name', mappedAs: 'roles\$name')
         ],
       )
@@ -205,36 +208,6 @@ class UserWhereClause extends WhereClause<User> {
     return this;
   }
 
-  UserWhereClause name(String value, {operator = "="}) {
-    model.where["users.name"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause lastName(String value, {operator = "="}) {
-    model.where["users.last_name"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause email(String? value, {operator = "="}) {
-    model.where["users.email"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause phone(String value, {operator = "="}) {
-    model.where["users.phone"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause password(String value, {operator = "="}) {
-    model.where["users.password"] = [operator, value];
-    return this;
-  }
-
-  UserWhereClause isBlocked(bool value, {operator = "="}) {
-    model.where["users.is_blocked"] = [operator, value];
-    return this;
-  }
-
   UserWhereClause roleKey(String? value, {operator = "="}) {
     model.where["users.role_id"] = [operator, value];
     return this;
@@ -242,6 +215,11 @@ class UserWhereClause extends WhereClause<User> {
 
   UserWhereClause customField(String key, value, {operator = "="}) {
     model.where[key] = [operator, value];
+    return this;
+  }
+
+  UserWhereClause customWhere(String where) {
+    model.where["_SQL"] = where;
     return this;
   }
 }
@@ -268,6 +246,7 @@ class UserInsertClause extends InsertClause<User> {
         "password": model.password,
         "is_blocked": model.isBlocked,
         "role_id": model.role.key,
+        "role_id_2": model.role2.key,
       };
 }
 
@@ -348,6 +327,16 @@ class UserMigration extends Migration {
         ),
         ColumnInfo(
           name: 'role_id',
+          columnType: ColumnType.varchar,
+          defaultValue: null,
+          isKey: false,
+          isAutoIncrement: false,
+          unique: false,
+          nullable: false,
+          length: 0,
+        ),
+        ColumnInfo(
+          name: 'role_id_2',
           columnType: ColumnType.varchar,
           defaultValue: null,
           isKey: false,

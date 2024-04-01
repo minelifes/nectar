@@ -43,21 +43,18 @@ class Book extends _Book implements Model {
     if (result.containsKey('books')) {
       id = result['books']['id'];
     } else {
-      // if(result.containsKey('id') == true)
       id = result['id'];
     }
 
     if (result.containsKey('books')) {
       userId = result['books']['user_id'];
     } else {
-      // if(result.containsKey('user_id') == true)
       userId = result['user_id'];
     }
 
     if (result.containsKey('books')) {
       title = result['books']['title'];
     } else {
-      // if(result.containsKey('title') == true)
       title = result['title'];
     }
   }
@@ -132,18 +129,13 @@ class BookWhereClause extends WhereClause<Book> {
     return this;
   }
 
-  BookWhereClause userId(int value, {operator = "="}) {
-    model.where["books.user_id"] = [operator, value];
-    return this;
-  }
-
-  BookWhereClause title(String value, {operator = "="}) {
-    model.where["books.title"] = [operator, value];
-    return this;
-  }
-
   BookWhereClause customField(String key, value, {operator = "="}) {
     model.where[key] = [operator, value];
+    return this;
+  }
+
+  BookWhereClause customWhere(String where) {
+    model.where["_SQL"] = where;
     return this;
   }
 }

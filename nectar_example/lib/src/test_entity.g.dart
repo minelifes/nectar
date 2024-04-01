@@ -42,14 +42,12 @@ class Test extends _Test implements Model {
     if (result.containsKey('test')) {
       id = result['test']['id'];
     } else {
-      // if(result.containsKey('id') == true)
       id = result['id'];
     }
 
     if (result.containsKey('test')) {
       testString = result['test']['test_string'];
     } else {
-      // if(result.containsKey('test_string') == true)
       testString = result['test_string'];
     }
   }
@@ -121,13 +119,13 @@ class TestWhereClause extends WhereClause<Test> {
     return this;
   }
 
-  TestWhereClause testString(String value, {operator = "="}) {
-    model.where["test.test_string"] = [operator, value];
+  TestWhereClause customField(String key, value, {operator = "="}) {
+    model.where[key] = [operator, value];
     return this;
   }
 
-  TestWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  TestWhereClause customWhere(String where) {
+    model.where["_SQL"] = where;
     return this;
   }
 }

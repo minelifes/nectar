@@ -42,14 +42,12 @@ class Role extends _Role implements Model {
     if (result.containsKey('roles')) {
       key = result['roles']['key'];
     } else {
-      // if(result.containsKey('key') == true)
       key = result['key'];
     }
 
     if (result.containsKey('roles')) {
       name = result['roles']['name'];
     } else {
-      // if(result.containsKey('name') == true)
       name = result['name'];
     }
   }
@@ -121,13 +119,13 @@ class RoleWhereClause extends WhereClause<Role> {
     return this;
   }
 
-  RoleWhereClause name(String value, {operator = "="}) {
-    model.where["roles.name"] = [operator, value];
+  RoleWhereClause customField(String key, value, {operator = "="}) {
+    model.where[key] = [operator, value];
     return this;
   }
 
-  RoleWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  RoleWhereClause customWhere(String where) {
+    model.where["_SQL"] = where;
     return this;
   }
 }

@@ -1,6 +1,5 @@
 import 'package:nectar/nectar.dart';
 
-import 'books.dart';
 import 'role.dart';
 
 part 'user.g.dart';
@@ -30,4 +29,7 @@ class _User {
 
   @OneToOne(mappedBy: "role_id", referenceClass: "_Role", foreignKey: "key")
   late Role role;
+
+  @OneToOne(mappedBy: "role_id_2", referenceClass: "_Role", foreignKey: "key")
+  late Role role2;
 }
