@@ -12,6 +12,10 @@ class OrmWhereSerializer {
     var names = await Future.wait(inspector.fields.map(_fieldNames));
     List<(FieldElement field, String? referenceClass,  String? customName, String? customType)> items = [];
     for (var element in names) {
+      if(element.$3 == null){
+        items.add(element);
+        continue;
+      }
       final f = items.firstWhereOrNull((e) => e.$3 == element.$3);
       if(f == null) items.add(element);
     }
