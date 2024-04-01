@@ -1,18 +1,22 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
 import 'package:nectar_generator/src/core/class_inspector.dart';
 import 'package:nectar_generator/src/orm/orm_utils.dart';
-import 'package:source_gen/source_gen.dart';
 
 class OrmWhereSerializer {
   final ClassInspector inspector;
   OrmWhereSerializer(this.inspector);
 
   Future<String> generate() async {
-    List<String> results =
-        await Future.wait(inspector.fields.map(_fieldToWhere));
+    var names = await Future.wait(inspector.fields.map(_fieldNames));
+    List<(FieldElement field, String? referenceClass,  String? customName, String? customType)> items = [];
+    for (var element in names) {
+      final f = items.firstWhereOrNull((e) => e.$3 == element.$3);
+      if(f == null) items.add(element);
+    }
+
+    List<String> results = items.mapIndexed((_, e) => _fieldToWhere(e.$1, e.$2, e.$3, e.$4)).toList();
     return '''
       class ${inspector.name}WhereClause extends WhereClause<${inspector.name}> {
         ${inspector.name}WhereClause(super.model, super.instanceOfT);
@@ -32,9 +36,9 @@ class OrmWhereSerializer {
     ''';
   }
 
-  Future<String> _fieldToWhere(FieldElement field) async {
+  Future <(FieldElement field, String? referenceClass,  String? customName, String? customType)> _fieldNames(FieldElement field) async {
     final referenceClass =
-        getFieldValueFromRelationAnnotation(field, "referenceClass");
+    getFieldValueFromRelationAnnotation(field, "referenceClass");
 
     String? customName;
     String? customType;
@@ -42,17 +46,21 @@ class OrmWhereSerializer {
       final clazz = await getClassInfo(inspector, referenceClass);
       if (clazz != null) {
         final idField =
-            clazz.fields.firstWhereOrNull((e) => getIdAnnotation(e) != null);
+        clazz.fields.firstWhereOrNull((e) => getIdAnnotation(e) != null);
         if (idField != null) {
           final idAnn = getIdAnnotation(idField)!;
           final name =
-              idAnn.computeConstantValue()?.getField("name")?.toStringValue();
+          idAnn.computeConstantValue()?.getField("name")?.toStringValue();
           customName = name ?? idField.name;
           customType = idField.type.toString();
         }
       }
     }
 
+    return (field, referenceClass, customName, customType);
+  }
+
+  String _fieldToWhere(FieldElement field, String? referenceClass,  String? customName, String? customType) {
     return '''
         ${inspector.name}WhereClause ${customName != null ? "${referenceClass!.toLowerCase().replaceFirst("_", "")}${customName.capitalize()}" : field.name}(${customName != null ? "$customType" : field.type.toString()} value, {operator = "="}) {
           model.where["${inspector.tableName}.${getFieldNameFromOrmAnnotation(field)}"] = [operator, value];
