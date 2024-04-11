@@ -880,6 +880,7 @@ class ResultFormat {
 
   Map<dynamic, dynamic> addJoins(
     Map<dynamic, dynamic> row,
+    Map<dynamic, dynamic> rawRow,
     List<JoinModel> joins,
     String forTable,
     Map<dynamic, dynamic> prevData,
@@ -890,8 +891,11 @@ class ResultFormat {
     if (primaryKey == null) return {};
     var primaryValue = row[primaryKey];
     if (primaryValue == null) return {};
-    final tableData =
+    var tableData =
         row.keys.where((element) => element.contains("$forTable\$"));
+    if(tableData.isEmpty){
+      tableData = rawRow.keys.where((element) => element.contains("$forTable\$"));
+    }
     for (var keyForTable in tableData) {
       if (!prevData.containsKey(primaryValue)) prevData[primaryValue] = {};
       prevData[primaryValue]![keyForTable.substring(
@@ -904,7 +908,7 @@ class ResultFormat {
       }
       prevData[primaryValue]![join.foreignTableName] = {
         ...prevData[primaryValue]![join.foreignTableName],
-        ...addJoins(newRow, joins, join.foreignTableName,
+        ...addJoins(newRow, rawRow, joins, join.foreignTableName,
             prevData[primaryValue]![join.foreignTableName])
       };
     });
@@ -933,7 +937,7 @@ class ResultFormat {
     for (var row in listData) {
       // data = {...data};
       Map<dynamic, Map<dynamic, dynamic>> data = {};
-      addJoins(row, joins, forTable, data).forEach((key, value) {
+      addJoins(Map.from(row), row, joins, forTable, data).forEach((key, value) {
         if (!data.containsKey(key)) {
           data[key] = {};
         }
