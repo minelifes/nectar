@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
-import 'package:nectar/src/db/tenant_loader.dart';
-
 
 typedef RouterConfigurer = Handler Function(RouterPlus);
 
@@ -145,7 +143,12 @@ class Nectar {
       },
       onWillClose: () {
         logger.i("Server stopping.");
-        _onWillClose?.call();
+        try {
+          inject<Db>()?.close();
+        } catch (_) {}
+        try {
+          _onWillClose?.call();
+        } catch (_) {}
       },
       onClosed: () {
         logger.i("Server stopped.");
