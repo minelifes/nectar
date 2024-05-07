@@ -29,7 +29,4 @@ class _User {
 
   @OneToOne(mappedBy: "role_id", referenceClass: "_Role", foreignKey: "key")
   late Role role;
-
-  @OneToOne(mappedBy: "role_id_2", referenceClass: "_Role", foreignKey: "key")
-  late Role role2;
 }

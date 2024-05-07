@@ -13,7 +13,7 @@ class _AuthController {
     @RequestBody() UserCreateRequest request,
   ) async {
     final existUser =
-        await User.query().select().where().email(request.email).one();
+        await User.query().select().where().one();
     if (existUser != null) {
       throw RestException.itemAlreadyExist("User");
     }
@@ -48,7 +48,10 @@ class _AuthController {
   @PostMapping('/login')
   @AddHeaders({"TestHeader": "asdfsfg"})
   Future<UserDTO> login(@RequestBody() AuthRequest request) async {
+    print(use(Nectar.context).toString());
+
     final user = await User.query().select().where().email(request.email).one();
+    print("user: ${user}");
     if (user == null) {
       throw RestException.unauthorized(
         message: "User with this data not found!",
@@ -59,6 +62,7 @@ class _AuthController {
         message: "User with this data not found!",
       );
     }
+    print(user);
     final token = getIt.get<JwtSecurity>().generateToken(
           JwtPayload(
               id: user.id!,

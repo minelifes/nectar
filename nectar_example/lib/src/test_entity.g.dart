@@ -114,13 +114,20 @@ class TestSelectClause extends SelectClause<Test> {
 class TestWhereClause extends WhereClause<Test> {
   TestWhereClause(super.model, super.instanceOfT);
 
-  TestWhereClause id(String? value, {operator = "="}) {
-    model.where["test.id"] = [operator, value];
+  TestWhereClause id(String? value, {operator = "=", condition = "AND"}) {
+    model.where["test.id"] = [operator, value, condition];
     return this;
   }
 
-  TestWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  TestWhereClause testString(String value,
+      {operator = "=", condition = "AND"}) {
+    model.where["test.test_string"] = [operator, value, condition];
+    return this;
+  }
+
+  TestWhereClause customField(String key, value,
+      {operator = "=", condition = "AND"}) {
+    model.where[key] = [operator, value, condition];
     return this;
   }
 

@@ -17,8 +17,7 @@ class User extends _User implements Model {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "role": role.toJson(),
-        "role2": role2.toJson()
+        "role": role.toJson()
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User()
@@ -29,8 +28,7 @@ class User extends _User implements Model {
     ..phone = json["phone"]
     ..password = json["password"]
     ..isBlocked = json["isBlocked"]
-    ..role = Role.fromJson(json["role"])
-    ..role2 = Role.fromJson(json["role2"]);
+    ..role = Role.fromJson(json["role"]);
 
   _valueForList(e) {
     if (e is String ||
@@ -57,8 +55,7 @@ class User extends _User implements Model {
         "phone",
         "password",
         "is_blocked",
-        "role_id",
-        "role_id_2"
+        "role_id"
       ];
 
   @override
@@ -114,11 +111,6 @@ class User extends _User implements Model {
     role = (l_role == null || l_role.isNotEmpty != true)
         ? Role()
         : (Role()..fromRow(l_role.values.first));
-
-    final l_role2 = (result["roles"] as Map<dynamic, dynamic>?);
-    role2 = (l_role2 == null || l_role2.isNotEmpty != true)
-        ? Role()
-        : (Role()..fromRow(l_role2.values.first));
   }
 
   @override
@@ -177,8 +169,6 @@ class UserQuery extends Query<User> {
         foreignKey: 'key',
         fields: [
           JoinField(name: 'key', mappedAs: 'roles\$key'),
-          JoinField(name: 'name', mappedAs: 'roles\$name'),
-          JoinField(name: 'key', mappedAs: 'roles\$key'),
           JoinField(name: 'name', mappedAs: 'roles\$name')
         ],
       )
@@ -203,18 +193,49 @@ class UserSelectClause extends SelectClause<User> {
 class UserWhereClause extends WhereClause<User> {
   UserWhereClause(super.model, super.instanceOfT);
 
-  UserWhereClause id(int? value, {operator = "="}) {
-    model.where["users.id"] = [operator, value];
+  UserWhereClause id(int? value, {operator = "=", condition = "AND"}) {
+    model.where["users.id"] = [operator, value, condition];
     return this;
   }
 
-  UserWhereClause roleKey(String? value, {operator = "="}) {
-    model.where["users.role_id"] = [operator, value];
+  UserWhereClause name(String value, {operator = "=", condition = "AND"}) {
+    model.where["users.name"] = [operator, value, condition];
     return this;
   }
 
-  UserWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  UserWhereClause lastName(String value, {operator = "=", condition = "AND"}) {
+    model.where["users.last_name"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause email(String? value, {operator = "=", condition = "AND"}) {
+    model.where["users.email"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause phone(String value, {operator = "=", condition = "AND"}) {
+    model.where["users.phone"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause password(String value, {operator = "=", condition = "AND"}) {
+    model.where["users.password"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause isBlocked(bool value, {operator = "=", condition = "AND"}) {
+    model.where["users.is_blocked"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause roleKey(String? value, {operator = "=", condition = "AND"}) {
+    model.where["users.role_id"] = [operator, value, condition];
+    return this;
+  }
+
+  UserWhereClause customField(String key, value,
+      {operator = "=", condition = "AND"}) {
+    model.where[key] = [operator, value, condition];
     return this;
   }
 
@@ -246,7 +267,6 @@ class UserInsertClause extends InsertClause<User> {
         "password": model.password,
         "is_blocked": model.isBlocked,
         "role_id": model.role.key,
-        "role_id_2": model.role2.key,
       };
 }
 
@@ -327,16 +347,6 @@ class UserMigration extends Migration {
         ),
         ColumnInfo(
           name: 'role_id',
-          columnType: ColumnType.varchar,
-          defaultValue: null,
-          isKey: false,
-          isAutoIncrement: false,
-          unique: false,
-          nullable: false,
-          length: 0,
-        ),
-        ColumnInfo(
-          name: 'role_id_2',
           columnType: ColumnType.varchar,
           defaultValue: null,
           isKey: false,

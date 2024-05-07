@@ -124,13 +124,24 @@ class BookSelectClause extends SelectClause<Book> {
 class BookWhereClause extends WhereClause<Book> {
   BookWhereClause(super.model, super.instanceOfT);
 
-  BookWhereClause id(int? value, {operator = "="}) {
-    model.where["books.id"] = [operator, value];
+  BookWhereClause id(int? value, {operator = "=", condition = "AND"}) {
+    model.where["books.id"] = [operator, value, condition];
     return this;
   }
 
-  BookWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  BookWhereClause userId(int value, {operator = "=", condition = "AND"}) {
+    model.where["books.user_id"] = [operator, value, condition];
+    return this;
+  }
+
+  BookWhereClause title(String value, {operator = "=", condition = "AND"}) {
+    model.where["books.title"] = [operator, value, condition];
+    return this;
+  }
+
+  BookWhereClause customField(String key, value,
+      {operator = "=", condition = "AND"}) {
+    model.where[key] = [operator, value, condition];
     return this;
   }
 

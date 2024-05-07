@@ -2,21 +2,22 @@ import 'package:nectar/nectar.dart';
 import 'package:nectar_example/src/books.dart';
 import 'package:nectar_example/src/controllers/auth_controller.dart';
 import 'package:nectar_example/src/controllers/test_controller.dart';
+import 'package:nectar_example/src/security/tenant_loader.dart';
 import 'package:nectar_example/src/security/user_details.dart';
 import 'package:nectar_example/src/user.dart';
 
 late Db db;
 
-void createDbConnection() {
-  db = Db()
-    ..connect(DbSettings(
-      host: "localhost",
-      user: "root",
-      password: "apppassword",
-      db: "appdb",
-      debug: true,
-    ));
-}
+// void createDbConnection() {
+//   db = Db()
+//     ..connect(DbSettings(
+//       host: "localhost",
+//       user: "root",
+//       password: "apppassword",
+//       db: "appdb",
+//       debug: true,
+//     ));
+// }
 
 void _registerRoutes() {
   TestController.register();
@@ -25,7 +26,7 @@ void _registerRoutes() {
 
 void main() async {
   _registerRoutes();
-  createDbConnection();
+  // createDbConnection();
   // final test = await Test.query().select().list();
   //
   // print(test);
@@ -85,16 +86,27 @@ void main() async {
 
   Nectar.configure()
       .enableJwtSecurity(JwtSecurity(
-    secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",
-    userDetailsFromPayload: (JwtPayload payload) async {
-      final user = await User.query().select().where().id(payload.id).one();
-      if (user == null) return null;
-      return AppUserDetails(user);
-    },
-  ))
+        secretKey: "6eYMKole0y9SgzmAWd82bRG0SS6asNk8",
+        userDetailsFromPayload: (JwtPayload payload) async {
+          final user = await User.query().select().where().id(payload.id).one();
+          if (user == null) return null;
+          return AppUserDetails(user);
+        },
+      ))
       .useCors(headers: {
-    ACCESS_CONTROL_ALLOW_ORIGIN: "http://localhost:5173, http://localhost:5174"
-  }).onWillClose(() {
-    db.close();
-  }).start();
+        ACCESS_CONTROL_ALLOW_ORIGIN:
+            "http://localhost:5173, http://localhost:5174"
+      })
+      .onWillClose(() {
+        db.close();
+      })
+      .withTenants(AppTenantLoader())
+      .withDefaultConnection(DbSettings(
+        host: "localhost",
+        user: "root",
+        password: "apppassword",
+        db: "appdb",
+        debug: true,
+      ))
+      .start();
 }

@@ -18,6 +18,7 @@ class AuthController extends _AuthController {
         controller._registerUserHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -28,6 +29,7 @@ class AuthController extends _AuthController {
             .addMiddleware(setHeadersMiddleware({
               'TestHeader': 'asdfsfg',
             }))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
     });

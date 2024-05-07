@@ -1,4 +1,5 @@
 import 'package:nectar/nectar.dart';
+import 'package:nectar_example/src/media.dart';
 import 'package:nectar_example/src/payloads/test_request.dart';
 import 'package:nectar_example/src/role.dart';
 import 'package:nectar_example/src/user.dart';
@@ -20,10 +21,10 @@ class _TestController {
   @PostMapping("/body")
   @AuthWithJwt()
   Future<Map<String, dynamic>> testBody(
-      @RequestBody() TestRequest request, UserDetails userDetails) async {
+      @RequestBody() TestRequest request) async {
     return {
-      "request": request,
-      "userDetails": (userDetails.getUserModel() as User).toJson()
+      "request": await MediaEntity.query().select().where().id("frame2").isMain(true, condition: "OR").one(),
+      "userDetails": (requestContext.userDetails?.getUserModel() as User?)?.toJson()
     };
   }
 

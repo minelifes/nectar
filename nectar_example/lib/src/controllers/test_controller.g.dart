@@ -18,6 +18,7 @@ class TestController extends _TestController {
         controller._getRolesHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -26,6 +27,7 @@ class TestController extends _TestController {
         controller._getIntByIdHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -35,6 +37,7 @@ class TestController extends _TestController {
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
             .addMiddleware(checkJwtMiddleware())
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -45,6 +48,7 @@ class TestController extends _TestController {
             .addMiddleware(setHeadersMiddleware({}))
             .addMiddleware(checkJwtMiddleware())
             .addMiddleware(hasRoleMiddleware(['admin']))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -53,6 +57,7 @@ class TestController extends _TestController {
         controller._loginHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -61,6 +66,7 @@ class TestController extends _TestController {
         controller._fileHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -69,6 +75,7 @@ class TestController extends _TestController {
         controller._formHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
 
@@ -77,6 +84,7 @@ class TestController extends _TestController {
         controller._getByIdHandler,
         use: setContentType('application/json')
             .addMiddleware(setHeadersMiddleware({}))
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware),
       );
     });
@@ -104,10 +112,7 @@ class TestController extends _TestController {
       final json0 = jsonDecode(str0);
       final body0 = TestRequest.fromJson(json0);
 
-      final userDetails1 =
-          request.context[MiddlewareKeys.userDetails]! as UserDetails;
-
-      return await testBody(body0, userDetails1);
+      return await testBody(body0);
     });
   }
 

@@ -114,13 +114,19 @@ class RoleSelectClause extends SelectClause<Role> {
 class RoleWhereClause extends WhereClause<Role> {
   RoleWhereClause(super.model, super.instanceOfT);
 
-  RoleWhereClause key(String? value, {operator = "="}) {
-    model.where["roles.key"] = [operator, value];
+  RoleWhereClause key(String? value, {operator = "=", condition = "AND"}) {
+    model.where["roles.key"] = [operator, value, condition];
     return this;
   }
 
-  RoleWhereClause customField(String key, value, {operator = "="}) {
-    model.where[key] = [operator, value];
+  RoleWhereClause name(String value, {operator = "=", condition = "AND"}) {
+    model.where["roles.name"] = [operator, value, condition];
+    return this;
+  }
+
+  RoleWhereClause customField(String key, value,
+      {operator = "=", condition = "AND"}) {
+    model.where[key] = [operator, value, condition];
     return this;
   }
 
