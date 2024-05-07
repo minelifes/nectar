@@ -1,6 +1,6 @@
 name: nectar_generator
 description: Generate all helper classes for nectar library.
-version: 1.2.1
+version: 1.2.2
 publish_to: none
 
 environment:

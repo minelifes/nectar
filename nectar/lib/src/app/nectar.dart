@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
+import 'package:nectar/src/db/tenant_loader.dart';
+
 
 typedef RouterConfigurer = Handler Function(RouterPlus);
 
@@ -8,6 +10,8 @@ class Nectar {
   Nectar._() {
     GetIt.I.registerSingleton<Nectar>(this);
   }
+
+  static ScopeKey<NectarContext> context = ScopeKey<NectarContext>("tenant_db");
 
   factory Nectar.configure() => Nectar._();
 
@@ -26,9 +30,13 @@ class Nectar {
   SecurityContext? _context;
   bool _enableHotReload = false;
 
+  TenantLoader? _tenantLoader;
+
   Middleware? _corsMiddleware;
 
   Middleware get corsMiddleware => _corsMiddleware ?? corsHeaders();
+
+  TenantLoader? get tenantLoader => _tenantLoader;
 
   Nectar onStart(Function method) {
     _onStarted = method;
@@ -92,6 +100,18 @@ class Nectar {
 
   Nectar useCustomMiddlewareForCORS(Middleware middleware) {
     _corsMiddleware = middleware;
+    return this;
+  }
+
+  Nectar withDefaultConnection(DbSettings settings) {
+    settings.toMap();
+    final db = Db.configure();
+    db.defaultConnection = db.newConnection(settings);
+    return this;
+  }
+
+  Nectar withTenants(TenantLoader loader) {
+    _tenantLoader = loader;
     return this;
   }
 

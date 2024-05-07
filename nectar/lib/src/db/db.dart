@@ -1,10 +1,34 @@
-import 'package:get_it/get_it.dart';
 import 'package:nectar/nectar.dart';
 import 'package:nectar/src/callbacks/callbacks.dart';
 
 class Db {
-  MysqlUtils? _utils;
+  Db._() {
+    registerSingleton<Db>(this);
+  }
+
+  factory Db.configure() => Db._();
+
+  MysqlUtils? defaultConnection;
+  DbSettings? _settings;
+
   bool debug = false;
+
+  final Map<String, MysqlUtils> _tenants = {};
+
+  MysqlUtils? get _utils {
+    if (hasScopeKey(Nectar.context) && inject<Nectar>()!.tenantLoader != null) {
+      final context = use(Nectar.context);
+      if (context.tenant == null) return defaultConnection;
+      if (_tenants.containsKey(context.tenant)) return _tenants[context.tenant];
+      final con = newConnection(inject<Nectar>()!.tenantLoader!.dbForTenant(context.tenant!, _settings));//(_settings!..db = context.tenant!));
+      _tenants[context.tenant!] = con;
+      return con;
+    }
+    if (defaultConnection == null) {
+      throw RestException(message: "Tenant not registered for this scope!");
+    }
+    return defaultConnection;
+  }
 
   void _onError(error) {
     logger.e(error);
@@ -24,20 +48,20 @@ class Db {
     _utils!.close();
   }
 
-  void connect(
+  MysqlUtils newConnection(
     DbSettings settings, {
     ValueCallback<String>? onError,
     ValueCallback<String>? sqlLog,
     ValueCallback<dynamic>? onConnected,
   }) {
     debug = settings.debug;
-    _utils = MysqlUtils(
+    _settings = settings;
+    return MysqlUtils(
       settings: settings.toMap(),
       errorLog: onError ?? _onError,
       sqlLog: sqlLog ?? _onSql,
       connectInit: onConnected ?? _onConnect,
     );
-    GetIt.I.registerSingleton<Db>(this);
   }
 
   Future<ResultFormat> query(

@@ -27,8 +27,8 @@ class OrmWhereSerializer {
         
         ${results.join("\n\n")}
         
-        ${inspector.name}WhereClause customField(String key, value, {operator = "="}) {
-          model.where[key] = [operator, value];
+        ${inspector.name}WhereClause customField(String key, value, {operator = "=", condition="AND"}) {
+          model.where[key] = [operator, value, condition];
           return this;
         }
         
@@ -66,8 +66,8 @@ class OrmWhereSerializer {
 
   String _fieldToWhere(FieldElement field, String? referenceClass,  String? customName, String? customType) {
     return '''
-        ${inspector.name}WhereClause ${customName != null ? "${referenceClass!.toLowerCase().replaceFirst("_", "")}${customName.capitalize()}" : field.name}(${customName != null ? "$customType" : field.type.toString()} value, {operator = "="}) {
-          model.where["${inspector.tableName}.${getFieldNameFromOrmAnnotation(field)}"] = [operator, value];
+        ${inspector.name}WhereClause ${customName != null ? "${referenceClass!.toLowerCase().replaceFirst("_", "")}${customName.capitalize()}" : field.name}(${customName != null ? "$customType" : field.type.toString()} value, {operator = "=", condition="AND"}) {
+          model.where["${inspector.tableName}.${getFieldNameFromOrmAnnotation(field)}"] = [operator, value, condition];
           return this;
         }
     ''';

@@ -1,6 +1,6 @@
 name: nectar
 description: A starting point for Dart libraries or applications.
-version: 1.2.1
+version: 1.2.2
 publish_to: none
 # repository: https://github.com/my_org/my_repo
 
@@ -20,6 +20,7 @@ dependencies:
   bcrypt: ^1.1.3
   shelf_multipart: ^1.0.0
   collection:
+  scope: ^4.1.0
 
 dev_dependencies:
   lints: ^3.0.0

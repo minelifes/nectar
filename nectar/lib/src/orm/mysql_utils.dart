@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'package:mysql_client/mysql_client.dart';
 import 'package:collection/collection.dart';
 import 'package:nectar/nectar.dart';
@@ -661,6 +660,8 @@ class MysqlUtils {
             }
           }
         } else if (value is List) {
+          final joinOperation = (value.length == 3) ? value[2] : "AND";
+
           switch (value[0]) {
             case 'in':
             case 'notin':
@@ -691,7 +692,7 @@ class MysqlUtils {
               if (_keys == '') {
                 _keys = _wh;
               } else {
-                _keys += ' AND $_wh';
+                _keys += ' $joinOperation $_wh';
               }
               break;
             case '>':
@@ -708,7 +709,7 @@ class MysqlUtils {
               if (_keys == '') {
                 _keys = _wh;
               } else {
-                _keys += ' AND $_wh';
+                _keys += ' $joinOperation $_wh';
               }
               break;
           }

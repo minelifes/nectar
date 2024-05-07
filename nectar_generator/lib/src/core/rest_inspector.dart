@@ -79,6 +79,7 @@ class RestInspector {
             ${(jwtAuth == null) ? "" : ".addMiddleware(checkJwtMiddleware())"}
             ${(jwtAuth == null || role == null) ? "" : ".addMiddleware(hasRoleMiddleware([${getFieldNameFromRestAnnotation(role, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
             ${(jwtAuth == null || privilege == null) ? "" : ".addMiddleware(hasPrivilegeMiddleware([${getFieldNameFromRestAnnotation(privilege, "value")!.toListValue()!.map((e) => "'${e.toStringValue()}'").join(",")}]))"}
+            .addMiddleware(contextProviderMiddleware())
             .addMiddleware(corsMiddleware)
     ,''';
   }

@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nectar/nectar.dart';
 import 'package:uuid/uuid.dart';
 
 GetIt get getIt => GetIt.I;
@@ -19,3 +20,5 @@ Logger get logger => Logger(
       methodCount: 0,
       printTime: true,
     ));
+
+NectarContext get requestContext => use(Nectar.context);

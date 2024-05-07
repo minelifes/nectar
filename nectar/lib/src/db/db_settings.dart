@@ -12,6 +12,35 @@ class DbSettings {
   final bool pool;
   final bool debug;
 
+  DbSettings copyWith({
+    String? host,
+    int? port,
+    String? user,
+    String? password,
+    String? db,
+    int? maxConnections,
+    bool? secure,
+    String? prefix,
+    String? collation,
+    bool? sqlEscape,
+    bool? pool,
+    bool? debug,
+  }) =>
+      DbSettings(
+        host: host ?? this.host,
+        port: port ?? this.port,
+        user: user ?? this.user,
+        password: password ?? this.password,
+        db: db ?? this.db,
+        maxConnections: maxConnections ?? this.maxConnections,
+        secure: secure ?? this.secure,
+        prefix: prefix ?? this.prefix,
+        collation: collation ?? this.collation,
+        sqlEscape: sqlEscape ?? this.sqlEscape,
+        pool: pool ?? this.pool,
+        debug: debug ?? this.debug,
+      );
+
   const DbSettings({
     required this.host,
     required this.user,
