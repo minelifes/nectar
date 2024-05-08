@@ -15,12 +15,18 @@ class Db {
 
   final Map<String, MysqlUtils> _tenants = {};
 
-  MysqlUtils? get _utils {
+  Future<MysqlUtils?>? get _utils async {
     if (hasScopeKey(Nectar.context) && inject<Nectar>()!.tenantLoader != null) {
       final context = use(Nectar.context);
       if (context.tenant == null) return defaultConnection;
       if (_tenants.containsKey(context.tenant)) return _tenants[context.tenant];
-      final con = newConnection(inject<Nectar>()!.tenantLoader!.dbForTenant(context.tenant!, _settings));//(_settings!..db = context.tenant!));
+      final loader = inject<Nectar>()!.tenantLoader!;
+      if (!(await loader.isProjectValid(context.tenant!))) {
+        throw RestException(
+            message: "Tenant with id: ${context.tenant!} not found!");
+      }
+      final config = await loader.dbForTenant(context.tenant!, _settings);
+      final con = newConnection(config);
       _tenants[context.tenant!] = con;
       return con;
     }
@@ -45,7 +51,9 @@ class Db {
   }
 
   void close() {
-    _utils!.close();
+    _tenants.values.map((e) => e.close());
+    _tenants.clear();
+    defaultConnection?.close();
   }
 
   MysqlUtils newConnection(
@@ -69,8 +77,8 @@ class Db {
     Map<String, dynamic> values = const {},
     List<JoinModel> joins = const [],
     String forTable = "",
-  }) =>
-      _utils!.query(
+  }) async =>
+      (await _utils)!.query(
         sql,
         values: values,
         debug: debug,
@@ -81,11 +89,12 @@ class Db {
   Future<ResultFormat> createTableIfNotExist({
     required String tableName,
     required List<ColumnInfo> columns,
-  }) =>
-      _utils!.createTableIfNotExist(table: tableName, columns: columns);
+  }) async =>
+      (await _utils)!.createTableIfNotExist(table: tableName, columns: columns);
 
-  Future<List<int>> queryMulti(String sql, Iterable<List<Object?>> values) =>
-      _utils!.queryMulti(sql, values, debug: debug);
+  Future<List<int>> queryMulti(
+          String sql, Iterable<List<Object?>> values) async =>
+      (await _utils)!.queryMulti(sql, values, debug: debug);
 
   Future<Map> getOne({
     required String table,
@@ -95,8 +104,8 @@ class Db {
     String having = '',
     String order = '',
     List<JoinModel> joins = const [],
-  }) =>
-      _utils!.getOne(
+  }) async =>
+      (await _utils)!.getOne(
           table: table,
           fields: fields,
           where: where,
@@ -116,8 +125,8 @@ class Db {
     String group = '',
     String having = '',
     List<JoinModel> joins = const [],
-  }) =>
-      _utils!.getAll(
+  }) async =>
+      (await _utils)!.getAll(
         table: table,
         fields: fields,
         where: where,
@@ -133,8 +142,8 @@ class Db {
     required String table,
     required Map<String, dynamic> insertData,
     required String primaryKeyName,
-  }) =>
-      _utils!.insertOrUpdate(
+  }) async =>
+      (await _utils)!.insertOrUpdate(
         primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
@@ -146,8 +155,8 @@ class Db {
     required List<Map<String, dynamic>> insertData,
     required String primaryKeyName,
     replace = false,
-  }) =>
-      _utils!.insertAll(
+  }) async =>
+      (await _utils)!.insertAll(
         primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
@@ -158,8 +167,8 @@ class Db {
   Future<int> delete({
     required String table,
     required where,
-  }) =>
-      _utils!.delete(
+  }) async =>
+      (await _utils)!.delete(
         table: table,
         where: where,
         debug: debug,
@@ -176,8 +185,8 @@ class Db {
     String having = '',
     List<JoinModel> joins = const [],
     required T Function(dynamic) instanceOfT,
-  }) =>
-      _utils!.paginated<T>(
+  }) async =>
+      (await _utils)!.paginated<T>(
           table: table,
           perPage: perPage,
           fields: fields,
