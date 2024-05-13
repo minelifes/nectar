@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nectar/nectar.dart';
@@ -12,6 +14,12 @@ registerSingleton<T extends Object>(T object) =>
 
 registerFactory<T extends Object>(T Function() object) =>
     GetIt.I.registerFactory(object);
+
+Future<T> runInDefaultConnection<T>(Future<T> Function() task) async {
+  final context = use(Nectar.context);
+  return await (Scope()..value(Nectar.context, NectarContext(user: context.userDetails, token: context.token)..putAll(context.storage)))
+      .run(() async => await task());
+}
 
 String generateUUID() => Uuid().v4();
 

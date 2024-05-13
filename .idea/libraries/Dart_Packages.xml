@@ -5,8 +5,8 @@
         <entry key="_fe_analyzer_shared">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-65.0.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-66.0.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-65.0.0/lib" />
             </list>
           </value>
         </entry>
@@ -20,8 +20,8 @@
         <entry key="analyzer">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-6.3.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-6.4.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-6.3.0/lib" />
             </list>
           </value>
         </entry>
@@ -91,8 +91,8 @@
         <entry key="build_runner">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.4.7/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.4.8/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.4.7/lib" />
             </list>
           </value>
         </entry>
@@ -113,8 +113,8 @@
         <entry key="built_value">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/built_value-8.8.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/built_value-8.9.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/built_value-8.8.1/lib" />
             </list>
           </value>
         </entry>
@@ -135,8 +135,8 @@
         <entry key="code_builder">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/code_builder-4.9.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/code_builder-4.10.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/code_builder-4.9.0/lib" />
             </list>
           </value>
         </entry>
@@ -171,8 +171,8 @@
         <entry key="dart_jsonwebtoken">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dart_jsonwebtoken-2.12.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dart_jsonwebtoken-2.12.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dart_jsonwebtoken-2.12.1/lib" />
             </list>
           </value>
         </entry>
@@ -214,8 +214,8 @@
         <entry key="get_it">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/get_it-7.6.4/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/get_it-7.6.7/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/get_it-7.6.4/lib" />
             </list>
           </value>
         </entry>
@@ -271,8 +271,8 @@
         <entry key="js">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.6.7/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.7.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.6.7/lib" />
             </list>
           </value>
         </entry>
@@ -328,8 +328,8 @@
         <entry key="mime">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mime-1.0.4/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mime-1.0.5/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mime-1.0.4/lib" />
             </list>
           </value>
         </entry>
@@ -351,13 +351,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mysql_client-0.0.27/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="nectar">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/git/nectar-e67bbf8876de45db3c680ebc701b6edc340aeb1e/nectar/lib" />
             </list>
           </value>
         </entry>
@@ -385,8 +378,8 @@
         <entry key="pointycastle">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pointycastle-3.7.3/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pointycastle-3.7.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pointycastle-3.7.3/lib" />
             </list>
           </value>
         </entry>
@@ -408,6 +401,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pubspec_parse-1.2.3/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="scope">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/scope-4.1.0/lib" />
             </list>
           </value>
         </entry>
@@ -547,8 +547,8 @@
         <entry key="test">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test-1.25.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test-1.25.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test-1.25.0/lib" />
             </list>
           </value>
         </entry>
@@ -590,8 +590,8 @@
         <entry key="uuid">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/uuid-4.3.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/uuid-4.3.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/uuid-4.3.1/lib" />
             </list>
           </value>
         </entry>
@@ -612,16 +612,16 @@
         <entry key="web">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.0/lib" />
             </list>
           </value>
         </entry>
         <entry key="web_socket_channel">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.1/lib" />
             </list>
           </value>
         </entry>
@@ -642,7 +642,6 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/.pub-cache/git/nectar-e67bbf8876de45db3c680ebc701b6edc340aeb1e/nectar/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-65.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-66.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/adaptive_number-1.0.0/lib" />
@@ -709,6 +708,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pool-1.5.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pub_semver-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pubspec_parse-1.2.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/scope-4.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf-1.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf_hotreload-1.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf_multipart-1.0.0/lib" />

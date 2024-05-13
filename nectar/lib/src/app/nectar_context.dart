@@ -12,6 +12,8 @@ class NectarContext {
     _token = token;
   }
 
+  void putAll(Map<String, dynamic> other) => _storage.addAll(other);
+
   void put(String key, dynamic data) => _storage[key] = data;
   void putString(String key, String data) => put(key, data);
   void putInt(String key, int data) => put(key, data);
@@ -27,6 +29,8 @@ class NectarContext {
   bool? readBool(String key) => read(key);
 
   void clean() => _storage = {};
+
+  Map<String, dynamic> get storage => _storage;
 
   void updateTenant(String? tenant){
     _tenant = tenant;
