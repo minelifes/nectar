@@ -16,19 +16,16 @@ class Db {
   final Map<String, MysqlUtils> _tenants = {};
 
   Future<MysqlUtils?>? get _utils async {
-    if (hasScopeKey(Nectar.context) && inject<Nectar>()!.tenantLoader != null) {
+    final loader = inject<Nectar>()!.tenantLoader;
+    if (hasScopeKey(Nectar.context) && loader != null) {
       try {
         final context = use(Nectar.context);
         if (context.tenant == null) return defaultConnection;
         if (_tenants.containsKey(context.tenant)) {
           return _tenants[context.tenant];
         }
-        final loader = inject<Nectar>()!.tenantLoader!;
         final cfg = await runInDefaultConnection(() async {
           try{
-            if (!(await loader.isProjectValid(context.tenant!))) {
-              return null;
-            }
             return await loader.dbForTenant(context.tenant!, _settings);
           }catch(_){}
           return null;
