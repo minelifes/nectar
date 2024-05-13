@@ -50,10 +50,12 @@ class Db {
     logger.d(db1);
   }
 
-  void close() {
-    _tenants.values.map((e) => e.close());
+  Future<void> close() async {
+    for (var tenant in _tenants.values) {
+      await tenant.close();
+    }
     _tenants.clear();
-    defaultConnection?.close();
+    await defaultConnection?.close();
   }
 
   MysqlUtils newConnection(
