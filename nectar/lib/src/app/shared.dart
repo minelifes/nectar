@@ -21,7 +21,7 @@ Future<T> runInDefaultConnection<T>(Future<T> Function() task) async {
       .run(() async => await task());
 }
 
-Future<T> runWithTenant<T>(String tenant, Future<T> Function() task) async {
+Future<T> runWithTenantConnection<T>(String tenant, Future<T> Function() task) async {
   final context = use(Nectar.context);
   return await (Scope()..value(Nectar.context, NectarContext(tenant: tenant, user: context.userDetails, token: context.token)..putAll(context.storage)))
       .run(() async => await task());
