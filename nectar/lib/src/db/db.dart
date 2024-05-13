@@ -17,23 +17,37 @@ class Db {
 
   Future<MysqlUtils?>? get _utils async {
     if (hasScopeKey(Nectar.context) && inject<Nectar>()!.tenantLoader != null) {
-      final context = use(Nectar.context);
-      if (context.tenant == null) return defaultConnection;
-      if (_tenants.containsKey(context.tenant)) return _tenants[context.tenant];
-      final loader = inject<Nectar>()!.tenantLoader!;
-      if (!(await loader.isProjectValid(context.tenant!))) {
-        throw RestException(
-            message: "Tenant with id: ${context.tenant!} not found!");
+      try {
+        final context = use(Nectar.context);
+        if (context.tenant == null) return defaultConnection;
+        if (_tenants.containsKey(context.tenant)) {
+          return _tenants[context.tenant];
+        }
+        final loader = inject<Nectar>()!.tenantLoader!;
+        if (!(await loader.isProjectValid(context.tenant!))) {
+          return null;
+        }
+        final config = await loader.dbForTenant(context.tenant!, _settings);
+        final con = newConnection(config);
+        _tenants[context.tenant!] = con;
+        return con;
+      }catch(_){
+        return null;
       }
-      final config = await loader.dbForTenant(context.tenant!, _settings);
-      final con = newConnection(config);
-      _tenants[context.tenant!] = con;
-      return con;
     }
     if (defaultConnection == null) {
-      throw RestException(message: "Tenant not registered for this scope!");
+      return null;
     }
     return defaultConnection;
+  }
+
+  Future<MysqlUtils> _getConnectionOrThrow() async {
+    final conn = await _utils;
+    if(conn == null) {
+      throw RestException(
+        message: "Tenant not found or can't create connection!");
+    }
+    return conn;
   }
 
   void _onError(error) {
@@ -80,7 +94,7 @@ class Db {
     List<JoinModel> joins = const [],
     String forTable = "",
   }) async =>
-      (await _utils)!.query(
+      (await _getConnectionOrThrow()).query(
         sql,
         values: values,
         debug: debug,
@@ -92,11 +106,11 @@ class Db {
     required String tableName,
     required List<ColumnInfo> columns,
   }) async =>
-      (await _utils)!.createTableIfNotExist(table: tableName, columns: columns);
+      (await _getConnectionOrThrow()).createTableIfNotExist(table: tableName, columns: columns);
 
   Future<List<int>> queryMulti(
           String sql, Iterable<List<Object?>> values) async =>
-      (await _utils)!.queryMulti(sql, values, debug: debug);
+      (await _getConnectionOrThrow()).queryMulti(sql, values, debug: debug);
 
   Future<Map> getOne({
     required String table,
@@ -107,7 +121,7 @@ class Db {
     String order = '',
     List<JoinModel> joins = const [],
   }) async =>
-      (await _utils)!.getOne(
+      (await _getConnectionOrThrow()).getOne(
           table: table,
           fields: fields,
           where: where,
@@ -128,7 +142,7 @@ class Db {
     String having = '',
     List<JoinModel> joins = const [],
   }) async =>
-      (await _utils)!.getAll(
+      (await _getConnectionOrThrow()).getAll(
         table: table,
         fields: fields,
         where: where,
@@ -145,7 +159,7 @@ class Db {
     required Map<String, dynamic> insertData,
     required String primaryKeyName,
   }) async =>
-      (await _utils)!.insertOrUpdate(
+      (await _getConnectionOrThrow()).insertOrUpdate(
         primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
@@ -158,7 +172,7 @@ class Db {
     required String primaryKeyName,
     replace = false,
   }) async =>
-      (await _utils)!.insertAll(
+      (await _getConnectionOrThrow()).insertAll(
         primaryKeyName: primaryKeyName,
         table: table,
         insertData: insertData,
@@ -170,7 +184,7 @@ class Db {
     required String table,
     required where,
   }) async =>
-      (await _utils)!.delete(
+      (await _getConnectionOrThrow()).delete(
         table: table,
         where: where,
         debug: debug,
@@ -188,7 +202,7 @@ class Db {
     List<JoinModel> joins = const [],
     required T Function(dynamic) instanceOfT,
   }) async =>
-      (await _utils)!.paginated<T>(
+      (await _getConnectionOrThrow()).paginated<T>(
           table: table,
           perPage: perPage,
           fields: fields,
