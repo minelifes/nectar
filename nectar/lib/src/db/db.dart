@@ -24,11 +24,17 @@ class Db {
           return _tenants[context.tenant];
         }
         final loader = inject<Nectar>()!.tenantLoader!;
-        if (!(await loader.isProjectValid(context.tenant!))) {
+        final cfg = await runInDefaultConnection(() async {
+          try{
+            if (!(await loader.isProjectValid(context.tenant!))) {
+              return null;
+            }
+            return await loader.dbForTenant(context.tenant!, _settings);
+          }catch(_){}
           return null;
-        }
-        final config = await loader.dbForTenant(context.tenant!, _settings);
-        final con = newConnection(config);
+        });
+        if(cfg == null) return null;
+        final con = newConnection(cfg);
         _tenants[context.tenant!] = con;
         return con;
       }catch(_){
