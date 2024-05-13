@@ -750,7 +750,7 @@ class MysqlUtils {
     final uniq = columns.where((element) => element.unique);
     if (uniq.isEmpty) return "";
     return uniq
-        .map((e) => "constraint ${table}_${e.name} unique (${e.name})")
+        .map((e) => ", constraint ${table}_${e.name} unique (${e.name})")
         .join(",\n");
   }
 
