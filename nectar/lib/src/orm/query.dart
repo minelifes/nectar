@@ -91,6 +91,11 @@ abstract class ExecClause<T extends Model> {
     return this;
   }
 
+  ExecClause<T> groupBy(String group) {
+    model.group = group;
+    return this;
+  }
+
   ExecClause<T> order(String key, SortTypes type) {
     model.order = "$key ${type.name}";
     return this;
