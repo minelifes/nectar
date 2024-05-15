@@ -110,6 +110,7 @@ abstract class ExecClause<T extends Model> {
           limit: model.limit,
           order: model.order,
           startFrom: model.startFrom,
+          group: model.group,
         );
 
     return results.mapIndexed((i, e) => instanceOfT()..fromRow(e)).toList();
@@ -124,6 +125,7 @@ abstract class ExecClause<T extends Model> {
         order: model.order,
         instanceOfT: (e) => instanceOfT()..fromRow(e),
         perPage: perPage,
+        group: model.group,
         page: page);
     return results;
   }
@@ -138,6 +140,7 @@ abstract class ExecClause<T extends Model> {
         table: model.tableName,
         fields: model.fields,
         where: model.where,
+        group: model.group,
         joins: model.joins);
     if (results.isNotEmpty) {
       return instanceOfT()..fromRow(results);
