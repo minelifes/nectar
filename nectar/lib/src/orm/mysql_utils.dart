@@ -705,7 +705,7 @@ class MysqlUtils {
               if (value[1] is String) {
                 val = '\'${value[1]}\'';
               }
-              String _wh = '($key ${value[0]} $val)';
+              String _wh = '$key ${value[0]} $val';
               if (_keys == '') {
                 _keys = _wh;
               } else {
