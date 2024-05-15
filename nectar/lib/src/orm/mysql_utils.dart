@@ -654,9 +654,9 @@ class MysqlUtils {
             }
           } else if (value is num) {
             if (_keys == '') {
-              _keys = '($key = $value)';
+              _keys = '$key = $value';
             } else {
-              _keys += ' AND ($key = $value)';
+              _keys += ' AND $key = $value';
             }
           }
         } else if (value is List) {
