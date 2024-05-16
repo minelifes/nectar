@@ -751,7 +751,7 @@ class MysqlUtils {
     if (uniq.isEmpty) return "";
     return uniq
         .map((e) => ", constraint ${table}_${e.name} unique (${e.name})")
-        .join(",\n");
+        .join("\n");
   }
 
   Future<ResultFormat> createTableIfNotExist({

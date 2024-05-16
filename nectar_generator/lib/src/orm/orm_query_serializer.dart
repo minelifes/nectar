@@ -76,12 +76,15 @@ class OrmQuerySerializer {
         )));
   }
 
-  String _getPrimaryKeyName() =>
-      inspector.fields
-          .where((e) => getIdAnnotation(e) != null)
-          .firstOrNull
-          ?.name ??
-      "";
+  String _getPrimaryKeyName(){
+    final field = inspector.fields
+        .where((e) => getIdAnnotation(e) != null)
+        .firstOrNull;
+    if(field == null) return "";
+    final idAnn = getIdAnnotation(field)!;
+    final name = getFieldFromAnnotation(idAnn, "name");
+    return name?.toStringValue() ?? field.name;
+  }
 
   Future<String> generate() async {
     (await Future.wait(inspector.fields.map((e) async =>
