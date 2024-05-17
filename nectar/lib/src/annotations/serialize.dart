@@ -11,3 +11,7 @@ class SerializableField {
     this.nullable = false,
   });
 }
+
+class ToJson{
+  const ToJson();
+}

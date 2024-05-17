@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:collection/collection.dart';
 import 'package:nectar_generator/src/orm/orm_utils.dart';
 import 'package:nectar_generator/src/rest/rest_utils.dart';
 import 'dart:mirrors';
@@ -10,11 +11,35 @@ class Serializable {
   final ClassInspector inspector;
   Serializable(this.inspector);
 
+  String? customToJsonMethod(){
+    for (var value in inspector.methods) {
+      for (var value1 in value.metadata) {
+        final name = value1.element?.displayName;
+        if(name == "ToJson") {
+          return value.displayName;
+        }
+      }
+    }
+    return null;
+  }
+
   String generate() {
-    return '''
+    final toJson = customToJsonMethod();
+    String str = "";
+    if(toJson != null){
+      str = """
+        Map<String, dynamic> toJson() => $toJson();
+      """;
+    } else {
+      str = """
       Map<String, dynamic> toJson() => {
         ${inspector.fields.map((e) => _serializeFieldIfAllowed(e)).join(",\n")}
       };
+      """;
+    }
+
+    return '''
+      $str
       
       factory ${inspector.name}.fromJson(Map<String, dynamic> json) => 
         ${inspector.name}()${inspector.fields.map((e) => _deserializeFieldIfAllowed(e)).where((element) => element.isNotEmpty).join("\n")};
