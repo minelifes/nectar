@@ -9,7 +9,7 @@ part of 'role.dart';
 class Role extends _Role implements Model {
   Role();
 
-  Map<String, dynamic> toJson() => {"key": key, "name": name};
+  Map<String, dynamic> toJson() => myToJson();
 
   factory Role.fromJson(Map<String, dynamic> json) => Role()
     ..key = json["key"]

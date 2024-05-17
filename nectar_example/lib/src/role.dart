@@ -9,4 +9,7 @@ class _Role {
 
   @Column()
   late String name;
+
+  @ToJson()
+  Map<String, dynamic> myToJson() => {};
 }
