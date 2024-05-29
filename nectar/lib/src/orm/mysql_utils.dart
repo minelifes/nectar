@@ -528,6 +528,7 @@ class MysqlUtils {
             .flattened
             .toList());
 
+    //'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM $table $join $_where $group $having $order $limit'
     String _sql =
         'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM (SELECT * FROM $table $_where $limit) as $table $join $group $having $order';
 
