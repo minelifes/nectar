@@ -529,7 +529,7 @@ class MysqlUtils {
             .toList());
 
     String _sql =
-        'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM $table $join $_where $group $having $order $limit';
+        'SELECT ${allFields.isEmpty ? "*" : allFields.join(",")} FROM (SELECT * FROM `$table` $_where $limit) as $table) $join $group $having $order';
 
     ResultFormat results =
         await query(_sql, debug: debug, joins: joins, forTable: rawTable);
