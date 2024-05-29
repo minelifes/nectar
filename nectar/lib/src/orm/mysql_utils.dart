@@ -662,7 +662,8 @@ class MysqlUtils {
         } else if (value is List) {
           final joinOperation = (value.length == 3) ? value[2] : "AND";
 
-          switch (value[0]) {
+          final condition = (value[0] as String).toLowerCase();
+          switch (condition) {
             case 'in':
             case 'notin':
             case 'between':
@@ -678,15 +679,15 @@ class MysqlUtils {
                 'notlike': 'NOT LIKE',
               };
               String _wh = '';
-              if (value[0] == 'in' || value[0] == 'notin') {
-                _wh = '$key ${_ex[value[0]]}(${value[1].join(',')})';
+              if (condition == 'in' || condition == 'notin') {
+                _wh = '$key ${_ex[condition]}(${value[1].join(',')})';
               }
-              if (value[0] == 'between' || value[0] == 'notbetween') {
-                _wh = '($key ${_ex[value[0]]} ${value[1]} AND ${value[2]})';
+              if (condition == 'between' || condition == 'notbetween') {
+                _wh = '($key ${_ex[condition]} ${value[1]} AND ${value[2]})';
               }
-              if (value[0] == 'like' || value[0] == 'notlike') {
+              if (condition == 'like' || condition == 'notlike') {
                 _wh =
-                    '($key ${_ex[value[0]]} \'${sqlEscapeString(value[1])}\')';
+                    '($key ${_ex[condition]} \'${sqlEscapeString(value[1])}\')';
               }
 
               if (_keys == '') {
@@ -705,7 +706,7 @@ class MysqlUtils {
               if (value[1] is String) {
                 val = '\'${value[1]}\'';
               }
-              String _wh = '$key ${value[0]} $val';
+              String _wh = '$key ${condition} $val';
               if (_keys == '') {
                 _keys = _wh;
               } else {
