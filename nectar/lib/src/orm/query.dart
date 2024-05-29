@@ -33,7 +33,7 @@ class QueryModel {
   List<String> fields = [];
   String order = "";
   Map<String, dynamic> where = {};
-  int limit = 20;
+  int? limit;
   int startFrom = 0;
   String group = "";
   List<JoinModel> joins = [];
