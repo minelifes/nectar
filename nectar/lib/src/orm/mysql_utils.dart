@@ -459,7 +459,7 @@ class MysqlUtils {
     required T Function(dynamic) instanceOfT,
   }) async {
     final c = await count(
-        table: table, where: where, group: group, having: having, debug: debug);
+        table: table, where: where, having: having, debug: debug);
     final list = await getAll(
       table: table,
       limit: [(page - 1) * perPage, perPage],
