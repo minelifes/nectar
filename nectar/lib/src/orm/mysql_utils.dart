@@ -245,6 +245,9 @@ class MysqlUtils {
     String _sql =
         '${replace ? 'REPLACE' : 'INSERT'} INTO $table ($_fieldsString) VALUES $_valuesString';
     ResultFormat result = await query(_sql, debug: debug);
+    // String _sql = 'INSERT INTO $table ($_fieldsString) VALUES ($_valuesString) '
+    //     'ON DUPLICATE KEY UPDATE ${(_fields..remove(primaryKeyName)).map((e) => "`$e`=:$e").join(', ')}';
+    // final inserted = await query(_sql, values: insertData, debug: debug);
     return result.affectedRows;
   }
 
@@ -276,7 +279,7 @@ class MysqlUtils {
       _fields.add('$key');
       _values.add(':$key');
       if (sqlEscape && value is String) {
-        insertData[key] = sqlEscapeString(value);
+        insertData[key] = value; //sqlEscapeString();
       }
     });
     String _fieldsString = _fields.map((e) => "`$e`").join(',');
